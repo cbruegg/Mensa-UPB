@@ -1,5 +1,7 @@
 package com.cbruegg.mensaupb.model
 
+import com.cbruegg.mensaupb.parser.provideGson
+import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.annotations.SerializedName
 import java.util.Date
 
@@ -18,4 +20,10 @@ public data class Dish(@SerializedName("date") public val date: Date,
                        @SerializedName("restaurant") public val restaurantId: String,
                        @SerializedName("pricetype") public val priceType: PriceType,
                        @SerializedName("image") public val imageUrl: String?,
-                       @SerializedName("thumbnail") public val thumbnailImageUrl: String?)
+                       @SerializedName("thumbnail") public val thumbnailImageUrl: String?) {
+    companion object {
+        fun deserialize(serialized: String) = provideGson().fromJson<Dish>(serialized)
+    }
+
+    fun serialize(): String = provideGson().toJson(this)
+}

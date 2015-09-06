@@ -3,7 +3,7 @@ package com.cbruegg.mensaupb.downloader
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.parser.parseDishes
-import com.cbruegg.mensaupb.parser.parseRestaurants
+import com.cbruegg.mensaupb.parser.parseStudentenwerkRestaurants
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 import rx.Observable
@@ -19,7 +19,7 @@ public fun downloadRestaurants(): Observable<List<Restaurant>> {
     val httpClient = OkHttpClient()
     val request = Request.Builder().url(RESTAURANT_URL).build()
     return observable {
-        it.onNext(parseRestaurants(httpClient.newCall(request).execute().body().string()))
+        it.onNext(parseStudentenwerkRestaurants(httpClient.newCall(request).execute().body().string()))
         it.onCompleted()
     }
 }

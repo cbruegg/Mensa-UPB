@@ -6,7 +6,7 @@ import org.json.JSONObject
 import com.github.salomonbrys.kotson.*
 import java.util.*
 
-public fun parseRestaurants(restaurantList: String): List<Restaurant> {
+public fun parseStudentenwerkRestaurants(restaurantList: String): List<Restaurant> {
     val jsonRestaurantList = JSONObject(restaurantList)
     val parsedRestaurantList = ArrayList<Restaurant>()
     jsonRestaurantList.keys().asSequence().forEach {
