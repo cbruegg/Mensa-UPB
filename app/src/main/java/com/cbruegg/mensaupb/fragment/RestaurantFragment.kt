@@ -1,6 +1,8 @@
 package com.cbruegg.mensaupb.fragment
 
+import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -11,6 +13,7 @@ import android.view.ViewGroup
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.model.Restaurant
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -30,6 +33,7 @@ class RestaurantFragment : Fragment() {
     }
 
     private val dayPager: ViewPager by bindView(R.id.day_pager)
+    private val dayPagerTabs: TabLayout by bindView(R.id.day_pager_tabs)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
             = inflater.inflate(R.layout.fragment_restaurant, container, false)
@@ -39,8 +43,10 @@ class RestaurantFragment : Fragment() {
 
         val restaurant = Restaurant.deserialize(getArguments().getString(ARG_RESTAURANT))!!
         val dates = computePagerDates()
-        val adapter = DishesPagerAdapter(getFragmentManager(), restaurant, dates)
+        val adapter = DishesPagerAdapter(getActivity(), getFragmentManager(), restaurant, dates)
         dayPager.setAdapter(adapter)
+
+        dayPagerTabs.setupWithViewPager(dayPager)
     }
 
     private fun computePagerDates(): List<Date> {
@@ -53,10 +59,15 @@ class RestaurantFragment : Fragment() {
         return dates
     }
 
-    class DishesPagerAdapter(fm: FragmentManager, private val restaurant: Restaurant, private val dates: List<Date>) : FragmentStatePagerAdapter(fm) {
+    class DishesPagerAdapter(context: Context, fm: FragmentManager, private val restaurant: Restaurant, private val dates: List<Date>) : FragmentStatePagerAdapter(fm) {
+
+        private val dateFormatter = SimpleDateFormat(context.getString(R.string.dateTabFormat))
+
         override fun getItem(position: Int) = DishesFragment.newInstance(restaurant, dates[position])
 
         override fun getCount() = dates.size()
+
+        override fun getPageTitle(position: Int) = dateFormatter.format(dates[position])
     }
 
 }
