@@ -1,12 +1,12 @@
 package com.cbruegg.mensaupb.adapter;
 
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.cbruegg.mensaupb.BR;
 import com.cbruegg.mensaupb.R;
 import com.cbruegg.mensaupb.databinding.RowRestaurantBinding;
 import com.cbruegg.mensaupb.model.Restaurant;
@@ -15,8 +15,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class RestaurantAdapter extends ObservableListAdapter<Restaurant, RestaurantAdapter.RestaurantBindingHolder> {
 
-    @Override public void onBindViewHolder(@NotNull RestaurantBindingHolder holder, Restaurant item) {
-        holder.binding.setVariable(BR.restaurant, item);
+    @Override public void onBindViewHolder(@NotNull RestaurantBindingHolder holder, Restaurant item, @NonNull View.OnClickListener onClickListener) {
+        holder.binding.setRestaurant(item);
+        holder.binding.setOnClickListener(onClickListener);
         holder.binding.executePendingBindings();
     }
 

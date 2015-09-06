@@ -4,6 +4,10 @@
     <data>
 
         <variable
+            name="onClickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
             name="dish"
             type="com.cbruegg.mensaupb.model.Dish" />
     </data>
@@ -11,6 +15,7 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="@{onClickListener.onClick}"
         android:orientation="vertical">
 
         <TextView

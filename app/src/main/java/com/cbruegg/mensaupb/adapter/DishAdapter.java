@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.cbruegg.mensaupb.BR;
 import com.cbruegg.mensaupb.R;
 import com.cbruegg.mensaupb.databinding.RowDishBinding;
 import com.cbruegg.mensaupb.model.Dish;
@@ -15,8 +14,9 @@ import com.cbruegg.mensaupb.model.Dish;
 import org.jetbrains.annotations.NotNull;
 
 public class DishAdapter extends ObservableListAdapter<Dish, DishAdapter.DishBindingViewHolder> {
-    @Override public void onBindViewHolder(@NotNull DishBindingViewHolder holder, Dish item) {
-        holder.binding.setVariable(BR.dish, item);
+    @Override public void onBindViewHolder(@NotNull DishBindingViewHolder holder, Dish item, @NotNull View.OnClickListener onClickListener) {
+        holder.binding.setDish(item);
+        holder.binding.setOnClickListener(onClickListener);
         holder.binding.executePendingBindings();
     }
 

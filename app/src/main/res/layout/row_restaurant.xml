@@ -4,6 +4,10 @@
     <data>
 
         <variable
+            name="onClickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
             name="restaurant"
             type="com.cbruegg.mensaupb.model.Restaurant" />
     </data>
@@ -11,6 +15,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:onClick="@{onClickListener.onClick}"
         android:orientation="vertical"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
