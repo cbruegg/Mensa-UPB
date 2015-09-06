@@ -43,7 +43,7 @@ class RestaurantFragment : Fragment() {
         dayPager.setAdapter(adapter)
     }
 
-    fun computePagerDates(): List<Date> {
+    private fun computePagerDates(): List<Date> {
         val dates = ArrayList<Date>(DAY_COUNT)
         val todayMs = System.currentTimeMillis()
         val dayInMs = TimeUnit.DAYS.toMillis(1)

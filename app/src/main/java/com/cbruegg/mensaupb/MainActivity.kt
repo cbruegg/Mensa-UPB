@@ -8,7 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import butterknife.bindView
 import com.cbruegg.mensaupb.adapter.RestaurantAdapter
-import com.cbruegg.mensaupb.downloader.downloadRestaurants
+import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.extensions.sortBy
 import com.cbruegg.mensaupb.fragment.DishesFragment
@@ -41,7 +41,7 @@ public class MainActivity : AppCompatActivity() {
         restaurantList.setAdapter(restaurantAdapter)
         restaurantList.setLayoutManager(LinearLayoutManager(this))
 
-        subscription = downloadRestaurants()
+        subscription = Downloader(this).downloadRestaurants()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {

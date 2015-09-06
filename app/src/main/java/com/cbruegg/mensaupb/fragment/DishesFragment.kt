@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.DishAdapter
-import com.cbruegg.mensaupb.downloader.downloadDishes
+import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.model.Restaurant
 import rx.Subscription
@@ -53,7 +53,7 @@ class DishesFragment : Fragment() {
         val restaurant = Restaurant.deserialize(getArguments().getString(ARG_RESTAURANT))!!
         val date = Date(getArguments().getLong(ARG_DATE))
 
-        subscription = downloadDishes(restaurant, date)
+        subscription = Downloader(getActivity()).downloadOrRetrieveDishes(restaurant, date)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
