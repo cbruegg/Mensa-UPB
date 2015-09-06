@@ -15,13 +15,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class RestaurantAdapter extends ObservableListAdapter<Restaurant, RestaurantAdapter.RestaurantBindingHolder> {
 
-    @Override public RestaurantBindingHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new RestaurantBindingHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_restaurant, parent, false));
-    }
-
     @Override public void onBindViewHolder(@NotNull RestaurantBindingHolder holder, Restaurant item) {
         holder.binding.setVariable(BR.restaurant, item);
         holder.binding.executePendingBindings();
+    }
+
+    @NotNull @Override public RestaurantBindingHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType, @NotNull LayoutInflater inflater) {
+        return new RestaurantBindingHolder(inflater.inflate(R.layout.row_restaurant, parent, false));
     }
 
     static class RestaurantBindingHolder extends RecyclerView.ViewHolder {
