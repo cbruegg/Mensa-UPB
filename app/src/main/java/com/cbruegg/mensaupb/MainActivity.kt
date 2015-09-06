@@ -26,8 +26,8 @@ public class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    restaurantAdapter.restaurants.clear()
-                    restaurantAdapter.restaurants.addAll(it)
+                    restaurantAdapter.list.clear()
+                    restaurantAdapter.list.addAll(it)
                     subscription?.unsubscribe()
                 }
 
