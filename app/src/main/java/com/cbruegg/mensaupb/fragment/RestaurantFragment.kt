@@ -53,7 +53,6 @@ class RestaurantFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    Log.i("Dishes", it.toString())
                     adapter.list.setAll(it)
                     subscription?.unsubscribe()
                 }
