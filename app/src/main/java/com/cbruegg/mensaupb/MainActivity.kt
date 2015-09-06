@@ -11,6 +11,7 @@ import com.cbruegg.mensaupb.adapter.RestaurantAdapter
 import com.cbruegg.mensaupb.downloader.downloadRestaurants
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.extensions.sortBy
+import com.cbruegg.mensaupb.fragment.DishesFragment
 import com.cbruegg.mensaupb.fragment.RestaurantFragment
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.view.DividerItemDecoration
