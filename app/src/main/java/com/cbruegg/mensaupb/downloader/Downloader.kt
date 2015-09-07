@@ -20,7 +20,7 @@ private val RESTAURANT_URL = BASE_URL + "&getrestaurants=1";
 
 class Downloader(context: Context) {
 
-    private val dataCache = DataCache(context)
+    private val dataCache = DataCache.getInstance(context)
 
     public fun downloadRestaurants(): Observable<List<Restaurant>> {
         val httpClient = OkHttpClient()

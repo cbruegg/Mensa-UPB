@@ -4,13 +4,28 @@ import android.content.Context
 import android.util.Log
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.ArrayList
 import java.util.Collections
 import java.util.Date
 import java.util.HashSet
 
-class DataCache(private val context: Context) {
+class DataCache private constructor(private val context: Context) {
+
+    companion object {
+        private var dataCacheRef: WeakReference<DataCache?> = WeakReference(null)
+
+        fun getInstance(context: Context): DataCache {
+            return dataCacheRef.get() ?: createNewInstance(context)
+        }
+
+        private fun createNewInstance(context: Context): DataCache {
+            val dataCache = DataCache(context)
+            dataCacheRef = WeakReference(dataCache)
+            return dataCache
+        }
+    }
 
     private val TAG = "DataCache"
     private val PREFERENCES_PREFIX = "CACHE_"
@@ -42,7 +57,7 @@ class DataCache(private val context: Context) {
         }
     }
 
-    fun cache(restaurant: Restaurant, date: Date, dishes: List<Dish>): List<Dish> {
+    synchronized fun cache(restaurant: Restaurant, date: Date, dishes: List<Dish>): List<Dish> {
         if (dishes.isEmpty()) {
             return dishes
         }
@@ -52,7 +67,12 @@ class DataCache(private val context: Context) {
         storeRestaurantId(restaurant)
         val store = sharedPreferenceForRestaurantId(restaurant.id)
         val keyForDate = SimpleDateFormat(DATE_FORMAT).format(date)
-        store.edit().putStringSet(keyForDate, dishes.serialize()).apply()
+        val serializedDishes = dishes.serialize()
+
+        synchronized(this) {
+            store.edit().putStringSet(keyForDate, serializedDishes).apply()
+        }
+
         return dishes
     }
 
