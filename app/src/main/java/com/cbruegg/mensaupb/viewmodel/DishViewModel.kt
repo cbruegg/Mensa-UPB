@@ -3,6 +3,7 @@ package com.cbruegg.mensaupb.viewmodel
 import android.content.Context
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.extensions.capitalizeFirstChar
+import com.cbruegg.mensaupb.extensions.replace
 import com.cbruegg.mensaupb.extensions.sortBy
 import com.cbruegg.mensaupb.model.Badge
 import com.cbruegg.mensaupb.model.Dish
@@ -25,7 +26,7 @@ data class DishViewModel(val dish: Dish, val headerText: String?, userType: User
     val priceText = context.getString(R.string.price) + " " +
             NUMBER_FORMAT.format(userPrice) + " € " + (if (dish.priceType == PriceType.WEIGHTED) context.getString(R.string.per_100_gramm) else "")
 
-    val allergensText = context.getString(R.string.allergens) + " " + dish.allergens.join()
+    val allergensText = context.getString(R.string.allergens) + " " + dish.allergens.replace("A1", "A1 (Gluten)").join()
     val containsAllergens = dish.allergens.isNotEmpty()
 
     val badges = dish.badges.map { Badge.findById(it) }.filterNotNull()

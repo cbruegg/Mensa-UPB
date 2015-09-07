@@ -71,7 +71,6 @@ class DishesFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    it.forEach { Log.d("Dish", it.badges.toString()) }
                     val dishViewModels = it.toDishViewModels(getActivity(), userType)
                     adapter.list.setAll(dishViewModels)
                     subscription?.unsubscribe()
