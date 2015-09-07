@@ -1,6 +1,5 @@
 package com.cbruegg.mensaupb.fragment
 
-import android.app.Dialog
 import android.content.Context
 import android.graphics.Point
 import android.os.Bundle
@@ -36,9 +35,7 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.Date
 
-
 class DishesFragment : Fragment() {
-
 
     companion object {
         private val ARG_RESTAURANT = "restaurant"
@@ -87,7 +84,7 @@ class DishesFragment : Fragment() {
                 }
     }
 
-    class DishDetailsDialog(private val dishViewModel: DishViewModel): DialogFragment() {
+    class DishDetailsDialog(private val dishViewModel: DishViewModel) : DialogFragment() {
 
         private val imageView: ImageView by bindView(R.id.dish_image)
         private val progressBar: ProgressBar by bindView(R.id.dish_image_progressbar)

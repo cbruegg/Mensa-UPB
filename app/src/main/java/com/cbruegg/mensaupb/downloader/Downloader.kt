@@ -2,6 +2,7 @@ package com.cbruegg.mensaupb.downloader
 
 import android.content.Context
 import android.util.Log
+import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.cache.DataCache
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
@@ -14,7 +15,7 @@ import rx.lang.kotlin.observable
 import java.text.SimpleDateFormat
 import java.util.Date
 
-private val API_ID = "***REMOVED***"
+private val API_ID = BuildConfig.API_ID
 private val BASE_URL = "http://www.studentenwerk-pb.de/fileadmin/shareddata/access2.php?id=" + API_ID
 private val RESTAURANT_URL = BASE_URL + "&getrestaurants=1";
 

@@ -12,6 +12,10 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+        def apiIdProps = new Properties()
+        apiIdProps.load(new FileInputStream(rootProject.file("api_id.properties")))
+        buildConfigField "String", "API_ID", "\"" + apiIdProps.id + "\""
     }
     buildTypes {
         release {
