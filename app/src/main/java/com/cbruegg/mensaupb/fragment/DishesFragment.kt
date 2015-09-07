@@ -1,6 +1,10 @@
 package com.cbruegg.mensaupb.fragment
 
+import android.app.Dialog
+import android.content.Context
+import android.graphics.Point
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.preference.PreferenceManager
@@ -9,10 +13,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.ViewSwitcher
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.PreferenceActivity
@@ -82,23 +87,67 @@ class DishesFragment : Fragment() {
                 }
     }
 
+    class DishDetailsDialog(private val dishViewModel: DishViewModel): DialogFragment() {
+
+        private val imageView: ImageView by bindView(R.id.dish_image)
+        private val progressBar: ProgressBar by bindView(R.id.dish_image_progressbar)
+
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
+                = inflater.inflate(R.layout.dialog_dish_details, container, false)
+
+        override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+
+            setCancelable(true)
+            Picasso.with(getActivity())
+                    .load(dishViewModel.dish.imageUrl)
+                    .fit()
+                    .centerInside()
+                    .into(imageView, object : Callback {
+                        override fun onSuccess() {
+                            progressBar.setVisibility(View.GONE)
+                        }
+
+                        override fun onError() {
+                            Toast.makeText(getActivity(), R.string.could_not_load_image, Toast.LENGTH_SHORT).show()
+                            dismiss()
+                        }
+
+                    })
+        }
+    }
+
+    private fun getDisplaySize(): Pair<Int, Int> {
+        val display = getActivity().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val size = Point()
+        display.getDefaultDisplay().getSize(size)
+        return Pair(size.x, size.y)
+    }
+
     private fun showDishDetailsDialog(dishViewModel: DishViewModel) {
-        val dialogViewSwitcher = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_dish_details, null, false) as ViewSwitcher
-        val imageView = dialogViewSwitcher.findViewById(R.id.dish_image) as ImageView
+        val dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_dish_details, null, false)
+        val imageView = dialogView.findViewById(R.id.dish_image) as ImageView
+        val progressBar = dialogView.findViewById(R.id.dish_image_progressbar) as ProgressBar
 
         val alertDialog = AlertDialog.Builder(getActivity())
-                .setView(dialogViewSwitcher)
+                .setView(dialogView)
                 .setCancelable(true)
                 .create()
         alertDialog.show()
 
+        val displaySize = getDisplaySize()
+
+
+        // fit() doesn't work here, as AlertDialogs don't provide
+        // a container for inflation, so some LayoutParams don't work
         Picasso.with(getActivity())
                 .load(dishViewModel.dish.imageUrl)
-                .fit()
+                .resize(displaySize.first, displaySize.second)
+                .onlyScaleDown()
                 .centerInside()
                 .into(imageView, object : Callback {
                     override fun onSuccess() {
-                        dialogViewSwitcher.showNext()
+                        progressBar.setVisibility(View.GONE)
                     }
 
                     override fun onError() {
