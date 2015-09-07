@@ -11,4 +11,9 @@
     <string name="lactose_free">laktosefrei</string>
     <string name="could_not_load_image">Bild konnte nicht geladen werden.</string>
     <string name="no_dishes_found">Keine Gerichte für diesen Tag gefunden. Hat die Einrichtung geschlossen?</string>
+    <string name="user_type_preference_description">Wähle zwischen Student, Mitarbeiter oder Gast.</string>
+    <string name="user_type_preference_dialog_title">Wähle deinen Status aus</string>
+    <string name="user_type_preference_title">Universitätsstatus</string>
+    <string name="settings">Einstellungen</string>
+    <string name="restaurants">Einrichtungen</string>
 </resources>

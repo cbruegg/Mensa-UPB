@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="user_type_preference_entries">
+        <item>Student</item>
+        <item>Mitarbeiter</item>
+        <item>Gast</item>
+    </string-array>
+</resources>

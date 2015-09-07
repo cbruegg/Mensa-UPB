@@ -10,4 +10,12 @@
     <string name="lactose_free">lactose-free</string>
     <string name="could_not_load_image">Couldn\'t load image.</string>
     <string name="no_dishes_found">No dishes have been found for this day. Maybe the restaurant is closed?</string>
+    <string name="user_type_preference_title">University Status</string>
+    <string name="user_type_preference_description">Select whether you are a Student, a Worker or a Guest.</string>
+    <string name="user_type_preference_dialog_title">Choose your status</string>
+
+    <!-- Reference to user_type_preference_values -->
+    <string name="user_type_preference_default">student</string>
+    <string name="settings">Settings</string>
+    <string name="restaurants">Restaurants</string>
 </resources>

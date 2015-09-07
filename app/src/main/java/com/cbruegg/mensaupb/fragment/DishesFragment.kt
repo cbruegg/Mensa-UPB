@@ -3,6 +3,7 @@ package com.cbruegg.mensaupb.fragment
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
+import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import android.widget.Toast
 import android.widget.ViewSwitcher
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
+import com.cbruegg.mensaupb.activity.PreferenceActivity
 import com.cbruegg.mensaupb.adapter.DishViewModelAdapter
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
@@ -66,7 +68,8 @@ class DishesFragment : Fragment() {
 
         val restaurant = Restaurant.deserialize(getArguments().getString(ARG_RESTAURANT))!!
         val date = Date(getArguments().getLong(ARG_DATE))
-        val userType = UserType.STUDENT // TODO
+        val userType = UserType.findById(PreferenceManager.getDefaultSharedPreferences(
+                getActivity()).getString(PreferenceActivity.KEY_PREF_USER_TYPE, UserType.STUDENT.id))!!
 
         subscription = Downloader(getActivity()).downloadOrRetrieveDishes(restaurant, date)
                 .subscribeOn(Schedulers.io())

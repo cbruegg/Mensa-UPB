@@ -1,17 +1,22 @@
-package com.cbruegg.mensaupb
+package com.cbruegg.mensaupb.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.Menu
+import android.view.MenuItem
 import butterknife.bindView
+import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantAdapter
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.extensions.sortBy
-import com.cbruegg.mensaupb.fragment.DishesFragment
+import com.cbruegg.mensaupb.extensions.toggleDrawer
 import com.cbruegg.mensaupb.fragment.RestaurantFragment
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.view.DividerItemDecoration
@@ -30,6 +35,7 @@ public class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         setContentView(R.layout.activity_main)
 
         val restaurantAdapter = RestaurantAdapter()
@@ -56,6 +62,26 @@ public class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        getMenuInflater().inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.getItemId()) {
+            R.id.settings -> {
+                val intent = Intent(this, javaClass<PreferenceActivity>())
+                startActivity(intent)
+                return true
+            }
+            R.id.restaurants -> {
+                drawerLayout.toggleDrawer(GravityCompat.START)
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
     private fun loadDefaultRestaurant(preparedList: List<Restaurant>) {
         val restaurant = preparedList
                 .firstOrNull { it.name.toLowerCase().equals(DEFAULT_RESTAURANT_NAME.toLowerCase()) }
@@ -66,6 +92,7 @@ public class MainActivity : AppCompatActivity() {
     }
 
     private fun showRestaurant(restaurant: Restaurant) {
+        getSupportActionBar().setTitle(restaurant.name)
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, RestaurantFragment.newInstance(restaurant))

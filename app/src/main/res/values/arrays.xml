@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="user_type_preference_entries">
+        <item>Student</item>
+        <item>Worker</item>
+        <item>Guest</item>
+    </string-array>
+
+    <!-- Referenced by user_type_preference_default, corresponding to model.UserType -->
+    <string-array name="user_type_preference_values">
+        <item>student</item>
+        <item>worker</item>
+        <item>guest</item>
+    </string-array>
+</resources>
