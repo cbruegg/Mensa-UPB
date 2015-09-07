@@ -3,7 +3,7 @@ package com.cbruegg.mensaupb.model
 import com.cbruegg.mensaupb.parser.provideGson
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.annotations.SerializedName
-import java.util.Date
+import java.util.*
 
 public data class Dish(@SerializedName("date") public val date: Date,
                        @SerializedName("name_de") public val germanName: String,

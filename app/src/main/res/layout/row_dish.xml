@@ -3,25 +3,81 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="onClickListener"
             type="android.view.View.OnClickListener" />
 
         <variable
-            name="dish"
-            type="com.cbruegg.mensaupb.model.Dish" />
+            name="dishViewModel"
+            type="com.cbruegg.mensaupb.viewmodel.DishViewModel" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{onClickListener.onClick}"
         android:orientation="vertical">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@color/header_gray"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
+            android:text="@{dishViewModel.headerText}"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:visibility="@{dishViewModel.hasHeader ? View.VISIBLE : View.GONE}" />
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{dish.germanName}" />
+            android:gravity="center_vertical"
+            android:onClick="@{onClickListener.onClick}"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp">
 
+            <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginRight="10dp"
+                android:scaleType="centerCrop"
+                android:visibility="@{dishViewModel.hasThumbnail ? View.VISIBLE : View.GONE}"
+                app:imageUrl="@{dishViewModel.dish.thumbnailImageUrl}" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{dishViewModel.dish.germanName}"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{dishViewModel.priceText}" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{dishViewModel.allergensText}"
+                    android:visibility="@{dishViewModel.containsAllergens ? View.VISIBLE : View.GONE}" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{dishViewModel.badgesText}"
+                    android:visibility="@{dishViewModel.hasBadges ? View.VISIBLE : View.GONE}" />
+
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </layout>

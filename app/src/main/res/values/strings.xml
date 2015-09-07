@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Mensa UPB</string>
     <string name="dateTabFormat">EEE\', \'dd\'.\'</string>
+    <string name="per_100_gramm">per 100g</string>
+    <string name="price">Price:</string>
+    <string name="allergens">Allergens:</string>
+    <string name="vegan">vegan</string>
+    <string name="vegetarian">vegetarian</string>
+    <string name="nonfat">nonfat</string>
+    <string name="lactose_free">lactose-free</string>
+    <string name="could_not_load_image">Couldn\'t load image.</string>
 </resources>
