@@ -27,6 +27,7 @@ import rx.schedulers.Schedulers
 public class MainActivity : AppCompatActivity() {
 
     private val DEFAULT_RESTAURANT_NAME = "Mensa Academica"
+    private val PREFS_KEY_FIRST_LAUNCH = "main_activity_first_launch"
 
     private val restaurantList: RecyclerView by bindView(R.id.restaurant_list)
     private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
@@ -56,10 +57,20 @@ public class MainActivity : AppCompatActivity() {
                             .sortBy { first, second -> first.location.compareTo(second.location) }
                             .reverse() // Paderborn should be at the top of the list
                     restaurantAdapter.list.setAll(preparedList)
+                    checkShowFirstTimeDrawer()
                     loadDefaultRestaurant(preparedList)
                     subscription?.unsubscribe()
                 }
 
+    }
+
+    private fun checkShowFirstTimeDrawer() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val firstLaunch = sharedPreferences.getBoolean(PREFS_KEY_FIRST_LAUNCH, true)
+        if (firstLaunch) {
+            drawerLayout.openDrawer(GravityCompat.START)
+            sharedPreferences.edit().putBoolean(PREFS_KEY_FIRST_LAUNCH, false).apply()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
