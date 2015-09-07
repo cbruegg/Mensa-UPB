@@ -10,4 +10,5 @@
     <string name="nonfat">fettfrei</string>
     <string name="lactose_free">laktosefrei</string>
     <string name="could_not_load_image">Bild konnte nicht geladen werden.</string>
+    <string name="no_dishes_found">Keine Gerichte für diesen Tag gefunden. Hat die Einrichtung geschlossen?</string>
 </resources>

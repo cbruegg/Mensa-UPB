@@ -9,4 +9,5 @@
     <string name="nonfat">nonfat</string>
     <string name="lactose_free">lactose-free</string>
     <string name="could_not_load_image">Couldn\'t load image.</string>
+    <string name="no_dishes_found">No dishes have been found for this day. Maybe the restaurant is closed?</string>
 </resources>

@@ -5,11 +5,11 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import android.widget.ViewSwitcher
 import butterknife.bindView
@@ -49,6 +49,7 @@ class DishesFragment : Fragment() {
     }
 
     private val dishList: RecyclerView by bindView(R.id.dish_list)
+    private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)
     private var subscription: Subscription? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View? =
@@ -71,6 +72,7 @@ class DishesFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
+                    noDishesMessage.setVisibility(if (it.isEmpty()) View.VISIBLE else View.GONE)
                     val dishViewModels = it.toDishViewModels(getActivity(), userType)
                     adapter.list.setAll(dishViewModels)
                     subscription?.unsubscribe()
