@@ -5,4 +5,4 @@
 .DS_Store
 /build
 /captures
-api_id.properties
+#api_id.properties
