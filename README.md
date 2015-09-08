@@ -16,6 +16,8 @@ Contributions are of course welcome, but unfortunately an API key is required fo
 I'm planning to revoke this restriction by creating an own API service that wraps the official API and doesn't require an API key. There's no ETA on that though.
 
 # License
+
+```
 Copyright 2015 Christian Brüggemann
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,3 +31,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+```
