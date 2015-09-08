@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceFragmentCompat
 import com.cbruegg.mensaupb.R
 
+/**
+ * Activity managing the user preferences.
+ */
 class PreferenceActivity : AppCompatActivity() {
 
     companion object {

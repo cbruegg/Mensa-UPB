@@ -17,12 +17,18 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
+/**
+ * Fragment hosting a Pager of DishesFragments.
+ * The factory method newInstance needs to be used.
+ */
 class RestaurantFragment : Fragment() {
     companion object {
         private val ARG_RESTAURANT = "restaurant"
         private val DAY_COUNT = 7
 
+        /**
+         * Construct a new instance of the RestaurantFragment.
+         */
         fun newInstance(restaurant: Restaurant): RestaurantFragment {
             val args = Bundle()
             args.putString(ARG_RESTAURANT, restaurant.serialize())
@@ -41,6 +47,9 @@ class RestaurantFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        /**
+         * Set up the view pager
+         */
         val restaurant = Restaurant.deserialize(getArguments().getString(ARG_RESTAURANT))!!
         val dates = computePagerDates()
         val adapter = DishesPagerAdapter(getActivity(), getFragmentManager(), restaurant, dates)
@@ -49,6 +58,9 @@ class RestaurantFragment : Fragment() {
         dayPagerTabs.setupWithViewPager(dayPager)
     }
 
+    /**
+     * Return a list of dates to be used for fetching dishes.
+     */
     private fun computePagerDates(): List<Date> {
         val dates = ArrayList<Date>(DAY_COUNT)
         val todayMs = System.currentTimeMillis()
@@ -59,7 +71,10 @@ class RestaurantFragment : Fragment() {
         return dates
     }
 
-    class DishesPagerAdapter(context: Context, fm: FragmentManager, private val restaurant: Restaurant, private val dates: List<Date>) : FragmentStatePagerAdapter(fm) {
+    /**
+     * ViewPager adapter
+     */
+    private class DishesPagerAdapter(context: Context, fm: FragmentManager, private val restaurant: Restaurant, private val dates: List<Date>) : FragmentStatePagerAdapter(fm) {
 
         private val dateFormatter = SimpleDateFormat(context.getString(R.string.dateTabFormat))
 

@@ -6,7 +6,10 @@ import org.json.JSONObject
 import com.github.salomonbrys.kotson.*
 import java.util.*
 
-public fun parseStudentenwerkRestaurants(restaurantList: String): List<Restaurant> {
+/**
+ * Parse restaurants from the API response.
+ */
+public fun parseRestaurants(restaurantList: String): List<Restaurant> {
     val jsonRestaurantList = JSONObject(restaurantList)
     val parsedRestaurantList = ArrayList<Restaurant>()
     jsonRestaurantList.keys().asSequence().forEach {
@@ -19,4 +22,7 @@ public fun parseStudentenwerkRestaurants(restaurantList: String): List<Restauran
     return parsedRestaurantList
 }
 
+/**
+ * Parse dishes from the API response.
+ */
 public fun parseDishes(dishes: String): List<Dish> = provideGson().fromJson<List<Dish>>(dishes) ?: Collections.emptyList()

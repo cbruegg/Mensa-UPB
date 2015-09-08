@@ -7,6 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.cbruegg.mensaupb.extensions.addOnListChangedCallback
 
+/**
+ * An abstract RecyclerView-Adapter that listents for changes in the provided observable list.
+ * It also features support for a lambda onClickListener.
+ */
 abstract class ObservableListAdapter<DATA, VH : RecyclerView.ViewHolder>(val list: ObservableArrayList<DATA> = ObservableArrayList(),
                                                                          var onClickListener: ((data: DATA, position: Int) -> Unit)? = null) : RecyclerView.Adapter<VH>() {
 
@@ -26,6 +30,10 @@ abstract class ObservableListAdapter<DATA, VH : RecyclerView.ViewHolder>(val lis
 
     abstract fun onBindViewHolder(holder: VH, item: DATA, onClickListener: View.OnClickListener)
 
+    /**
+     * Since we can specify a lambda OnClickListener, we need to convert that
+     * to a normal View.OnClickListener. This method is responsible for that.
+     */
     private fun ((data: DATA, position: Int) -> Unit)?.toInternalOnClickListener(data: DATA, position: Int): View.OnClickListener {
         return object : View.OnClickListener {
             override fun onClick(v: View) {

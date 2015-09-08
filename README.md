@@ -11,9 +11,6 @@ Mensa-UPB works with the official API of the Studierendenwerk, so it's unlikely 
 I've also tried to make it use modern technologies, like Google's support libraries, RxJava and many others. It's also written almost entirely in Kotlin, JetBrains relatively new language that's a more innovative alternative to Java, yet preserves Java-Interop as much as possible.
 In addition to that, the app uses the new data binding feature and targets the Marshmallow SDK.
 
-# What's still left to be done
-As of now, the project lacks documentation. I'll resolve this issue as soon as possible.
-
 # Contributions
 Contributions are of course welcome, but unfortunately an API key is required for communicating with the official API. It has to be put into the api_id.properties file in the root directory of the project.
 I'm planning to revoke this restriction by creating an own API service that wraps the official API and doesn't require an API key. There's no ETA on that though.

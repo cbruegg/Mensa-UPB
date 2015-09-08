@@ -8,9 +8,14 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import com.cbruegg.mensaupb.extensions.children
 
-private val ATTRS = intArrayOf(android.R.attr.listDivider)
-
+/**
+ * RecyclerView item decoration that adds divider lines.
+ */
 public class DividerItemDecoration : RecyclerView.ItemDecoration {
+
+    companion object {
+        private val ATTRS = intArrayOf(android.R.attr.listDivider)
+    }
 
     private val divider: Drawable
 

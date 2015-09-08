@@ -24,13 +24,28 @@ import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
+/**
+ * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
+ */
 public class MainActivity : AppCompatActivity() {
+
+    /*
+     * Constants
+     */
 
     private val DEFAULT_RESTAURANT_NAME = "Mensa Academica"
     private val PREFS_KEY_FIRST_LAUNCH = "main_activity_first_launch"
 
+    /*
+     * Views
+     */
+
     private val restaurantList: RecyclerView by bindView(R.id.restaurant_list)
     private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
+
+    /*
+     * Other vars
+     */
 
     private var subscription: Subscription? = null
 
@@ -39,6 +54,7 @@ public class MainActivity : AppCompatActivity() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         setContentView(R.layout.activity_main)
 
+        // Setup the restaurant list in the drawer
         val restaurantAdapter = RestaurantAdapter()
         restaurantAdapter.onClickListener = { restaurant, position ->
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -48,6 +64,7 @@ public class MainActivity : AppCompatActivity() {
         restaurantList.setAdapter(restaurantAdapter)
         restaurantList.setLayoutManager(LinearLayoutManager(this))
 
+        // Download data for the list
         subscription = Downloader(this).downloadRestaurants()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -64,6 +81,10 @@ public class MainActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * If this is the first time the user opens the app, show the drawer so
+     * the user knows about its existence.
+     */
     private fun checkShowFirstTimeDrawer() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val firstLaunch = sharedPreferences.getBoolean(PREFS_KEY_FIRST_LAUNCH, true)
@@ -93,15 +114,22 @@ public class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Load a default restaurant fragment. If found in the list of restaurants,
+     * [DEFAULT_RESTAURANT_NAME] is used, else the first item in the list.
+     */
     private fun loadDefaultRestaurant(preparedList: List<Restaurant>) {
         val restaurant = preparedList
-                .firstOrNull { it.name.toLowerCase().equals(DEFAULT_RESTAURANT_NAME.toLowerCase()) }
+                .firstOrNull { it.name.toLowerCase() == DEFAULT_RESTAURANT_NAME.toLowerCase() }
                 .let { it ?: preparedList.firstOrNull() }
         if (restaurant != null) {
             showRestaurant(restaurant)
         }
     }
 
+    /**
+     * Show a fragment that displays the dishes for the specified restaurant.
+     */
     private fun showRestaurant(restaurant: Restaurant) {
         getSupportActionBar().setTitle(restaurant.name)
         getSupportFragmentManager()

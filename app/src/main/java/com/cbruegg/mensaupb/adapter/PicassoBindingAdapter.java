@@ -5,6 +5,9 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+/**
+ * Used by the data binding feature.
+ */
 public class PicassoBindingAdapter {
     @BindingAdapter({"bind:imageUrl"})
     public static void loadImage(ImageView view, String url) {

@@ -13,6 +13,9 @@ import com.cbruegg.mensaupb.model.Restaurant;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Adapter responsible for displaying Restaurants in a RecyclerView.
+ */
 public class RestaurantAdapter extends ObservableListAdapter<Restaurant, RestaurantAdapter.RestaurantBindingHolder> {
 
     @Override public void onBindViewHolder(@NotNull RestaurantBindingHolder holder, Restaurant item, @NonNull View.OnClickListener onClickListener) {

@@ -3,7 +3,6 @@ package com.cbruegg.mensaupb.fragment
 import android.content.Context
 import android.graphics.Point
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.preference.PreferenceManager
@@ -35,12 +34,20 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.Date
 
+/**
+ * Fragment responsible for displaying the dishes of a restaurant at a specified date.
+ * The factory method newInstance needs to be used.
+ */
 class DishesFragment : Fragment() {
 
     companion object {
         private val ARG_RESTAURANT = "restaurant"
         private val ARG_DATE = "date"
 
+        /**
+         * Construct a new instance of this fragment.
+         * @see DishesFragment
+         */
         fun newInstance(restaurant: Restaurant, date: Date): DishesFragment {
             val args = Bundle()
             args.putString(ARG_RESTAURANT, restaurant.serialize())
@@ -62,6 +69,9 @@ class DishesFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        /**
+         * Set up the list of dishes
+         */
         val adapter = DishViewModelAdapter()
         adapter.onClickListener = { dishViewModel, position -> if (dishViewModel.hasBigImage) showDishDetailsDialog(dishViewModel) }
         dishList.setAdapter(adapter)
@@ -73,6 +83,9 @@ class DishesFragment : Fragment() {
         val userType = UserType.findById(PreferenceManager.getDefaultSharedPreferences(
                 getActivity()).getString(PreferenceActivity.KEY_PREF_USER_TYPE, UserType.STUDENT.id))!!
 
+        /**
+         * Download data for the list
+         */
         subscription = Downloader(getActivity()).downloadOrRetrieveDishes(restaurant, date)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -84,36 +97,10 @@ class DishesFragment : Fragment() {
                 }
     }
 
-    class DishDetailsDialog(private val dishViewModel: DishViewModel) : DialogFragment() {
-
-        private val imageView: ImageView by bindView(R.id.dish_image)
-        private val progressBar: ProgressBar by bindView(R.id.dish_image_progressbar)
-
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-                = inflater.inflate(R.layout.dialog_dish_details, container, false)
-
-        override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-
-            setCancelable(true)
-            Picasso.with(getActivity())
-                    .load(dishViewModel.dish.imageUrl)
-                    .fit()
-                    .centerInside()
-                    .into(imageView, object : Callback {
-                        override fun onSuccess() {
-                            progressBar.setVisibility(View.GONE)
-                        }
-
-                        override fun onError() {
-                            Toast.makeText(getActivity(), R.string.could_not_load_image, Toast.LENGTH_SHORT).show()
-                            dismiss()
-                        }
-
-                    })
-        }
-    }
-
+    /**
+     * @return the size of the display in pixels. The first element of the pair is the width,
+     * the second part is the height.
+     */
     private fun getDisplaySize(): Pair<Int, Int> {
         val display = getActivity().getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val size = Point()
@@ -121,6 +108,10 @@ class DishesFragment : Fragment() {
         return Pair(size.x, size.y)
     }
 
+    /**
+     * Show a dialog that displays the full size image of the dish.
+     * @param dishViewModel DishViewModel with an imageUrl
+     */
     private fun showDishDetailsDialog(dishViewModel: DishViewModel) {
         val dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_dish_details, null, false)
         val imageView = dialogView.findViewById(R.id.dish_image) as ImageView
@@ -133,7 +124,6 @@ class DishesFragment : Fragment() {
         alertDialog.show()
 
         val displaySize = getDisplaySize()
-
 
         // fit() doesn't work here, as AlertDialogs don't provide
         // a container for inflation, so some LayoutParams don't work

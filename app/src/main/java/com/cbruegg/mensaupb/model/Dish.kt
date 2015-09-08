@@ -3,8 +3,11 @@ package com.cbruegg.mensaupb.model
 import com.cbruegg.mensaupb.parser.provideGson
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.annotations.SerializedName
-import java.util.*
+import java.util.Date
 
+/**
+ * Model representing a dish object returned by the API.
+ */
 public data class Dish(@SerializedName("date") public val date: Date,
                        @SerializedName("name_de") public val germanName: String,
                        @SerializedName("description_de") public val germanDescription: String?,
@@ -22,8 +25,14 @@ public data class Dish(@SerializedName("date") public val date: Date,
                        @SerializedName("image") public val imageUrl: String?,
                        @SerializedName("thumbnail") public val thumbnailImageUrl: String?) {
     companion object {
+        /**
+         * Deserialize a Dish serialized with [serialize]
+         */
         fun deserialize(serialized: String) = provideGson().fromJson<Dish>(serialized)
     }
 
+    /**
+     * Serialize the object for deserialization using the companion object's method.
+     */
     fun serialize(): String = provideGson().toJson(this)
 }

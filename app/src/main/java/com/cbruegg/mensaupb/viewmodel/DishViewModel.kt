@@ -12,6 +12,9 @@ import com.cbruegg.mensaupb.model.UserType
 import java.text.DecimalFormat
 import java.util.Locale
 
+/**
+ * Wrapper for [Dish] objects providing easy access to various attributes for data binding.
+ */
 data class DishViewModel(val dish: Dish, val headerText: String?, userType: UserType, context: Context) {
     private val NUMBER_FORMAT = DecimalFormat("0.00")
 
@@ -40,11 +43,18 @@ data class DishViewModel(val dish: Dish, val headerText: String?, userType: User
 
 }
 
+/**
+ * Compute the DishViewModels for a list of Dishes.
+ */
 fun List<Dish>.toDishViewModels(context: Context, userType: UserType): List<DishViewModel> {
     val sortedList = sortBy { first, second -> first.germanCategory.compareTo(second.germanCategory) }.reverse()
     return sortedList.mapIndexed { position, dish -> DishViewModel(dish, headerTextForIndex(position, sortedList), userType, context) }
 }
 
+/**
+ * Check if the dish is the first element of a category in the list.
+ * Useful for determining whether a header should be displayed.
+ */
 private fun isFirstInCategory(index: Int, dishes: List<Dish>): Boolean {
     val indexDish = dishes[index]
     val previousDish = if (index - 1 >= 0) dishes[index - 1] else null

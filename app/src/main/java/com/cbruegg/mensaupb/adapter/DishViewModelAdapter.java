@@ -13,6 +13,9 @@ import com.cbruegg.mensaupb.viewmodel.DishViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Adapter responsible for displaying DishViewModels in a RecyclerView.
+ */
 public class DishViewModelAdapter extends ObservableListAdapter<DishViewModel, DishViewModelAdapter.DishBindingViewHolder> {
     @Override public void onBindViewHolder(@NotNull DishBindingViewHolder holder, DishViewModel item, @NotNull View.OnClickListener onClickListener) {
         holder.binding.setDishViewModel(item);

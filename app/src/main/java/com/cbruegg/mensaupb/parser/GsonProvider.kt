@@ -4,6 +4,9 @@ import com.cbruegg.mensaupb.model.PriceType
 import com.google.gson.*
 import java.lang.reflect.Type
 
+/**
+ * Provide a new Gson instance that is designed to be used for handling the API responses.
+ */
 fun provideGson(): Gson {
     return GsonBuilder()
             .setDateFormat("yyyy-MM-dd")
