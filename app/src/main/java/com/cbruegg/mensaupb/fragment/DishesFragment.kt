@@ -51,10 +51,10 @@ class DishesFragment : Fragment() {
         fun newInstance(restaurant: Restaurant, date: Date): DishesFragment {
             val args = Bundle()
             args.putString(ARG_RESTAURANT, restaurant.serialize())
-            args.putLong(ARG_DATE, date.getTime())
+            args.putLong(ARG_DATE, date.time)
 
             val fragment = DishesFragment()
-            fragment.setArguments(args)
+            fragment.arguments = args
             return fragment
         }
     }
@@ -74,24 +74,24 @@ class DishesFragment : Fragment() {
          */
         val adapter = DishViewModelAdapter()
         adapter.onClickListener = { dishViewModel, position -> if (dishViewModel.hasBigImage) showDishDetailsDialog(dishViewModel) }
-        dishList.setAdapter(adapter)
-        dishList.addItemDecoration(DividerItemDecoration(getActivity()))
-        dishList.setLayoutManager(LinearLayoutManager(getActivity()))
+        dishList.adapter = adapter
+        dishList.addItemDecoration(DividerItemDecoration(activity))
+        dishList.layoutManager = LinearLayoutManager(activity)
 
-        val restaurant = Restaurant.deserialize(getArguments().getString(ARG_RESTAURANT))!!
-        val date = Date(getArguments().getLong(ARG_DATE))
+        val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))!!
+        val date = Date(arguments.getLong(ARG_DATE))
         val userType = UserType.findById(PreferenceManager.getDefaultSharedPreferences(
-                getActivity()).getString(PreferenceActivity.KEY_PREF_USER_TYPE, UserType.STUDENT.id))!!
+                activity).getString(PreferenceActivity.KEY_PREF_USER_TYPE, UserType.STUDENT.id))!!
 
         /**
          * Download data for the list
          */
-        subscription = Downloader(getActivity()).downloadOrRetrieveDishes(restaurant, date)
+        subscription = Downloader(activity).downloadOrRetrieveDishes(restaurant, date)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    noDishesMessage.setVisibility(if (it.isEmpty()) View.VISIBLE else View.GONE)
-                    val dishViewModels = it.toDishViewModels(getActivity(), userType)
+                    noDishesMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+                    val dishViewModels = it.toDishViewModels(activity, userType)
                     adapter.list.setAll(dishViewModels)
                     subscription?.unsubscribe()
                 }
@@ -102,9 +102,9 @@ class DishesFragment : Fragment() {
      * the second part is the height.
      */
     private fun getDisplaySize(): Pair<Int, Int> {
-        val display = getActivity().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val display = activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val size = Point()
-        display.getDefaultDisplay().getSize(size)
+        display.defaultDisplay.getSize(size)
         return Pair(size.x, size.y)
     }
 
@@ -113,11 +113,11 @@ class DishesFragment : Fragment() {
      * @param dishViewModel DishViewModel with an imageUrl
      */
     private fun showDishDetailsDialog(dishViewModel: DishViewModel) {
-        val dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_dish_details, null, false)
+        val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_dish_details, null, false)
         val imageView = dialogView.findViewById(R.id.dish_image) as ImageView
         val progressBar = dialogView.findViewById(R.id.dish_image_progressbar) as ProgressBar
 
-        val alertDialog = AlertDialog.Builder(getActivity())
+        val alertDialog = AlertDialog.Builder(activity)
                 .setView(dialogView)
                 .setCancelable(true)
                 .create()
@@ -127,18 +127,18 @@ class DishesFragment : Fragment() {
 
         // fit() doesn't work here, as AlertDialogs don't provide
         // a container for inflation, so some LayoutParams don't work
-        Picasso.with(getActivity())
+        Picasso.with(activity)
                 .load(dishViewModel.dish.imageUrl)
                 .resize(displaySize.first, displaySize.second)
                 .onlyScaleDown()
                 .centerInside()
                 .into(imageView, object : Callback {
                     override fun onSuccess() {
-                        progressBar.setVisibility(View.GONE)
+                        progressBar.visibility = View.GONE
                     }
 
                     override fun onError() {
-                        Toast.makeText(getActivity(), R.string.could_not_load_image, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, R.string.could_not_load_image, Toast.LENGTH_SHORT).show()
                         alertDialog.dismiss()
                     }
 

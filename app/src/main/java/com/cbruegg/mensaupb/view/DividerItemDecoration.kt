@@ -31,19 +31,19 @@ public class DividerItemDecoration : RecyclerView.ItemDecoration {
     /**
      * Custom divider will be used
      */
-    public constructor(context: Context, DrawableRes resId: Int) {
+    public constructor(context: Context, @DrawableRes resId: Int) {
         divider = ContextCompat.getDrawable(context, resId)
     }
 
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
-        val left = parent.getPaddingLeft()
-        val right = parent.getWidth() - parent.getPaddingRight()
+        val left = parent.paddingLeft
+        val right = parent.width - parent.paddingRight
 
         for (child in parent.children) {
-            val params = child.getLayoutParams() as RecyclerView.LayoutParams
+            val params = child.layoutParams as RecyclerView.LayoutParams
 
-            val top = child.getBottom() + params.bottomMargin
-            val bottom = top + divider.getIntrinsicHeight()
+            val top = child.bottom + params.bottomMargin
+            val bottom = top + divider.intrinsicHeight
 
             divider.setBounds(left, top, right, bottom)
             divider.draw(c)

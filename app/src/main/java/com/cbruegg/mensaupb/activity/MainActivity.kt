@@ -61,8 +61,8 @@ public class MainActivity : AppCompatActivity() {
             showRestaurant(restaurant)
         }
         restaurantList.addItemDecoration(DividerItemDecoration(this))
-        restaurantList.setAdapter(restaurantAdapter)
-        restaurantList.setLayoutManager(LinearLayoutManager(this))
+        restaurantList.adapter = restaurantAdapter
+        restaurantList.layoutManager = LinearLayoutManager(this)
 
         // Download data for the list
         subscription = Downloader(this).downloadRestaurants()
@@ -72,7 +72,7 @@ public class MainActivity : AppCompatActivity() {
                     val preparedList = it
                             .filter { it.isActive }
                             .sortBy { first, second -> first.location.compareTo(second.location) }
-                            .reverse() // Paderborn should be at the top of the list
+                            .reversed() // Paderborn should be at the top of the list
                     restaurantAdapter.list.setAll(preparedList)
                     checkShowFirstTimeDrawer()
                     loadDefaultRestaurant(preparedList)
@@ -95,14 +95,14 @@ public class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        getMenuInflater().inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        when (item.itemId) {
             R.id.settings -> {
-                val intent = Intent(this, javaClass<PreferenceActivity>())
+                val intent = Intent(this, PreferenceActivity::class.java)
                 startActivity(intent)
                 return true
             }
@@ -131,8 +131,8 @@ public class MainActivity : AppCompatActivity() {
      * Show a fragment that displays the dishes for the specified restaurant.
      */
     private fun showRestaurant(restaurant: Restaurant) {
-        getSupportActionBar().setTitle(restaurant.name)
-        getSupportFragmentManager()
+        supportActionBar.title = restaurant.name
+        supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.fragment_container, RestaurantFragment.newInstance(restaurant))
                 .commit()

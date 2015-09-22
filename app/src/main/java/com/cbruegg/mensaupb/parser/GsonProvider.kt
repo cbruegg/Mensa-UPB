@@ -10,8 +10,8 @@ import java.lang.reflect.Type
 fun provideGson(): Gson {
     return GsonBuilder()
             .setDateFormat("yyyy-MM-dd")
-            .registerTypeAdapter(javaClass<PriceType>(), PriceTypeDeserializer())
-            .registerTypeAdapter(javaClass<PriceType>(), PriceTypeSerializer())
+            .registerTypeAdapter(PriceType::class.java, PriceTypeDeserializer())
+            .registerTypeAdapter(PriceType::class.java, PriceTypeSerializer())
             .create()
 }
 
@@ -26,7 +26,7 @@ private class PriceTypeSerializer : JsonSerializer<PriceType> {
 
 private class PriceTypeDeserializer : JsonDeserializer<PriceType> {
     override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): PriceType? =
-            when (json?.getAsString()) {
+            when (json?.asString) {
                 "weighted" -> PriceType.WEIGHTED
                 "fixed" -> PriceType.FIXED
                 null -> null

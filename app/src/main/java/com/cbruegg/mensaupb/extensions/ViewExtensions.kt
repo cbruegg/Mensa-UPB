@@ -12,7 +12,7 @@ val ViewGroup.children: Sequence<View>
     get() {
         var i = 0
         return sequence {
-            if (i < getChildCount()) {
+            if (i < childCount) {
                 getChildAt(i++)
             } else {
                 null

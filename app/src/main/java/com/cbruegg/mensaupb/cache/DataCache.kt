@@ -6,7 +6,6 @@ import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
-import java.util.ArrayList
 import java.util.Collections
 import java.util.Date
 import java.util.HashSet
@@ -65,7 +64,7 @@ class DataCache private constructor(private val context: Context) {
         restaurantIds.forEach { restaurantId ->
             val store = sharedPreferenceForRestaurantId(restaurantId)
             val storeEditor = store.edit()
-            val datesInStore = store.getAll().keySet().map { stringDate -> Pair(stringDate, dateFormatter.parse(stringDate)) }
+            val datesInStore = store.all.keySet().map { stringDate -> Pair(stringDate, dateFormatter.parse(stringDate)) }
 
             datesInStore.filter {
                 it.second.before(today)
@@ -80,7 +79,7 @@ class DataCache private constructor(private val context: Context) {
      * Put the dishes of the restaurant into the cache.
      * Only the day, month and year of the date are used.
      */
-    synchronized fun cache(restaurant: Restaurant, date: Date, dishes: List<Dish>): List<Dish> {
+    @Synchronized fun cache(restaurant: Restaurant, date: Date, dishes: List<Dish>): List<Dish> {
         if (dishes.isEmpty()) {
             return dishes
         }
@@ -92,9 +91,7 @@ class DataCache private constructor(private val context: Context) {
         val keyForDate = SimpleDateFormat(DATE_FORMAT).format(date)
         val serializedDishes = dishes.serialize()
 
-        synchronized(this) {
-            store.edit().putStringSet(keyForDate, serializedDishes).apply()
-        }
+        store.edit().putStringSet(keyForDate, serializedDishes.toSet()).apply()
 
         return dishes
     }
@@ -136,24 +133,13 @@ class DataCache private constructor(private val context: Context) {
     /**
      * Serialize dishes for storing them in a SharedPreference.
      */
-    private fun List<Dish>.serialize(): Set<String> {
-        val serializedDishes = HashSet<String>(size())
-        for (dish in this) {
-            serializedDishes.add(dish.serialize())
-        }
-        return serializedDishes
-    }
+    private fun List<Dish>.serialize(): List<String> = map { it.serialize() }
 
     /**
      * Deserialize dishes from a SharedPreference.
      */
-    private fun deserializeDishes(serializedDishes: Set<String>): List<Dish> {
-        val deserializedDishes = ArrayList<Dish>(serializedDishes.size())
-        for (serializedDish in serializedDishes) {
-            deserializedDishes.add(Dish.deserialize(serializedDish))
-        }
-        return deserializedDishes
-    }
+    private fun deserializeDishes(serializedDishes: Set<String>): List<Dish>
+            = serializedDishes.map { Dish.deserialize(it) }.filterNotNull()
 
 }
 

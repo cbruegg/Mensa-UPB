@@ -24,7 +24,7 @@ abstract class ObservableListAdapter<DATA, VH : RecyclerView.ViewHolder>(val lis
         onBindViewHolder(holder, list[position], onClickListener.toInternalOnClickListener(list[position], position))
     }
 
-    override final fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH = onCreateViewHolder(parent, viewType, LayoutInflater.from(parent.getContext()))
+    override final fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH = onCreateViewHolder(parent, viewType, LayoutInflater.from(parent.context))
 
     abstract fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): VH
 

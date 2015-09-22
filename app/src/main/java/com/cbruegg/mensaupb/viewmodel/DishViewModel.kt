@@ -18,7 +18,7 @@ import java.util.Locale
 data class DishViewModel(val dish: Dish, val headerText: String?, userType: UserType, context: Context) {
     private val NUMBER_FORMAT = DecimalFormat("0.00")
 
-    val localizedCategory: String = if (Locale.getDefault().getLanguage() == Locale.GERMAN.getLanguage()) dish.germanCategory else dish.category
+    val localizedCategory: String = if (Locale.getDefault().language == Locale.GERMAN.language) dish.germanCategory else dish.category
 
     val userPrice = when (userType) {
         UserType.STUDENT -> dish.studentPrice
@@ -47,7 +47,7 @@ data class DishViewModel(val dish: Dish, val headerText: String?, userType: User
  * Compute the DishViewModels for a list of Dishes.
  */
 fun List<Dish>.toDishViewModels(context: Context, userType: UserType): List<DishViewModel> {
-    val sortedList = sortBy { first, second -> first.germanCategory.compareTo(second.germanCategory) }.reverse()
+    val sortedList = sortBy { first, second -> first.germanCategory.compareTo(second.germanCategory) }.reversed()
     return sortedList.mapIndexed { position, dish -> DishViewModel(dish, headerTextForIndex(position, sortedList), userType, context) }
 }
 

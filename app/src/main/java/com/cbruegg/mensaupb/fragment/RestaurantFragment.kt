@@ -33,7 +33,7 @@ class RestaurantFragment : Fragment() {
             val args = Bundle()
             args.putString(ARG_RESTAURANT, restaurant.serialize())
             val fragment = RestaurantFragment()
-            fragment.setArguments(args)
+            fragment.arguments = args
             return fragment
         }
     }
@@ -50,10 +50,10 @@ class RestaurantFragment : Fragment() {
         /**
          * Set up the view pager
          */
-        val restaurant = Restaurant.deserialize(getArguments().getString(ARG_RESTAURANT))!!
+        val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))!!
         val dates = computePagerDates()
-        val adapter = DishesPagerAdapter(getActivity(), getFragmentManager(), restaurant, dates)
-        dayPager.setAdapter(adapter)
+        val adapter = DishesPagerAdapter(activity, fragmentManager, restaurant, dates)
+        dayPager.adapter = adapter
 
         dayPagerTabs.setupWithViewPager(dayPager)
     }

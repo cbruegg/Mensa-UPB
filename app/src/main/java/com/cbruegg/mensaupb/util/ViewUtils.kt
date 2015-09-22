@@ -6,10 +6,10 @@ object ViewUtils {
     /**
      * Convert dp to pixels.
      */
-    fun dpToPx(dp: Int): Int = dp * Resources.getSystem().getDisplayMetrics().density.toInt()
+    fun dpToPx(dp: Int): Int = dp * Resources.getSystem().displayMetrics.density.toInt()
 
     /**
      * Convert pixels to dp.
      */
-    fun pxToDp(px: Int) = px / Resources.getSystem().getDisplayMetrics().density.toInt()
+    fun pxToDp(px: Int) = px / Resources.getSystem().displayMetrics.density.toInt()
 }

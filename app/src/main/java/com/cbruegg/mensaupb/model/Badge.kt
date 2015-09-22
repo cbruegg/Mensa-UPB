@@ -6,7 +6,7 @@ import com.cbruegg.mensaupb.R
 /**
  * Enum of badges applicable for a dish.
  */
-enum class Badge(private val id: String, public StringRes val descriptionId: Int) {
+enum class Badge(private val id: String, public @StringRes val descriptionId: Int) {
     VEGAN("vegan", R.string.vegan), VEGETARIAN("vegetarian", R.string.vegetarian), NONFAT("nonfat", R.string.nonfat), LACTOSE_FREE("lactose-free", R.string.lactose_free);
 
     companion object {
