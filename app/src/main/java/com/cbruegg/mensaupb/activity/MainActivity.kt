@@ -1,6 +1,7 @@
 package com.cbruegg.mensaupb.activity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
@@ -35,6 +36,7 @@ public class MainActivity : AppCompatActivity() {
 
     private val DEFAULT_RESTAURANT_NAME = "Mensa Academica"
     private val PREFS_KEY_FIRST_LAUNCH = "main_activity_first_launch"
+    private val STUDENTENWERK_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/")
 
     /*
      * Views
@@ -108,6 +110,10 @@ public class MainActivity : AppCompatActivity() {
             }
             R.id.restaurants -> {
                 drawerLayout.toggleDrawer(GravityCompat.START)
+                return true
+            }
+            R.id.stw_url -> {
+                startActivity(Intent(Intent.ACTION_VIEW, STUDENTENWERK_URI))
                 return true
             }
             else -> return super.onOptionsItemSelected(item)

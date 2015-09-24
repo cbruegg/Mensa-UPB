@@ -14,4 +14,9 @@
         android:title="@string/settings"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/stw_url"
+        android:title="@string/studentenwerk_paderborn"
+        app:showAsAction="never" />
+
 </menu>
