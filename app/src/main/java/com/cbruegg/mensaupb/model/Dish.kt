@@ -3,7 +3,7 @@ package com.cbruegg.mensaupb.model
 import com.cbruegg.mensaupb.parser.provideGson
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.annotations.SerializedName
-import java.util.Date
+import java.util.*
 
 /**
  * Model representing a dish object returned by the API.
@@ -19,7 +19,7 @@ public data class Dish(@SerializedName("date") public val date: Date,
                        @SerializedName("priceGuests") public val guestPrice: Double,
                        @SerializedName("allergens") public val allergens: List<String>,
                        @SerializedName("order_info") public val orderInfo: Int,
-                       @SerializedName("badges") public val badges: List<String>,
+                       @SerializedName("badges") public val badgesStrings: List<String>,
                        @SerializedName("restaurant") public val restaurantId: String,
                        @SerializedName("pricetype") public val priceType: PriceType,
                        @SerializedName("image") public val imageUrl: String?,
@@ -35,4 +35,7 @@ public data class Dish(@SerializedName("date") public val date: Date,
      * Serialize the object for deserialization using the companion object's method.
      */
     fun serialize(): String = provideGson().toJson(this)
+
+    val badges: List<Badge>
+        get() = badgesStrings.map { Badge.findById(it) }.filterNotNull()
 }

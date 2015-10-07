@@ -8,7 +8,7 @@ import com.squareup.picasso.Picasso;
 /**
  * Used by the data binding feature.
  */
-public class PicassoBindingAdapter {
+@SuppressWarnings("unused") public class PicassoBindingAdapter {
     @BindingAdapter({"bind:imageUrl"})
     public static void loadImage(ImageView view, String url) {
         if (url != null && url.length() > 0) {
