@@ -1,5 +1,6 @@
 package com.cbruegg.mensaupb.activity
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -35,7 +36,9 @@ public class MainActivity : AppCompatActivity() {
      */
 
     private val DEFAULT_RESTAURANT_NAME = "Mensa Academica"
+    private val PREFS_FILE_NAME = "main_activity_prefs"
     private val PREFS_KEY_FIRST_LAUNCH = "main_activity_first_launch"
+    private val PREFS_KEY_LAST_SELECTED_RESTAURANT = "last_selected_restaurant"
     private val STUDENTENWERK_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/")
 
     /*
@@ -50,6 +53,15 @@ public class MainActivity : AppCompatActivity() {
      */
 
     private var subscription: Subscription? = null
+    private var lastRestaurantId: String?
+        get() = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE).getString(PREFS_KEY_LAST_SELECTED_RESTAURANT, null)
+        set(new) {
+            getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE)
+                    .edit()
+                    .putString(PREFS_KEY_LAST_SELECTED_RESTAURANT, new)
+                    .apply()
+        }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,7 +100,7 @@ public class MainActivity : AppCompatActivity() {
      * the user knows about its existence.
      */
     private fun checkShowFirstTimeDrawer() {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val sharedPreferences = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE)
         val firstLaunch = sharedPreferences.getBoolean(PREFS_KEY_FIRST_LAUNCH, true)
         if (firstLaunch) {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -122,11 +134,13 @@ public class MainActivity : AppCompatActivity() {
 
     /**
      * Load a default restaurant fragment. If found in the list of restaurants,
-     * [DEFAULT_RESTAURANT_NAME] is used, else the first item in the list.
+     * the last used restaurant or else if found the [DEFAULT_RESTAURANT_NAME] is used,
+     * else the first item in the list.
      */
     private fun loadDefaultRestaurant(preparedList: List<Restaurant>) {
         val restaurant = preparedList
-                .firstOrNull { it.name.toLowerCase() == DEFAULT_RESTAURANT_NAME.toLowerCase() }
+                .firstOrNull { it.id == lastRestaurantId }
+                .let { it ?: preparedList.firstOrNull { it.name.toLowerCase() == DEFAULT_RESTAURANT_NAME.toLowerCase() } }
                 .let { it ?: preparedList.firstOrNull() }
         if (restaurant != null) {
             showRestaurant(restaurant)
@@ -135,8 +149,10 @@ public class MainActivity : AppCompatActivity() {
 
     /**
      * Show a fragment that displays the dishes for the specified restaurant.
+     * Also updates the [lastRestaurantId].
      */
     private fun showRestaurant(restaurant: Restaurant) {
+        lastRestaurantId = restaurant.id
         supportActionBar.title = restaurant.name
         supportFragmentManager
                 .beginTransaction()
