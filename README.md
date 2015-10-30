@@ -13,7 +13,6 @@ In addition to that, the app uses the new data binding feature and targets the M
 
 # Contributions
 Contributions are of course welcome, but unfortunately an API key is required for communicating with the official API. It has to be put into the api_id.properties file in the root directory of the project.
-I'm planning to revoke this restriction by creating an own API service that wraps the official API and doesn't require an API key. There's no ETA on that though.
 
 # License
 
