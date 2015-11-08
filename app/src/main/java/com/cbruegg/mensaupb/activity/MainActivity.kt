@@ -40,6 +40,7 @@ public class MainActivity : AppCompatActivity() {
     private val PREFS_KEY_FIRST_LAUNCH = "main_activity_first_launch"
     private val PREFS_KEY_LAST_SELECTED_RESTAURANT = "last_selected_restaurant"
     private val STUDENTENWERK_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/")
+    private val REQUEST_CODE_PREFERENCES = 1
 
     /*
      * Views
@@ -61,6 +62,7 @@ public class MainActivity : AppCompatActivity() {
                     .putString(PREFS_KEY_LAST_SELECTED_RESTAURANT, new)
                     .apply()
         }
+    private var lastRestaurant: Restaurant? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,7 +119,7 @@ public class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.settings -> {
                 val intent = Intent(this, PreferenceActivity::class.java)
-                startActivity(intent)
+                startActivityForResult(intent, REQUEST_CODE_PREFERENCES)
                 return true
             }
             R.id.restaurants -> {
@@ -129,6 +131,14 @@ public class MainActivity : AppCompatActivity() {
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_PREFERENCES) {
+            lastRestaurant?.let { showRestaurant(it) }
         }
     }
 
@@ -152,6 +162,7 @@ public class MainActivity : AppCompatActivity() {
      * Also updates the [lastRestaurantId].
      */
     private fun showRestaurant(restaurant: Restaurant) {
+        lastRestaurant = restaurant
         lastRestaurantId = restaurant.id
         supportActionBar.title = restaurant.name
         supportFragmentManager
