@@ -80,7 +80,7 @@ class RestaurantFragment : Fragment() {
 
         override fun getItem(position: Int) = DishesFragment.newInstance(restaurant, dates[position])
 
-        override fun getCount() = dates.size()
+        override fun getCount() = dates.size
 
         override fun getPageTitle(position: Int) = dateFormatter.format(dates[position])
     }

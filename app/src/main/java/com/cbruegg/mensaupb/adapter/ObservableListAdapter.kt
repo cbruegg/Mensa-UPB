@@ -18,7 +18,7 @@ abstract class ObservableListAdapter<DATA, VH : RecyclerView.ViewHolder>(val lis
         list.addOnListChangedCallback({ notifyDataSetChanged() })
     }
 
-    override final fun getItemCount(): Int = list.size()
+    override final fun getItemCount(): Int = list.size
 
     override final fun onBindViewHolder(holder: VH, position: Int) {
         onBindViewHolder(holder, list[position], onClickListener.toInternalOnClickListener(list[position], position))

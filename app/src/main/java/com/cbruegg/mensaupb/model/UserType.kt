@@ -11,6 +11,6 @@ enum class UserType(internal val id: String) {
          * Each UserType has an id that is used by the API. This method retrieves a UserType by its id.
          * Return value will be null if there's no matching element.
          */
-        fun findById(id: String): UserType? = values().firstOrNull { it.id == id }
+        fun findById(id: String): UserType? = values.firstOrNull { it.id == id }
     }
 }

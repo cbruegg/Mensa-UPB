@@ -64,7 +64,7 @@ class DataCache private constructor(private val context: Context) {
         restaurantIds.forEach { restaurantId ->
             val store = sharedPreferenceForRestaurantId(restaurantId)
             val storeEditor = store.edit()
-            val datesInStore = store.all.keySet().map { stringDate -> Pair(stringDate, dateFormatter.parse(stringDate)) }
+            val datesInStore = store.all.keys.map { stringDate -> Pair(stringDate, dateFormatter.parse(stringDate)) }
 
             datesInStore.filter {
                 it.second.before(today)

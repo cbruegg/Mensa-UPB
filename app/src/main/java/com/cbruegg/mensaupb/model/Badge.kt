@@ -14,6 +14,6 @@ enum class Badge(private val id: String, public @StringRes val descriptionId: In
          * Each Badge has an id that is used by the API. This method retrieves a Badge by its id.
          * Return value will be null if there's no matching element.
          */
-        fun findById(id: String): Badge? = values().firstOrNull { it.id == id }
+        fun findById(id: String): Badge? = values.firstOrNull { it.id == id }
     }
 }
