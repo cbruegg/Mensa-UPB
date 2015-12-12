@@ -35,10 +35,6 @@ abstract class ObservableListAdapter<DATA, VH : RecyclerView.ViewHolder>(val lis
      * to a normal View.OnClickListener. This method is responsible for that.
      */
     private fun ((data: DATA, position: Int) -> Unit)?.toInternalOnClickListener(data: DATA, position: Int): View.OnClickListener {
-        return object : View.OnClickListener {
-            override fun onClick(v: View) {
-                this@toInternalOnClickListener?.invoke(data, position)
-            }
-        }
+        return View.OnClickListener { this@toInternalOnClickListener?.invoke(data, position) }
     }
 }
