@@ -46,6 +46,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
+    compile 'org.funktionale:funktionale:0.6_1.0.0-beta-3594'
 }
 
 buildscript {

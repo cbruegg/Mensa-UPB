@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantAdapter
@@ -85,16 +86,23 @@ public class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    val preparedList = it
-                            .filter { it.isActive }
-                            .sortBy { first, second -> first.location.compareTo(second.location) }
-                            .reversed() // Paderborn should be at the top of the list
-                    restaurantAdapter.list.setAll(preparedList)
-                    checkShowFirstTimeDrawer()
-                    loadDefaultRestaurant(preparedList)
+                    it.fold({ showNetworkError(restaurantAdapter) }) {
+                        val preparedList = it
+                                .filter { it.isActive }
+                                .sortBy { first, second -> first.location.compareTo(second.location) }
+                                .reversed() // Paderborn should be at the top of the list
+                        restaurantAdapter.list.setAll(preparedList)
+                        checkShowFirstTimeDrawer()
+                        loadDefaultRestaurant(preparedList)
+                    }
                     subscription?.unsubscribe()
                 }
 
+    }
+
+    private fun showNetworkError(restaurantAdapter: RestaurantAdapter) {
+        restaurantAdapter.list.setAll(emptyList())
+        Toast.makeText(this, R.string.network_error, Toast.LENGTH_LONG).show()
     }
 
     /**

@@ -19,4 +19,6 @@
     <string name="settings">Settings</string>
     <string name="restaurants">Restaurants</string>
     <string name="studentenwerk_paderborn" translatable="false">Studentenwerk Paderborn</string>
+
+    <string name="network_error">There was an error while connecting to the network service.</string>
 </resources>

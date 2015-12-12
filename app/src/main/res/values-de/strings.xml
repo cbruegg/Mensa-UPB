@@ -16,4 +16,5 @@
     <string name="user_type_preference_title">Universitätsstatus</string>
     <string name="settings">Einstellungen</string>
     <string name="restaurants">Einrichtungen</string>
+    <string name="network_error">Es gab einen Fehler bei der Verbindung zum Internetdienst.</string>
 </resources>

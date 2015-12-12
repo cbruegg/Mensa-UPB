@@ -32,7 +32,7 @@ import com.squareup.picasso.Picasso
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import java.util.Date
+import java.util.*
 
 /**
  * Fragment responsible for displaying the dishes of a restaurant at a specified date.
@@ -90,11 +90,18 @@ class DishesFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    noDishesMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
-                    val dishViewModels = it.toDishViewModels(activity, userType)
-                    adapter.list.setAll(dishViewModels)
+                    it.fold({ showNetworkError(adapter) }) {
+                        noDishesMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+                        val dishViewModels = it.toDishViewModels(activity, userType)
+                        adapter.list.setAll(dishViewModels)
+                    }
                     subscription?.unsubscribe()
                 }
+    }
+
+    private fun showNetworkError(adapter: DishViewModelAdapter) {
+        noDishesMessage.visibility = View.GONE
+        adapter.list.setAll(emptyList())
     }
 
     /**
