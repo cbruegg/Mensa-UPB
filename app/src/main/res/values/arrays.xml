@@ -7,7 +7,7 @@
     </string-array>
 
     <!-- Referenced by user_type_preference_default, corresponding to model.UserType -->
-    <string-array name="user_type_preference_values">
+    <string-array translatable="false" name="user_type_preference_values">
         <item>student</item>
         <item>worker</item>
         <item>guest</item>
