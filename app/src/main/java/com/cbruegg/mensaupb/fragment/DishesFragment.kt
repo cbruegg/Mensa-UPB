@@ -78,7 +78,7 @@ class DishesFragment : Fragment() {
         dishList.addItemDecoration(DividerItemDecoration(activity))
         dishList.layoutManager = LinearLayoutManager(activity)
 
-        val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))!!
+        val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))
         val date = Date(arguments.getLong(ARG_DATE))
         val userType = UserType.findById(PreferenceManager.getDefaultSharedPreferences(
                 activity).getString(PreferenceActivity.KEY_PREF_USER_TYPE, UserType.STUDENT.id))!!

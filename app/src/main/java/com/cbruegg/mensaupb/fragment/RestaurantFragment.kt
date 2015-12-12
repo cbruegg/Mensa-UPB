@@ -50,7 +50,7 @@ class RestaurantFragment : Fragment() {
         /**
          * Set up the view pager
          */
-        val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))!!
+        val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))
         val dates = computePagerDates()
         val adapter = DishesPagerAdapter(activity, fragmentManager, restaurant, dates)
         dayPager.adapter = adapter

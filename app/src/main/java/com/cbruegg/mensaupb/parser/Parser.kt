@@ -25,4 +25,4 @@ public fun parseRestaurants(restaurantList: String): List<Restaurant> {
 /**
  * Parse dishes from the API response.
  */
-public fun parseDishes(dishes: String): List<Dish> = provideGson().fromJson<List<Dish>>(dishes) ?: Collections.emptyList()
+public fun parseDishes(dishes: String): List<Dish> = provideGson().fromJson<List<Dish>>(dishes)
