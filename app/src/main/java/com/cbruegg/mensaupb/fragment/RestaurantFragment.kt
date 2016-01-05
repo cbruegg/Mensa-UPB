@@ -62,13 +62,9 @@ class RestaurantFragment : Fragment() {
      * Return a list of dates to be used for fetching dishes.
      */
     private fun computePagerDates(): List<Date> {
-        val dates = ArrayList<Date>(DAY_COUNT)
-        val todayMs = System.currentTimeMillis()
+        val today = System.currentTimeMillis()
         val dayInMs = TimeUnit.DAYS.toMillis(1)
-        for (i in 0..DAY_COUNT) {
-            dates.add(Date(todayMs + i * dayInMs))
-        }
-        return dates
+        return (0..DAY_COUNT - 1).map { Date(today + it * dayInMs) }
     }
 
     /**
