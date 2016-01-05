@@ -24,14 +24,17 @@ import java.util.concurrent.TimeUnit
 class RestaurantFragment : Fragment() {
     companion object {
         private val ARG_RESTAURANT = "restaurant"
+        private val ARG_PAGER_POSITION = "pager_position"
         private val DAY_COUNT = 7
 
         /**
          * Construct a new instance of the RestaurantFragment.
+         * @param pagerPosition The position the pager should be initially set to
          */
-        fun newInstance(restaurant: Restaurant): RestaurantFragment {
+        fun newInstance(restaurant: Restaurant, pagerPosition: Int = 0): RestaurantFragment {
             val args = Bundle()
             args.putString(ARG_RESTAURANT, restaurant.serialize())
+            args.putInt(ARG_PAGER_POSITION, Math.min(pagerPosition, DAY_COUNT))
             val fragment = RestaurantFragment()
             fragment.arguments = args
             return fragment
@@ -51,12 +54,18 @@ class RestaurantFragment : Fragment() {
          * Set up the view pager
          */
         val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))
+        val pagerPosition = arguments.getInt(ARG_PAGER_POSITION)
         val dates = computePagerDates()
         val adapter = DishesPagerAdapter(activity, fragmentManager, restaurant, dates)
         dayPager.adapter = adapter
-
         dayPagerTabs.setupWithViewPager(dayPager)
+        dayPager.currentItem = pagerPosition
     }
+
+    /**
+     * Get the current position of the pager
+     */
+    public fun pagerPosition(): Int = dayPager.currentItem
 
     /**
      * Return a list of dates to be used for fetching dishes.

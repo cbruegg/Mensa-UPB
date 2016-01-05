@@ -170,12 +170,16 @@ public class MainActivity : AppCompatActivity() {
      * Also updates the [lastRestaurantId].
      */
     private fun showRestaurant(restaurant: Restaurant) {
+        val currentPagerPosition = (supportFragmentManager
+                .findFragmentById(R.id.fragment_container) as? RestaurantFragment)
+                ?.pagerPosition()
+
         lastRestaurant = restaurant
         lastRestaurantId = restaurant.id
         supportActionBar.title = restaurant.name
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.fragment_container, RestaurantFragment.newInstance(restaurant))
+                .replace(R.id.fragment_container, RestaurantFragment.newInstance(restaurant, currentPagerPosition ?: 0))
                 .commit()
     }
 
