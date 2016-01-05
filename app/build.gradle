@@ -43,20 +43,20 @@ dependencies {
     compile 'io.reactivex:rxkotlin:0.30.1'
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'io.reactivex:rxjava:1.1.0'
-    compile 'com.squareup.okhttp:okhttp:2.6.0'
+    compile 'com.squareup.okhttp:okhttp:2.7.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
     compile 'org.funktionale:funktionale:0.6_1.0.0-beta-3594'
 }
 
 buildscript {
-    ext.kotlin_version = '1.0.0-beta-3595'
+    ext.kotlin_version = '1.0.0-beta-4584'
     repositories {
         jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'org.robovm:robovm-gradle-plugin:1.9.0'
+        classpath 'org.robovm:robovm-gradle-plugin:1.12.0'
     }
 }
 repositories {
