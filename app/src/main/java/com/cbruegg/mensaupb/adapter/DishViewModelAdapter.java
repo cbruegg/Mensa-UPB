@@ -20,7 +20,6 @@ public class DishViewModelAdapter extends ObservableListAdapter<DishViewModel, D
     @Override public void onBindViewHolder(@NotNull DishBindingViewHolder holder, DishViewModel item, @NotNull View.OnClickListener onClickListener) {
         holder.binding.setDishViewModel(item);
         holder.binding.setOnClickListener(onClickListener);
-        holder.binding.executePendingBindings();
     }
 
     @NonNull @Override public DishBindingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType, @NonNull LayoutInflater inflater) {
