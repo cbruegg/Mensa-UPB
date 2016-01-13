@@ -13,12 +13,12 @@ import java.util.*
 /**
  * Wrapper for [Dish] objects providing easy access to various attributes for data binding.
  */
-data class DishViewModel(val dish: Dish,
-                         val headerText: String?,
-                         val userPrice: Double,
-                         val priceText: String,
-                         val allergensText: String,
-                         val badgesText: String) {
+data class DishViewModel(@DataBindingProperty val dish: Dish,
+                                    @DataBindingProperty val headerText: String?,
+                                    @DataBindingProperty val userPrice: Double,
+                                    @DataBindingProperty val priceText: String,
+                                    @DataBindingProperty val allergensText: String,
+                                    @DataBindingProperty val badgesText: String) {
 
     companion object {
         private val NUMBER_FORMAT = DecimalFormat("0.00")
@@ -36,25 +36,25 @@ data class DishViewModel(val dish: Dish,
         }
     }
 
-    val hasBadges = dish.badges.isNotEmpty()
-    val localizedCategory: String = if (Locale.getDefault().language == Locale.GERMAN.language) dish.germanCategory else dish.category
-    val containsAllergens = dish.allergens.isNotEmpty()
-    val hasThumbnail = !dish.thumbnailImageUrl.isNullOrEmpty()
-    val hasBigImage = !dish.imageUrl.isNullOrEmpty()
-    val hasHeader = headerText != null
+    @DataBindingProperty val hasBadges = dish.badges.isNotEmpty()
+    @DataBindingProperty val localizedCategory: String = if (Locale.getDefault().language == Locale.GERMAN.language) dish.germanCategory else dish.category
+    @DataBindingProperty val containsAllergens = dish.allergens.isNotEmpty()
+    @DataBindingProperty val hasThumbnail = !dish.thumbnailImageUrl.isNullOrEmpty()
+    @DataBindingProperty val hasBigImage = !dish.imageUrl.isNullOrEmpty()
+    @DataBindingProperty val hasHeader = headerText != null
 }
 
 /**
  * Compute the DishViewModels for a list of Dishes.
  */
 fun List<Dish>.toDishViewModels(context: Context, userType: UserType): List<DishViewModel> {
-    val sortedList = sortedBy { it.germanCategory }
-            .reversed()
-            .asSequence()
-            .groupBy { it.germanCategory }
-            .values
-            .flatMap { it.sortedBy { userType.selectPrice(it) } }
-            .toList()
+    val comparator = compareByDescending<Dish> { it.germanCategory } // Sort by category
+            .thenComparator { d1, d2 ->
+                if (d1.priceType == d2.priceType) 0 else if (d1.priceType == PriceType.FIXED) -1 else 1
+            } // Weighted is worse
+            .thenBy { userType.selectPrice(it) } // then by actual price
+
+    val sortedList = sortedWith(comparator)
     return sortedList.mapIndexed { position, dish -> DishViewModel.create(dish, headerTextForIndex(position, sortedList), userType, context) }
 }
 
