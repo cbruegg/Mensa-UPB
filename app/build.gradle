@@ -9,8 +9,8 @@ android {
         applicationId "com.cbruegg.mensaupb"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 5
-        versionName "1.3.0"
+        versionCode 6
+        versionName "1.3.1"
 
         def apiIdProps = new Properties()
         apiIdProps.load(new FileInputStream(rootProject.file("api_id.properties")))
