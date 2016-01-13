@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'robovm'
 
 android {
     compileSdkVersion 23
@@ -56,7 +55,6 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'org.robovm:robovm-gradle-plugin:1.12.0'
     }
 }
 repositories {
