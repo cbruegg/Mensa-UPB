@@ -13,4 +13,13 @@ enum class UserType(internal val id: String) {
          */
         fun findById(id: String): UserType? = values().firstOrNull { it.id == id }
     }
+
+    /**
+     * For a Student, select the studentPrice, ...
+     */
+    fun selectPrice(dish: Dish): Double = when (this) {
+        STUDENT -> dish.studentPrice
+        WORKER -> dish.workerPrice
+        GUEST -> dish.guestPrice
+    }
 }

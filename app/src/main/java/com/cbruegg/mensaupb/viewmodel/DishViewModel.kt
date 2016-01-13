@@ -4,7 +4,6 @@ import android.content.Context
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.extensions.capitalizeFirstChar
 import com.cbruegg.mensaupb.extensions.replace
-import com.cbruegg.mensaupb.extensions.sortBy
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.PriceType
 import com.cbruegg.mensaupb.model.UserType
@@ -49,7 +48,13 @@ data class DishViewModel(val dish: Dish,
  * Compute the DishViewModels for a list of Dishes.
  */
 fun List<Dish>.toDishViewModels(context: Context, userType: UserType): List<DishViewModel> {
-    val sortedList = sortBy { first, second -> first.germanCategory.compareTo(second.germanCategory) }.reversed()
+    val sortedList = sortedBy { it.germanCategory }
+            .reversed()
+            .asSequence()
+            .groupBy { it.germanCategory }
+            .values
+            .flatMap { it.sortedBy { userType.selectPrice(it) } }
+            .toList()
     return sortedList.mapIndexed { position, dish -> DishViewModel.create(dish, headerTextForIndex(position, sortedList), userType, context) }
 }
 
