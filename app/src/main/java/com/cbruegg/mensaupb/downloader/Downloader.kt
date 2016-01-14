@@ -30,11 +30,12 @@ class Downloader(context: Context) {
     /**
      * Get a list of all restaurants.
      */
-    public fun downloadRestaurants(): Observable<Either<IOException, List<Restaurant>>> {
+    public fun downloadOrRetrieveRestaurants(): Observable<Either<IOException, List<Restaurant>>> {
         val httpClient = OkHttpClient()
         val request = Request.Builder().url(RESTAURANT_URL).build()
         return ioObservable {
-            it.onNext(parseRestaurants(httpClient.newCall(request).execute().body().string()))
+            val cachedRestaurants = dataCache.retrieveRestaurants()
+            it.onNext(cachedRestaurants ?: dataCache.cache(parseRestaurants(httpClient.newCall(request).execute().body().string())))
             it.onCompleted()
         }
     }

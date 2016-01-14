@@ -4,16 +4,16 @@ import com.cbruegg.mensaupb.model.PriceType
 import com.google.gson.*
 import java.lang.reflect.Type
 
+private val gson = GsonBuilder()
+        .setDateFormat("yyyy-MM-dd")
+        .registerTypeAdapter(PriceType::class.java, PriceTypeDeserializer())
+        .registerTypeAdapter(PriceType::class.java, PriceTypeSerializer())
+        .create()
+
 /**
  * Provide a new Gson instance that is designed to be used for handling the API responses.
  */
-fun provideGson(): Gson {
-    return GsonBuilder()
-            .setDateFormat("yyyy-MM-dd")
-            .registerTypeAdapter(PriceType::class.java, PriceTypeDeserializer())
-            .registerTypeAdapter(PriceType::class.java, PriceTypeSerializer())
-            .create()
-}
+fun provideGson(): Gson = gson
 
 private class PriceTypeSerializer : JsonSerializer<PriceType> {
     override fun serialize(src: PriceType?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement? =

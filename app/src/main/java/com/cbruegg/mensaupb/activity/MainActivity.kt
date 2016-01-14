@@ -82,7 +82,7 @@ public class MainActivity : AppCompatActivity() {
         restaurantList.layoutManager = LinearLayoutManager(this)
 
         // Download data for the list
-        subscription = Downloader(this).downloadRestaurants()
+        subscription = Downloader(this).downloadOrRetrieveRestaurants()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
