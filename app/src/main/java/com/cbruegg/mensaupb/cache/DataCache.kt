@@ -3,11 +3,13 @@ package com.cbruegg.mensaupb.cache
 import android.content.Context
 import android.util.Log
 import com.cbruegg.mensaupb.extensions.atMidnight
+import com.cbruegg.mensaupb.extensions.withLockAsync
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Class responsible for caching data used by the app.
@@ -46,6 +48,8 @@ class DataCache private constructor(private val context: Context) {
     private val MASTER_PREFERENCE_RESTAURANTS_SET_SAVED_DATE_KEY = "restaurant_data_saved_date"
     private val DATE_FORMAT = "yyyy-MM-dd"
 
+    private val writeLock = ReentrantLock()
+
     /**
      * SharedPreferences for cache metadata.
      */
@@ -58,44 +62,49 @@ class DataCache private constructor(private val context: Context) {
     /**
      * Delete entries in all caches older than the current date.
      */
-    private @Synchronized fun cleanUp() {
-        val restaurantIds: Set<String> = masterPreference.getStringSet(MASTER_PREFERENCE_RESTAURANT_IDS_KEY, Collections.emptySet())
-        val today = Date().atMidnight()
-        val dateFormatter = SimpleDateFormat(DATE_FORMAT)
-        restaurantIds.forEach { restaurantId ->
-            val store = sharedPreferenceForRestaurantId(restaurantId)
-            val storeEditor = store.edit()
-            val datesInStore = store.all.keys.map { stringDate -> Pair(stringDate, dateFormatter.parse(stringDate)) }
+    private fun cleanUp() {
+        writeLock.withLockAsync {
+            val restaurantIds: Set<String> = masterPreference.getStringSet(MASTER_PREFERENCE_RESTAURANT_IDS_KEY, Collections.emptySet())
+            val today = Date().atMidnight()
+            val dateFormatter = SimpleDateFormat(DATE_FORMAT)
+            restaurantIds.forEach { restaurantId ->
+                val store = sharedPreferenceForRestaurantId(restaurantId)
+                val storeEditor = store.edit()
+                val datesInStore = store.all.keys.map { stringDate -> Pair(stringDate, dateFormatter.parse(stringDate)) }
 
-            datesInStore.filter {
-                it.second.before(today)
-            }.forEach { oldStringDatePair ->
-                storeEditor.remove(oldStringDatePair.first)
+                datesInStore.filter {
+                    it.second.before(today)
+                }.forEach { oldStringDatePair ->
+                    storeEditor.remove(oldStringDatePair.first)
+                }
+                storeEditor.apply()
             }
-            storeEditor.apply()
-        }
 
-        if (masterPreference.getLong(MASTER_PREFERENCE_RESTAURANTS_SET_SAVED_DATE_KEY, today.time) < today.time) {
-            // Clear cached restaurants
-            masterPreference.edit().remove(MASTER_PREFERENCE_RESTAURANTS_SET_KEY).apply()
+            if (masterPreference.getLong(MASTER_PREFERENCE_RESTAURANTS_SET_SAVED_DATE_KEY, today.time) < today.time) {
+                // Clear cached restaurants
+                masterPreference.edit().remove(MASTER_PREFERENCE_RESTAURANTS_SET_KEY).apply()
+            }
         }
     }
 
     /**
      * Cache the list of restaurants and return the original list.
      */
-    @Synchronized fun cache(restaurants: List<Restaurant>): List<Restaurant> {
+    fun cache(restaurants: List<Restaurant>): List<Restaurant> {
         if (restaurants.isEmpty()) {
             return restaurants
         }
 
         Log.d(TAG, "Storing restaurants")
         val serialized = restaurants.map { it.serialize() }.toSet()
-        masterPreference
-                .edit()
-                .putStringSet(MASTER_PREFERENCE_RESTAURANTS_SET_KEY, serialized)
-                .putLong(MASTER_PREFERENCE_RESTAURANTS_SET_SAVED_DATE_KEY, System.currentTimeMillis())
-                .apply()
+
+        writeLock.withLockAsync {
+            masterPreference
+                    .edit()
+                    .putStringSet(MASTER_PREFERENCE_RESTAURANTS_SET_KEY, serialized)
+                    .putLong(MASTER_PREFERENCE_RESTAURANTS_SET_SAVED_DATE_KEY, System.currentTimeMillis())
+                    .apply()
+        }
 
         return restaurants
     }
@@ -114,19 +123,21 @@ class DataCache private constructor(private val context: Context) {
      * Only the day, month and year of the date are used.
      * @return The original dish list
      */
-    @Synchronized fun cache(restaurant: Restaurant, date: Date, dishes: List<Dish>): List<Dish> {
+    fun cache(restaurant: Restaurant, date: Date, dishes: List<Dish>): List<Dish> {
         if (dishes.isEmpty()) {
             return dishes
         }
 
         Log.d(TAG, "Storing dishes for ${restaurant.id} and date ${date.toString()}")
 
-        storeRestaurantId(restaurant)
-        val store = sharedPreferenceForRestaurantId(restaurant.id)
-        val keyForDate = SimpleDateFormat(DATE_FORMAT).format(date)
-        val serializedDishes = dishes.serialize()
+        writeLock.withLockAsync {
+            storeRestaurantId(restaurant)
+            val store = sharedPreferenceForRestaurantId(restaurant.id)
+            val keyForDate = SimpleDateFormat(DATE_FORMAT).format(date)
+            val serializedDishes = dishes.serialize()
 
-        store.edit().putStringSet(keyForDate, serializedDishes.toSet()).apply()
+            store.edit().putStringSet(keyForDate, serializedDishes.toSet()).apply()
+        }
 
         return dishes
     }
