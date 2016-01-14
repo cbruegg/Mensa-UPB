@@ -4,12 +4,12 @@ import android.content.Context
 import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.cache.DataCache
 import com.cbruegg.mensaupb.extensions.ioObservable
+import com.cbruegg.mensaupb.httpClient
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.parser.parseDishes
-import com.cbruegg.mensaupb.parser.parseRestaurants
-import com.squareup.okhttp.OkHttpClient
-import com.squareup.okhttp.Request
+import com.cbruegg.mensaupb.parser.parseRestaurantsFromApi
+import okhttp3.Request
 import org.funktionale.either.Either
 import rx.Observable
 import java.io.IOException
@@ -31,11 +31,10 @@ class Downloader(context: Context) {
      * Get a list of all restaurants.
      */
     public fun downloadOrRetrieveRestaurants(): Observable<Either<IOException, List<Restaurant>>> {
-        val httpClient = OkHttpClient()
         val request = Request.Builder().url(RESTAURANT_URL).build()
         return ioObservable {
             val cachedRestaurants = dataCache.retrieveRestaurants()
-            it.onNext(cachedRestaurants ?: dataCache.cache(parseRestaurants(httpClient.newCall(request).execute().body().string())))
+            it.onNext(cachedRestaurants ?: dataCache.cache(parseRestaurantsFromApi(httpClient.newCall(request).execute().body().source())))
             it.onCompleted()
         }
     }
@@ -44,11 +43,10 @@ class Downloader(context: Context) {
      * Get a list of all dishes in a restaurant at the specified date. The list might be empty.
      */
     public fun downloadOrRetrieveDishes(restaurant: Restaurant, date: Date): Observable<Either<IOException, List<Dish>>> {
-        val httpClient = OkHttpClient()
         val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
         return ioObservable {
             val cachedDishes = dataCache.retrieve(restaurant, date)
-            it.onNext(cachedDishes ?: dataCache.cache(restaurant, date, parseDishes(httpClient.newCall(request).execute().body().string())))
+            it.onNext(cachedDishes ?: dataCache.cache(restaurant, date, parseDishes(httpClient.newCall(request).execute().body().source())))
             it.onCompleted()
         }
     }
