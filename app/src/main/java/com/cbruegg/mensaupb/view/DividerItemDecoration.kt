@@ -11,7 +11,7 @@ import com.cbruegg.mensaupb.extensions.children
 /**
  * RecyclerView item decoration that adds divider lines.
  */
-public class DividerItemDecoration : RecyclerView.ItemDecoration {
+class DividerItemDecoration : RecyclerView.ItemDecoration {
 
     companion object {
         private val ATTRS = intArrayOf(android.R.attr.listDivider)
@@ -22,7 +22,7 @@ public class DividerItemDecoration : RecyclerView.ItemDecoration {
     /**
      * Default divider will be used
      */
-    public constructor(context: Context) {
+    constructor(context: Context) {
         val styledAttributes = context.obtainStyledAttributes(ATTRS)
         divider = styledAttributes.getDrawable(0)
         styledAttributes.recycle()
@@ -31,7 +31,7 @@ public class DividerItemDecoration : RecyclerView.ItemDecoration {
     /**
      * Custom divider will be used
      */
-    public constructor(context: Context, @DrawableRes resId: Int) {
+    constructor(context: Context, @DrawableRes resId: Int) {
         divider = ContextCompat.getDrawable(context, resId)
     }
 
