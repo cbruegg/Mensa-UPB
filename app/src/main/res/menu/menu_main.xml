@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/restaurants"
-        android:icon="@drawable/ic_store_white_24dp"
+        android:icon="@drawable/ic_store_mall_directory_white_24dp"
         android:title="@string/restaurants"
         app:showAsAction="ifRoom|withText" />
 
