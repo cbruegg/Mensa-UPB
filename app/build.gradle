@@ -5,6 +5,9 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
+    // Enabling this doesn't play well with Kotlin
+    compileOptions.incremental = false
+
     defaultConfig {
         applicationId "com.cbruegg.mensaupb"
         minSdkVersion 16
@@ -38,19 +41,19 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:preference-v7:23.1.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'io.reactivex:rxkotlin:0.30.1'
+    compile 'io.reactivex:rxkotlin:0.40.1'
     compile 'io.reactivex:rxandroid:1.1.0'
-    compile 'io.reactivex:rxjava:1.1.0'
-    compile 'com.squareup.okhttp3:okhttp:3.0.0'
-    compile 'com.squareup.moshi:moshi:1.0.0'
-    compile 'com.squareup.moshi:moshi-adapters:1.0.0'
+    compile 'io.reactivex:rxjava:1.1.1'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.squareup.moshi:moshi:1.1.0'
+    compile 'com.squareup.moshi:moshi-adapters:1.1.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
-    compile 'org.funktionale:funktionale:0.6_1.0.0-beta-3594'
+    compile 'org.funktionale:funktionale:0.8'
 }
 
 buildscript {
-    ext.kotlin_version = '1.0.0-beta-4584'
+    ext.kotlin_version = '1.0.0'
     repositories {
         jcenter()
     }

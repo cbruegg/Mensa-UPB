@@ -9,16 +9,19 @@ import com.cbruegg.mensaupb.model.PriceType
 import com.cbruegg.mensaupb.model.UserType
 import java.text.DecimalFormat
 import java.util.*
+import kotlin.comparisons.compareByDescending
+import kotlin.comparisons.thenBy
+import kotlin.comparisons.thenComparator
 
 /**
  * Wrapper for [Dish] objects providing easy access to various attributes for data binding.
  */
 data class DishViewModel(@DataBindingProperty val dish: Dish,
-                                    @DataBindingProperty val headerText: String?,
-                                    @DataBindingProperty val userPrice: Double,
-                                    @DataBindingProperty val priceText: String,
-                                    @DataBindingProperty val allergensText: String,
-                                    @DataBindingProperty val badgesText: String?) {
+                         @DataBindingProperty val headerText: String?,
+                         @DataBindingProperty val userPrice: Double,
+                         @DataBindingProperty val priceText: String,
+                         @DataBindingProperty val allergensText: String,
+                         @DataBindingProperty val badgesText: String?) {
 
     companion object {
         private val NUMBER_FORMAT = DecimalFormat("0.00")
@@ -32,15 +35,15 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
             val priceText = "${context.getString(R.string.price)} ${NUMBER_FORMAT.format(userPrice)} € ${if (dish.priceType == PriceType.WEIGHTED) context.getString(R.string.per_100_gramm) else ""}"
             val allergensText = "${context.getString(R.string.allergens)} ${dish.allergens.replace("A1", "A1 (Gluten)").joinToString()}"
             val badgesText = dish.badges
-                    ?.filterNotNull()
-                    ?.joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionId) })
-                    ?.toString()
-                    ?.capitalizeFirstChar()
+                    .filterNotNull()
+                    .joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionId) })
+                    .toString()
+                    .capitalizeFirstChar()
             return DishViewModel(dish, headerText, userPrice, priceText, allergensText, badgesText)
         }
     }
 
-    @DataBindingProperty val hasBadges = dish.badges?.filterNotNull()?.isNotEmpty()
+    @DataBindingProperty val hasBadges = dish.badges.filterNotNull().isNotEmpty()
     @DataBindingProperty val localizedCategory: String = if (Locale.getDefault().language == Locale.GERMAN.language) dish.germanCategory else dish.category
     @DataBindingProperty val containsAllergens = dish.allergens.isNotEmpty()
     @DataBindingProperty val hasThumbnail = !dish.thumbnailImageUrl.isNullOrEmpty()

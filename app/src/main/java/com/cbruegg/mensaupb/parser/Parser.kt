@@ -7,7 +7,7 @@ import okio.BufferedSource
 /**
  * Parse restaurants from the API response.
  */
-public fun parseRestaurantsFromApi(restaurantListSource: BufferedSource): List<Restaurant> =
+fun parseRestaurantsFromApi(restaurantListSource: BufferedSource): List<Restaurant> =
         MoshiProvider.provideJsonAdapter<Map<String, Map<String, *>>>()
                 .fromJson(restaurantListSource)
                 .map {
@@ -17,4 +17,4 @@ public fun parseRestaurantsFromApi(restaurantListSource: BufferedSource): List<R
 /**
  * Parse dishes from the API response.
  */
-public fun parseDishes(dishSource: BufferedSource): List<Dish> = MoshiProvider.provideListJsonAdapter<Dish>().fromJson(dishSource)
+fun parseDishes(dishSource: BufferedSource): List<Dish> = MoshiProvider.provideListJsonAdapter<Dish>().fromJson(dishSource)

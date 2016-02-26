@@ -65,7 +65,7 @@ class RestaurantFragment : Fragment() {
     /**
      * Get the current position of the pager
      */
-    public fun pagerPosition(): Int = dayPager.currentItem
+    fun pagerPosition(): Int = dayPager.currentItem
 
     /**
      * Return a list of dates to be used for fetching dishes.

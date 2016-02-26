@@ -63,7 +63,7 @@ class DishesFragment : Fragment() {
     private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)
     private var subscription: Subscription? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View? =
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.fragment_dishes, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {

@@ -1,6 +1,5 @@
 package com.cbruegg.mensaupb.parser
 
-import com.cbruegg.mensaupb.model.Badge
 import com.cbruegg.mensaupb.model.PriceType
 import com.squareup.moshi.*
 import java.util.*
@@ -12,7 +11,6 @@ object MoshiProvider {
      */
     val moshi = Moshi.Builder()
             .add(PriceTypeJsonAdapter())
-            .add(BadgeJsonAdapter())
             .add(Date::class.java, Rfc3339DateJsonAdapter())
             .build()
 
@@ -47,10 +45,4 @@ private class PriceTypeJsonAdapter {
                 PriceType.WEIGHTED -> "weighted"
                 null -> null
             }
-}
-
-private class BadgeJsonAdapter {
-    @FromJson fun badgeFromJson(badge: String?): Badge? = if (badge != null) Badge.findById(badge) else null
-
-    @ToJson fun badgeToJson(badge: Badge?): String? = badge?.name
 }

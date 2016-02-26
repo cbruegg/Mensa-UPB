@@ -30,7 +30,7 @@ import rx.schedulers.Schedulers
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
  */
-public class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     /*
      * Constants
@@ -176,7 +176,7 @@ public class MainActivity : AppCompatActivity() {
 
         lastRestaurant = restaurant
         lastRestaurantId = restaurant.id
-        supportActionBar.title = restaurant.name
+        supportActionBar?.title = restaurant.name
         supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.fragment_container, RestaurantFragment.newInstance(restaurant, currentPagerPosition ?: 0))

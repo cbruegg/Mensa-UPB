@@ -13,7 +13,7 @@ fun <T, G : T> MutableList<T>.setAll(collection: Collection<G>) {
  * This method doesn't modify the original list
  */
 fun <T, G : T> List<T>.replace(toReplace: G, by: G): List<T> {
-    val copy = toArrayList()
+    val copy = toMutableList()
     for (i in copy.indices) {
         if (copy[i] == toReplace) {
             copy[i] = by

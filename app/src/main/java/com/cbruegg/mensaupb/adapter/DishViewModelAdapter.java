@@ -11,13 +11,11 @@ import com.cbruegg.mensaupb.R;
 import com.cbruegg.mensaupb.databinding.RowDishBinding;
 import com.cbruegg.mensaupb.viewmodel.DishViewModel;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * Adapter responsible for displaying DishViewModels in a RecyclerView.
  */
 public class DishViewModelAdapter extends ObservableListAdapter<DishViewModel, DishViewModelAdapter.DishBindingViewHolder> {
-    @Override public void onBindViewHolder(@NotNull DishBindingViewHolder holder, DishViewModel item, @NotNull View.OnClickListener onClickListener) {
+    @Override public void onBindViewHolder(@NonNull DishBindingViewHolder holder, DishViewModel item, @NonNull View.OnClickListener onClickListener) {
         holder.binding.setDishViewModel(item);
         holder.binding.setOnClickListener(onClickListener);
     }

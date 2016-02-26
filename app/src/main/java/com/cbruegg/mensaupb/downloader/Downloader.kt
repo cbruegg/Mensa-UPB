@@ -30,7 +30,7 @@ class Downloader(context: Context) {
     /**
      * Get a list of all restaurants.
      */
-    public fun downloadOrRetrieveRestaurants(): Observable<Either<IOException, List<Restaurant>>> {
+    fun downloadOrRetrieveRestaurants(): Observable<Either<IOException, List<Restaurant>>> {
         val request = Request.Builder().url(RESTAURANT_URL).build()
         return ioObservable {
             val cachedRestaurants = dataCache.retrieveRestaurants()
@@ -42,7 +42,7 @@ class Downloader(context: Context) {
     /**
      * Get a list of all dishes in a restaurant at the specified date. The list might be empty.
      */
-    public fun downloadOrRetrieveDishes(restaurant: Restaurant, date: Date): Observable<Either<IOException, List<Dish>>> {
+    fun downloadOrRetrieveDishes(restaurant: Restaurant, date: Date): Observable<Either<IOException, List<Dish>>> {
         val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
         return ioObservable {
             val cachedDishes = dataCache.retrieve(restaurant, date)
