@@ -18,4 +18,5 @@
     <string name="restaurants">Einrichtungen</string>
     <string name="network_error">Es gab einen Fehler bei der Verbindung zum Internetdienst.</string>
     <string name="dish_image">Foto des Gerichtes</string>
+    <string name="opening_hours">Öffnungszeiten</string>
 </resources>

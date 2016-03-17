@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private val PREFS_KEY_FIRST_LAUNCH = "main_activity_first_launch"
     private val PREFS_KEY_LAST_SELECTED_RESTAURANT = "last_selected_restaurant"
     private val STUDENTENWERK_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/")
+    private val STUDENTENWERK_OPENING_HOURS_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/oeffnungszeiten")
     private val REQUEST_CODE_PREFERENCES = 1
 
     /*
@@ -136,6 +137,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.stw_url -> {
                 startActivity(Intent(Intent.ACTION_VIEW, STUDENTENWERK_URI))
+                return true
+            }
+            R.id.opening_hours -> {
+                startActivity(Intent(Intent.ACTION_VIEW, STUDENTENWERK_OPENING_HOURS_URI))
                 return true
             }
             else -> return super.onOptionsItemSelected(item)

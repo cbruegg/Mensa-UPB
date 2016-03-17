@@ -15,6 +15,11 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/opening_hours"
+        android:title="@string/opening_hours"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/stw_url"
         android:title="@string/studentenwerk_paderborn"
         app:showAsAction="never" />
