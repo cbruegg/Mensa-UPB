@@ -96,9 +96,9 @@ class DataCache private constructor(private val context: Context) {
         }
 
         Log.d(TAG, "Storing restaurants")
-        val serialized = restaurants.map { it.serialize() }.toSet()
 
         writeLock.withLockAsync {
+            val serialized = restaurants.map { it.serialize() }.toSet()
             masterPreference
                     .edit()
                     .putStringSet(MASTER_PREFERENCE_RESTAURANTS_SET_KEY, serialized)
