@@ -5,6 +5,7 @@ import android.app.Service
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.IBinder
 import android.widget.RemoteViews
 import com.cbruegg.mensaupb.R
@@ -96,15 +97,18 @@ class DishesWidgetUpdateService : Service() {
 
         val appWidgetId = appWidgetResult.appWidgetId
         val appWidgetManager = AppWidgetManager.getInstance(this)
-        val dishesStr = dishes.joinToString { it.germanName }
         val restaurantIntent = MainActivity.createStartIntent(this, restaurant)
         val restaurantPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_MAIN_ACTIVITY, restaurantIntent, 0)
 
+        val dishRemoteViewsServiceIntent = Intent(this, DishRemoteViewsService::class.java)
+        dishRemoteViewsServiceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        dishRemoteViewsServiceIntent.data = Uri.parse(dishRemoteViewsServiceIntent.toUri(Intent.URI_INTENT_SCHEME))
+
         val remoteViews = RemoteViews(packageName, R.layout.app_widget_dishes)
         remoteViews.setOnClickPendingIntent(R.id.dishes_widget_restaurant_name, restaurantPendingIntent)
-        remoteViews.setTextViewText(R.id.dishes_widget_restaurant_name, dishesStr)
-
-        // TODO Build list with dish intents
+        remoteViews.setTextViewText(R.id.dishes_widget_restaurant_name, restaurant.name)
+        remoteViews.setRemoteAdapter(R.id.dishes_widget_list, dishRemoteViewsServiceIntent)
+        // TODO set empty view
 
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
     }

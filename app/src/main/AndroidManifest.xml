@@ -47,6 +47,9 @@
         </receiver>
 
         <service android:name=".service.DishesWidgetUpdateService" />
+        <service
+            android:name=".service.DishRemoteViewsService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>
