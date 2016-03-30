@@ -21,7 +21,6 @@ import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 
 class DishesAppWidgetConfigActivity : AppCompatActivity() {
 
@@ -41,7 +40,6 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
 
         // todo show loading
         subscription = Downloader(this).downloadOrRetrieveRestaurants()
-                .delay(5L, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {

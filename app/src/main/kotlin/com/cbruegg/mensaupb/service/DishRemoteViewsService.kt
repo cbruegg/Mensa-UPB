@@ -8,10 +8,14 @@ import android.widget.RemoteViewsService
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.extensions.filterRight
 import com.cbruegg.mensaupb.model.Dish
+import org.funktionale.either.Either
 import rx.Subscription
 import rx.lang.kotlin.filterNotNull
+import java.io.IOException
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class DishRemoteViewsService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent)
@@ -19,6 +23,7 @@ class DishRemoteViewsService : RemoteViewsService() {
 
     class DishRemoteViewsFactory(private val context: Context, private val appWidgetId: Int) : RemoteViewsFactory {
 
+        private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
         private var dishes = emptyList<Dish>()
         private var subscription: Subscription? = null
 
@@ -47,11 +52,12 @@ class DishRemoteViewsService : RemoteViewsService() {
             val downloader = Downloader(context)
 
             subscription = downloader.downloadOrRetrieveRestaurants()
-                    .map { it.fold({ null }, { it }) }
-                    .filterNotNull()
+                    .filterRight()
                     .map { it.firstOrNull { restaurant -> restaurant.id == restaurantId } }
                     .flatMap { it?.let { downloader.downloadOrRetrieveDishes(it, Date()) } }
                     .filterNotNull()
+                    .timeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                    .onErrorReturn { Either.Left(IOException("Timeout.")) }
                     .subscribe {
                         it.fold({}) {
                             dishes = it

@@ -12,19 +12,19 @@ import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.MainActivity
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.downloader.Downloader
-import com.cbruegg.mensaupb.model.Dish
+import com.cbruegg.mensaupb.extensions.filterRight
 import com.cbruegg.mensaupb.model.Restaurant
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
-import rx.lang.kotlin.*
+import rx.lang.kotlin.filterNotNull
+import rx.lang.kotlin.onError
 import rx.schedulers.Schedulers
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class DishesWidgetUpdateService : Service() {
 
     sealed class DishAppWidgetResult(val appWidgetId: Int) {
-        class Success(appWidgetId: Int, val restaurant: Restaurant, val dishes: List<Dish>) : DishAppWidgetResult(appWidgetId)
+        class Success(appWidgetId: Int, val restaurant: Restaurant) : DishAppWidgetResult(appWidgetId)
         class Failure(appWidgetId: Int, val reason: Reason) : DishAppWidgetResult(appWidgetId) {
             enum class Reason {
                 RESTAURANT_NOT_FOUND
@@ -51,27 +51,23 @@ class DishesWidgetUpdateService : Service() {
         val downloader = Downloader(this)
         val appWidgetIds = intent.getIntArrayExtra(ARG_APPWIDGET_IDS)
         val configManager = DishesWidgetConfigurationManager(this)
-        val today = Date()
 
         subscription = downloader.downloadOrRetrieveRestaurants()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map { it.fold({ emptyList<Restaurant>() }, { it }) } // Simply return 0 restaurants on error
-                .map { it.associate { Pair(it.id, it) } } // Map by id
-                .flatMap { restaurantsById ->
+                .filterRight()
+                .map { it.associate { it.id to it } } // Map by id
+                .flatMapIterable { restaurantsById ->
                     appWidgetIds.map { appWidgetId ->
                         val config = configManager.retrieveConfiguration(appWidgetId)
-                                ?: return@map emptyObservable<DishAppWidgetResult>()
+                                ?: return@map null
                         val restaurant = restaurantsById[config.restaurantId]
-                                ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND).toSingletonObservable()
+                                ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
 
-                        return@map downloader.downloadOrRetrieveDishes(restaurant, today)
-                                .map { it.fold({ null }, { it }) }
-                                .filterNotNull()
-                                .map { DishAppWidgetResult.Success(appWidgetId, restaurant, it) }
-
-                    }.merge()
+                        return@map DishAppWidgetResult.Success(appWidgetId, restaurant)
+                    }
                 }
+                .filterNotNull()
                 .timeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .onError { stopSelf() }
                 .doOnCompleted { stopSelf() }
@@ -85,10 +81,10 @@ class DishesWidgetUpdateService : Service() {
     override fun onBind(intent: Intent): IBinder? = null
 
     private fun updateAppWidget(appWidgetResult: DishAppWidgetResult) {
-        val (restaurant, dishes) =
+        val restaurant =
                 when (appWidgetResult) {
                     is DishAppWidgetResult.Success -> {
-                        Pair(appWidgetResult.restaurant, appWidgetResult.dishes)
+                        appWidgetResult.restaurant
                     }
                     is DishAppWidgetResult.Failure -> {
                         return updateWithError(appWidgetResult)
