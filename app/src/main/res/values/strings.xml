@@ -23,4 +23,8 @@
     <string name="network_error">There was an error while connecting to the network service.</string>
     <string name="dish_image">Dish image</string>
     <string name="opening_hours">Opening Hours</string>
+    <string name="configure_app_widget">Configure Widget</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="dish_app_widget_error_restaurant_not_found">Restaurant not found</string>
 </resources>

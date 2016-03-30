@@ -29,12 +29,15 @@ class Downloader(context: Context) {
 
     /**
      * Get a list of all restaurants.
+     *
+     * @param onlyActive If true, only return restaurants marked as active.
      */
-    fun downloadOrRetrieveRestaurants(): Observable<Either<IOException, List<Restaurant>>> {
+    fun downloadOrRetrieveRestaurants(onlyActive: Boolean = true): Observable<Either<IOException, List<Restaurant>>> {
         val request = Request.Builder().url(RESTAURANT_URL).build()
         return ioObservable {
             val cachedRestaurants = dataCache.retrieveRestaurants()
-            it.onNext(cachedRestaurants ?: dataCache.cache(parseRestaurantsFromApi(httpClient.newCall(request).execute().body().source())))
+            val restaurants = cachedRestaurants ?: dataCache.cache(parseRestaurantsFromApi(httpClient.newCall(request).execute().body().source()))
+            it.onNext(restaurants.filter { !onlyActive || it.isActive })
             it.onCompleted()
         }
     }

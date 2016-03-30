@@ -21,6 +21,7 @@ import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.extensions.sortBy
 import com.cbruegg.mensaupb.extensions.toggleDrawer
 import com.cbruegg.mensaupb.fragment.RestaurantFragment
+import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.view.DividerItemDecoration
 import rx.Subscription
@@ -31,6 +32,18 @@ import rx.schedulers.Schedulers
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
  */
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+
+        private val ARG_RESTAURANT_ID = "restaurant_id"
+        private val ARG_DISH_GERMAN_NAME = "dish_german_name"
+
+        fun createStartIntent(context: Context, restaurant: Restaurant? = null, dish: Dish? = null): Intent
+                = Intent(context, MainActivity::class.java).apply {
+            putExtra(ARG_RESTAURANT_ID, restaurant?.id)
+            putExtra(ARG_DISH_GERMAN_NAME, dish?.germanName)
+        }
+    }
 
     /*
      * Constants
@@ -89,7 +102,6 @@ class MainActivity : AppCompatActivity() {
                 .subscribe {
                     it.fold({ showNetworkError(restaurantAdapter) }) {
                         val preparedList = it
-                                .filter { it.isActive }
                                 .sortBy { first, second -> first.location.compareTo(second.location) }
                                 .reversed() // Paderborn should be at the top of the list
                         restaurantAdapter.list.setAll(preparedList)
@@ -161,10 +173,10 @@ class MainActivity : AppCompatActivity() {
      * else the first item in the list.
      */
     private fun loadDefaultRestaurant(preparedList: List<Restaurant>) {
-        val restaurant = preparedList
-                .firstOrNull { it.id == lastRestaurantId }
-                .let { it ?: preparedList.firstOrNull { it.name.toLowerCase() == DEFAULT_RESTAURANT_NAME.toLowerCase() } }
-                .let { it ?: preparedList.firstOrNull() }
+        val restaurant = preparedList.firstOrNull { it.id == intent.getStringExtra(ARG_RESTAURANT_ID) }
+                ?: preparedList.firstOrNull { it.id == lastRestaurantId }
+                ?: preparedList.firstOrNull { it.name.toLowerCase() == DEFAULT_RESTAURANT_NAME.toLowerCase() }
+                ?: preparedList.firstOrNull()
         if (restaurant != null) {
             showRestaurant(restaurant)
         }
@@ -178,6 +190,8 @@ class MainActivity : AppCompatActivity() {
         val currentPagerPosition = (supportFragmentManager
                 .findFragmentById(R.id.fragment_container) as? RestaurantFragment)
                 ?.pagerPosition()
+
+        // TODO if ARG dish is set, open popup
 
         lastRestaurant = restaurant
         lastRestaurantId = restaurant.id
