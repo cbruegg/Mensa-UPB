@@ -20,6 +20,7 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:background="@android:color/white"
+        android:ellipsize="end"
         android:gravity="center_vertical"
         android:padding="8dp"
         android:textColor="@android:color/black"
