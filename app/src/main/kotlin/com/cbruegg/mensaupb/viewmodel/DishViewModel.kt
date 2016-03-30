@@ -51,6 +51,10 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
     @DataBindingProperty val hasHeader = headerText != null
 }
 
+/**
+ * A comparator that sorts by the dish category and the price
+ * for this user type.
+ */
 val UserType.dishComparator: Comparator<Dish>
     get() = compareByDescending<Dish> { it.germanCategory } // Sort by category
             .thenComparator { d1, d2 ->

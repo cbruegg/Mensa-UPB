@@ -21,9 +21,19 @@ import rx.lang.kotlin.onError
 import rx.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
+/**
+ * A service that is responsible for updating
+ * all dishes widgets.
+ */
 class DishesWidgetUpdateService : Service() {
 
-    sealed class DishAppWidgetResult(val appWidgetId: Int) {
+    /**
+     * Case class for app widget content results.
+     *
+     * @see Failure
+     * @see Success
+     */
+    private sealed class DishAppWidgetResult(val appWidgetId: Int) {
         class Success(appWidgetId: Int, val restaurant: Restaurant) : DishAppWidgetResult(appWidgetId)
         class Failure(appWidgetId: Int, val reason: Reason) : DishAppWidgetResult(appWidgetId) {
             enum class Reason {
@@ -38,6 +48,10 @@ class DishesWidgetUpdateService : Service() {
         private const val REQUEST_CODE_MAIN_ACTIVITY = 0
 
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
+
+        /**
+         * Function for creating intent that start this service.
+         */
         fun createStartIntent(context: Context, vararg appWidgetIds: Int): Intent =
                 Intent(context, DishesWidgetUpdateService::class.java).apply {
                     putExtra(ARG_APPWIDGET_IDS, appWidgetIds)
@@ -55,10 +69,12 @@ class DishesWidgetUpdateService : Service() {
         subscription = downloader.downloadOrRetrieveRestaurants()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .filterRight()
+                .filterRight() // On errors, do nothing
                 .map { it.associate { it.id to it } } // Map by id
                 .flatMapIterable { restaurantsById ->
                     appWidgetIds.map { appWidgetId ->
+                        // When no config exists, just don't update this widget
+                        // (null is filtered out later)
                         val config = configManager.retrieveConfiguration(appWidgetId)
                                 ?: return@map null
                         val restaurant = restaurantsById[config.restaurantId]
@@ -71,15 +87,18 @@ class DishesWidgetUpdateService : Service() {
                 .timeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .onError { stopSelf() }
                 .doOnCompleted { stopSelf() }
-                .subscribe {
-                    updateAppWidget(it)
-                }
+                .subscribe { updateAppWidget(it) }
 
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onBind(intent: Intent): IBinder? = null
 
+    /**
+     * If the result is successful, update the remote views
+     * with the result data. If the result is not successful,
+     * [updateWithError] is called internally.
+     */
     private fun updateAppWidget(appWidgetResult: DishAppWidgetResult) {
         val restaurant =
                 when (appWidgetResult) {
@@ -113,6 +132,9 @@ class DishesWidgetUpdateService : Service() {
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
     }
 
+    /**
+     * Set an error message in the remote view.
+     */
     private fun updateWithError(appWidgetResult: DishAppWidgetResult.Failure) {
         val errorText = when (appWidgetResult.reason) {
             DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND -> {

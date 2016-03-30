@@ -5,6 +5,9 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 
+/**
+ * AppWidgetProvider for the dishes widget.
+ */
 class DishesAppWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {

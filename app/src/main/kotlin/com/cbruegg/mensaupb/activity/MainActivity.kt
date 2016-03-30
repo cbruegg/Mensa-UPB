@@ -18,12 +18,12 @@ import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantAdapter
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
-import com.cbruegg.mensaupb.extensions.sortBy
 import com.cbruegg.mensaupb.extensions.toggleDrawer
 import com.cbruegg.mensaupb.fragment.RestaurantFragment
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.view.DividerItemDecoration
+import com.cbruegg.mensaupb.viewmodel.uiSorted
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -38,11 +38,20 @@ class MainActivity : AppCompatActivity() {
         private val ARG_RESTAURANT_ID = "restaurant_id"
         private val ARG_DISH_GERMAN_NAME = "dish_german_name"
 
+        /**
+         * Create a start intent for this activity that displays
+         * a possibly supplied restaurant. If a dish is supplied,
+         * the activity tries to locate it in today's list of dishes
+         * of the given restaurant.
+         */
         fun createStartIntent(context: Context, restaurant: Restaurant? = null, dish: Dish? = null): Intent
                 = Intent(context, MainActivity::class.java).apply {
             fillIntent(this, restaurant, dish)
         }
 
+        /**
+         * Same as [createStartIntent], except this fills an existing intent.
+         */
         fun fillIntent(intent: Intent, restaurant: Restaurant? = null, dish: Dish? = null) {
             intent.putExtra(ARG_RESTAURANT_ID, restaurant?.id)
             intent.putExtra(ARG_DISH_GERMAN_NAME, dish?.germanName)
@@ -102,6 +111,11 @@ class MainActivity : AppCompatActivity() {
         reload()
     }
 
+    /**
+     * Refetch the list of restaurants from the cache
+     * or the network, reloading the fragments afterwards.
+     * This is useful for reloading after receiving a new intent.
+     */
     private fun reload() {
         val restaurantAdapter = restaurantList.adapter as RestaurantAdapter
         subscription = Downloader(this).downloadOrRetrieveRestaurants()
@@ -109,9 +123,7 @@ class MainActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     it.fold({ showNetworkError(restaurantAdapter) }) {
-                        val preparedList = it
-                                .sortBy { first, second -> first.location.compareTo(second.location) }
-                                .reversed() // Paderborn should be at the top of the list
+                        val preparedList = it.uiSorted()
                         restaurantAdapter.list.setAll(preparedList)
                         checkShowFirstTimeDrawer()
                         loadDefaultRestaurant(preparedList)

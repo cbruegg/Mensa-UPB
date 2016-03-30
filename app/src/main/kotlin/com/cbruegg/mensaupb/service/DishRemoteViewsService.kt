@@ -3,7 +3,6 @@ package com.cbruegg.mensaupb.service
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.os.Debug
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
@@ -24,10 +23,18 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+/**
+ * A [RemoteViewsService] that is only responsible
+ * for proving dish app widgets with list items.
+ */
 class DishRemoteViewsService : RemoteViewsService() {
+
     override fun onGetViewFactory(intent: Intent)
             = DishRemoteViewsFactory(this, intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID))
 
+    /**
+     * Factory for the remote dish views.
+     */
     class DishRemoteViewsFactory(private val context: Context, private val appWidgetId: Int) : RemoteViewsFactory {
 
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
@@ -41,7 +48,6 @@ class DishRemoteViewsService : RemoteViewsService() {
             val dish = dishes[position]
             val thumbnailVisibility = if (dish.thumbnailImageUrl.isNullOrEmpty()) View.GONE else View.VISIBLE
 
-            Debug.waitForDebugger()
             val dishIntent = Intent().apply { MainActivity.fillIntent(this, restaurant, dish) }
             val remoteViews = RemoteViews(context.packageName, R.layout.row_dish_widget)
             remoteViews.setTextViewText(R.id.dish_widget_name, dish.germanName)
@@ -73,7 +79,7 @@ class DishRemoteViewsService : RemoteViewsService() {
             val downloader = Downloader(context)
 
             subscription = downloader.downloadOrRetrieveRestaurants()
-                    .filterRight()
+                    .filterRight() // Just do nothing on errors
                     .map {
                         it.firstOrNull { restaurant -> restaurant.id == restaurantId }
                                 ?.apply { restaurant = this }

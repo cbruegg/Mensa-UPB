@@ -15,23 +15,31 @@ import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfiguration
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.downloader.Downloader
-import com.cbruegg.mensaupb.extensions.sortBy
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
+import com.cbruegg.mensaupb.viewmodel.uiSorted
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
+/**
+ * Activity used for configuring an app widget. It must
+ * be supplied an an AppWidgetId using [AppWidgetManager.EXTRA_APPWIDGET_ID].
+ */
 class DishesAppWidgetConfigActivity : AppCompatActivity() {
 
-    private val appWidgetId by lazy { intent.extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID) }
     private val spinner by bindView<Spinner>(R.id.widget_config_spinner)
+
     private val cancelButton by bindView<Button>(R.id.widget_config_cancel)
     private val confirmButton by bindView<Button>(R.id.widget_config_confirm)
     private val progressBar by bindView<ProgressBar>(R.id.widget_config_progressbar)
 
     private var subscription: Subscription? = null
     private var restaurantList: List<Restaurant>? = null
+    private val appWidgetId by lazy {
+        intent.extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,15 +51,12 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     it.fold({ showNetworkError() }) {
-                        // TODO Remove duplicated code
-                        val preparedList = it
-                                .sortBy { first, second -> first.location.compareTo(second.location) }
-                                .reversed() // Paderborn should be at the top of the list
+                        val preparedList = it.uiSorted()
                         restaurantList = preparedList
                         spinner.adapter = RestaurantSpinnerAdapter(this, preparedList)
                         confirmButton.isEnabled = true
-                        progressBar.visibility = View.INVISIBLE
                     }
+                    progressBar.visibility = View.INVISIBLE
                     subscription?.unsubscribe()
                 }
 
@@ -69,6 +74,9 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
         cancelButton.setOnClickListener { finish() }
     }
 
+    /**
+     * Notify the user about a network error.
+     */
     private fun showNetworkError() {
         Toast.makeText(this, R.string.network_error, Toast.LENGTH_LONG).show()
     }
@@ -78,6 +86,9 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    /**
+     * Start the widget update service.
+     */
     fun updateWidget() {
         val serviceIntent = DishesWidgetUpdateService.createStartIntent(this, appWidgetId)
         startService(serviceIntent)

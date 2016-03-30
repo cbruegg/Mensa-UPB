@@ -34,6 +34,9 @@ class PreferenceActivity : AppCompatActivity() {
     }
 }
 
+/**
+ * Fetch the user type from the preferences file.
+ */
 val Context.userType: UserType
     get() = UserType.findById(PreferenceManager.getDefaultSharedPreferences(
             this).getString(PreferenceActivity.KEY_PREF_USER_TYPE, UserType.STUDENT.id))!!
