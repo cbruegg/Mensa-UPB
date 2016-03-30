@@ -112,7 +112,9 @@ class DishesFragment : Fragment() {
         }
 
         dishViewModels.firstOrNull { it.dish.germanName == germanDishName }?.let {
-            showDishDetailsDialog(it)
+            if (it.hasThumbnail) {
+                showDishDetailsDialog(it)
+            }
         }
     }
 
