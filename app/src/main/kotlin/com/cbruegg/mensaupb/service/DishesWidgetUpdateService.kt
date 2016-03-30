@@ -99,12 +99,16 @@ class DishesWidgetUpdateService : Service() {
         val dishRemoteViewsServiceIntent = Intent(this, DishRemoteViewsService::class.java)
         dishRemoteViewsServiceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         dishRemoteViewsServiceIntent.data = Uri.parse(dishRemoteViewsServiceIntent.toUri(Intent.URI_INTENT_SCHEME))
+        val mainActivityIntent = Intent(this, MainActivity::class.java)
+        mainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        val dishPendingIntent = PendingIntent.getActivity(this, 0, mainActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         val remoteViews = RemoteViews(packageName, R.layout.app_widget_dishes)
         remoteViews.setOnClickPendingIntent(R.id.dishes_widget_restaurant_name, restaurantPendingIntent)
         remoteViews.setTextViewText(R.id.dishes_widget_restaurant_name, restaurant.name)
         remoteViews.setRemoteAdapter(R.id.dishes_widget_list, dishRemoteViewsServiceIntent)
-        // TODO set empty view
+        remoteViews.setPendingIntentTemplate(R.id.dishes_widget_list, dishPendingIntent)
+        remoteViews.setEmptyView(R.id.dishes_widget_list, R.id.dishes_widget_empty_view)
 
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
     }

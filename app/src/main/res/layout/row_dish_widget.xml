@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout android:id="@+id/dish_widget_row"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="@dimen/row_dish_widget_image_size"
+    android:orientation="horizontal"
+    android:paddingTop="0.5dp">
+
+    <ImageView
+        android:id="@+id/dish_widget_image"
+        android:layout_width="@dimen/row_dish_widget_image_size"
+        android:layout_height="@dimen/row_dish_widget_image_size"
+        android:contentDescription="@string/dish_image"
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/dish_widget_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:textColor="@android:color/black"
+        android:textSize="15sp" />
 </LinearLayout>

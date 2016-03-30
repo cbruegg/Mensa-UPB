@@ -5,7 +5,6 @@ import android.graphics.Point
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -18,12 +17,11 @@ import android.widget.TextView
 import android.widget.Toast
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
-import com.cbruegg.mensaupb.activity.PreferenceActivity
+import com.cbruegg.mensaupb.activity.userType
 import com.cbruegg.mensaupb.adapter.DishViewModelAdapter
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.model.Restaurant
-import com.cbruegg.mensaupb.model.UserType
 import com.cbruegg.mensaupb.view.DividerItemDecoration
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
@@ -43,15 +41,19 @@ class DishesFragment : Fragment() {
     companion object {
         private val ARG_RESTAURANT = "restaurant"
         private val ARG_DATE = "date"
+        private val ARG_GERMAN_DISH_NAME = "german_dish_name"
 
         /**
          * Construct a new instance of this fragment.
+         * @param germanDishName If non-null, look for a matching dish and
+         * shows its image.
          * @see DishesFragment
          */
-        fun newInstance(restaurant: Restaurant, date: Date): DishesFragment {
+        fun newInstance(restaurant: Restaurant, date: Date, germanDishName: String? = null): DishesFragment {
             val args = Bundle()
             args.putString(ARG_RESTAURANT, restaurant.serialize())
             args.putLong(ARG_DATE, date.time)
+            args.putString(ARG_GERMAN_DISH_NAME, germanDishName)
 
             val fragment = DishesFragment()
             fragment.arguments = args
@@ -80,8 +82,8 @@ class DishesFragment : Fragment() {
 
         val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))
         val date = Date(arguments.getLong(ARG_DATE))
-        val userType = UserType.findById(PreferenceManager.getDefaultSharedPreferences(
-                activity).getString(PreferenceActivity.KEY_PREF_USER_TYPE, UserType.STUDENT.id))!!
+        val userType = context.userType
+        val germanDishName: String? = arguments.getString(ARG_GERMAN_DISH_NAME, null)
 
         /**
          * Download data for the list
@@ -93,10 +95,25 @@ class DishesFragment : Fragment() {
                     it.fold({ showNetworkError(adapter) }) {
                         noDishesMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
                         val dishViewModels = it.toDishViewModels(activity, userType)
+                        tryShowArgDish(dishViewModels, germanDishName)
                         adapter.list.setAll(dishViewModels)
                     }
                     subscription?.unsubscribe()
                 }
+    }
+
+    /**
+     * If the germanDishName parameter is non-null,
+     * try to find a matching dish and display its image.
+     */
+    private fun tryShowArgDish(dishViewModels: List<DishViewModel>, germanDishName: String?) {
+        if (germanDishName == null) {
+            return
+        }
+
+        dishViewModels.firstOrNull { it.dish.germanName == germanDishName }?.let {
+            showDishDetailsDialog(it)
+        }
     }
 
     private fun showNetworkError(adapter: DishViewModelAdapter) {

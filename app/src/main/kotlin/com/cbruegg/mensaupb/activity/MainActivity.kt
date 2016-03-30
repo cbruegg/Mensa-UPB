@@ -40,8 +40,12 @@ class MainActivity : AppCompatActivity() {
 
         fun createStartIntent(context: Context, restaurant: Restaurant? = null, dish: Dish? = null): Intent
                 = Intent(context, MainActivity::class.java).apply {
-            putExtra(ARG_RESTAURANT_ID, restaurant?.id)
-            putExtra(ARG_DISH_GERMAN_NAME, dish?.germanName)
+            fillIntent(this, restaurant, dish)
+        }
+
+        fun fillIntent(intent: Intent, restaurant: Restaurant? = null, dish: Dish? = null) {
+            intent.putExtra(ARG_RESTAURANT_ID, restaurant?.id)
+            intent.putExtra(ARG_DISH_GERMAN_NAME, dish?.germanName)
         }
     }
 
@@ -79,7 +83,6 @@ class MainActivity : AppCompatActivity() {
         }
     private var lastRestaurant: Restaurant? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
@@ -96,6 +99,11 @@ class MainActivity : AppCompatActivity() {
         restaurantList.layoutManager = LinearLayoutManager(this)
 
         // Download data for the list
+        reload()
+    }
+
+    private fun reload() {
+        val restaurantAdapter = restaurantList.adapter as RestaurantAdapter
         subscription = Downloader(this).downloadOrRetrieveRestaurants()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -110,7 +118,6 @@ class MainActivity : AppCompatActivity() {
                     }
                     subscription?.unsubscribe()
                 }
-
     }
 
     private fun showNetworkError(restaurantAdapter: RestaurantAdapter) {
@@ -191,15 +198,23 @@ class MainActivity : AppCompatActivity() {
                 .findFragmentById(R.id.fragment_container) as? RestaurantFragment)
                 ?.pagerPosition()
 
-        // TODO if ARG dish is set, open popup
-
         lastRestaurant = restaurant
         lastRestaurantId = restaurant.id
         supportActionBar?.title = restaurant.name
+        val germanDishName: String? = intent.getStringExtra(ARG_DISH_GERMAN_NAME)
+        val restaurantFragment = RestaurantFragment.newInstance(restaurant,
+                currentPagerPosition ?: 0,
+                germanDishName)
         supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.fragment_container, RestaurantFragment.newInstance(restaurant, currentPagerPosition ?: 0))
+                .replace(R.id.fragment_container, restaurantFragment)
                 .commit()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        this.intent = intent
+        reload()
     }
 
     override fun onDestroy() {

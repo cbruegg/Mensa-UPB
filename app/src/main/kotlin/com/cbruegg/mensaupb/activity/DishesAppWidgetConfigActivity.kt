@@ -38,7 +38,6 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
         setContentView(R.layout.activity_app_widget_config)
         setResult(RESULT_CANCELED)
 
-        // todo show loading
         subscription = Downloader(this).downloadOrRetrieveRestaurants()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -15,12 +15,25 @@
         android:paddingRight="16dp"
         android:paddingTop="8dp"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textStyle="normal"
         tools:text="Mensa Academica" />
 
     <ListView
         android:id="@+id/dishes_widget_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/dish_app_widget_list_bg"
+        android:padding="4dp" />
+
+    <TextView
+        android:id="@+id/dishes_widget_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/dish_app_widget_list_bg"
+        android:gravity="center"
+        android:padding="4dp"
+        android:text="@string/no_dishes_found"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
 </LinearLayout>

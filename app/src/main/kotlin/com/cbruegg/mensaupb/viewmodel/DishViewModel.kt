@@ -22,8 +22,8 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
                          @DataBindingProperty val priceText: String,
                          @DataBindingProperty val allergensText: String,
                          @DataBindingProperty val badgesText: String?) {
-
     companion object {
+
         private val NUMBER_FORMAT = DecimalFormat("0.00")
 
         fun create(dish: Dish, headerText: String?, userType: UserType, context: Context): DishViewModel {
@@ -51,17 +51,18 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
     @DataBindingProperty val hasHeader = headerText != null
 }
 
+val UserType.dishComparator: Comparator<Dish>
+    get() = compareByDescending<Dish> { it.germanCategory } // Sort by category
+            .thenComparator { d1, d2 ->
+                if (d1.priceType == d2.priceType) 0 else if (d1.priceType == PriceType.FIXED) -1 else 1
+            } // Weighted is worse
+            .thenBy { selectPrice(it) } // then by actual price
+
 /**
  * Compute the DishViewModels for a list of Dishes.
  */
 fun List<Dish>.toDishViewModels(context: Context, userType: UserType): List<DishViewModel> {
-    val comparator = compareByDescending<Dish> { it.germanCategory } // Sort by category
-            .thenComparator { d1, d2 ->
-                if (d1.priceType == d2.priceType) 0 else if (d1.priceType == PriceType.FIXED) -1 else 1
-            } // Weighted is worse
-            .thenBy { userType.selectPrice(it) } // then by actual price
-
-    val sortedList = sortedWith(comparator)
+    val sortedList = sortedWith(userType.dishComparator)
     return sortedList.mapIndexed { position, dish -> DishViewModel.create(dish, headerTextForIndex(position, sortedList), userType, context) }
 }
 
