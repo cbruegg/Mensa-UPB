@@ -5,4 +5,4 @@ package com.cbruegg.mensaupb.viewmodel
  * in an XML layout for data binding. Used to
  * suppress warnings about unused properties.
  */
-annotation class DataBindingProperty
+@Retention(AnnotationRetention.SOURCE) annotation class DataBindingProperty
