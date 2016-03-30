@@ -44,8 +44,9 @@ class DishesWidgetUpdateService : Service() {
     }
 
     companion object {
+        private const val REQUEST_CODE_RESTAURANT = 0
+        private const val REQUEST_CODE_DISH = 1
         private const val ARG_APPWIDGET_IDS = "app_widget_ids"
-        private const val REQUEST_CODE_MAIN_ACTIVITY = 0
 
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
 
@@ -113,14 +114,15 @@ class DishesWidgetUpdateService : Service() {
         val appWidgetId = appWidgetResult.appWidgetId
         val appWidgetManager = AppWidgetManager.getInstance(this)
         val restaurantIntent = MainActivity.createStartIntent(this, restaurant)
-        val restaurantPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_MAIN_ACTIVITY, restaurantIntent, 0)
+        restaurantIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        val restaurantPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_RESTAURANT, restaurantIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         val dishRemoteViewsServiceIntent = Intent(this, DishRemoteViewsService::class.java)
         dishRemoteViewsServiceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         dishRemoteViewsServiceIntent.data = Uri.parse(dishRemoteViewsServiceIntent.toUri(Intent.URI_INTENT_SCHEME))
         val mainActivityIntent = Intent(this, MainActivity::class.java)
         mainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        val dishPendingIntent = PendingIntent.getActivity(this, 0, mainActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val dishPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_DISH, mainActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         val remoteViews = RemoteViews(packageName, R.layout.app_widget_dishes)
         remoteViews.setOnClickPendingIntent(R.id.dishes_widget_restaurant_name, restaurantPendingIntent)
