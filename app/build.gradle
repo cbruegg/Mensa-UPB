@@ -56,6 +56,8 @@ dependencies {
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
     compile 'org.funktionale:funktionale:0.9.5'
 
+    kapt 'com.android.databinding:compiler:2.2.1'
+
     kapt 'com.google.dagger:dagger-compiler:2.7'
     compile 'com.google.dagger:dagger:2.7'
     provided 'javax.annotation:jsr250-api:1.0'

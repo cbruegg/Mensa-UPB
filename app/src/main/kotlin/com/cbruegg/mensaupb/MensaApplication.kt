@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import com.cbruegg.mensaupb.compat.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import okhttp3.OkHttpClient
+import javax.inject.Inject
 
 class MensaApplication : Application() {
 
@@ -13,7 +14,7 @@ class MensaApplication : Application() {
             .appModule(AppModule(this))
             .netModule(NetModule())
             .build()
-    lateinit var httpClient: OkHttpClient
+    @Inject lateinit var httpClient: OkHttpClient
 
     override fun onCreate() {
         super.onCreate()
