@@ -16,6 +16,7 @@ import android.widget.Toast
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantAdapter
+import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.extensions.sortBy
@@ -26,6 +27,7 @@ import com.cbruegg.mensaupb.view.DividerItemDecoration
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import javax.inject.Inject
 
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
@@ -65,12 +67,15 @@ class MainActivity : AppCompatActivity() {
                     .apply()
         }
     private var lastRestaurant: Restaurant? = null
+    @Inject lateinit var downloader: Downloader
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         setContentView(R.layout.activity_main)
+
+        app.netComponent.inject(this)
 
         // Setup the restaurant list in the drawer
         val restaurantAdapter = RestaurantAdapter()
@@ -83,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         restaurantList.layoutManager = LinearLayoutManager(this)
 
         // Download data for the list
-        subscription = Downloader(this).downloadOrRetrieveRestaurants()
+        subscription = downloader.downloadOrRetrieveRestaurants()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {

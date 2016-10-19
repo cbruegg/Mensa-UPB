@@ -9,7 +9,7 @@ object MoshiProvider {
      * The global Moshi instance. You will most likely want ot use
      * [provideJsonAdapter] instead.
      */
-    val moshi = Moshi.Builder()
+    val moshi: Moshi = Moshi.Builder()
             .add(PriceTypeJsonAdapter())
             .add(Date::class.java, Rfc3339DateJsonAdapter())
             .build()

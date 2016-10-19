@@ -20,6 +20,7 @@ import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.PreferenceActivity
 import com.cbruegg.mensaupb.adapter.DishViewModelAdapter
+import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.model.Restaurant
@@ -33,6 +34,7 @@ import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Fragment responsible for displaying the dishes of a restaurant at a specified date.
@@ -62,6 +64,12 @@ class DishesFragment : Fragment() {
     private val dishList: RecyclerView by bindView(R.id.dish_list)
     private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)
     private var subscription: Subscription? = null
+    @Inject lateinit var downloader: Downloader
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        app.netComponent.inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.fragment_dishes, container, false)
@@ -86,7 +94,7 @@ class DishesFragment : Fragment() {
         /**
          * Download data for the list
          */
-        subscription = Downloader(activity).downloadOrRetrieveDishes(restaurant, date)
+        subscription = downloader.downloadOrRetrieveDishes(restaurant, date)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
