@@ -7,13 +7,17 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
+import android.util.Log
 import android.widget.RemoteViews
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.MainActivity
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.filterRight
 import com.cbruegg.mensaupb.model.Restaurant
+import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Failure
+import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Success
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.filterNotNull
@@ -62,7 +66,13 @@ class DishesWidgetUpdateService : Service() {
 
     private var subscription: Subscription? = null
 
+    override fun onCreate() {
+        super.onCreate()
+        Log.d(TAG, "onCreate")
+    }
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        Log.d(TAG, "onStartCommand")
         val downloader = Downloader(this)
         val appWidgetIds = intent.getIntArrayExtra(ARG_APPWIDGET_IDS)
         val configManager = DishesWidgetConfigurationManager(this)
@@ -93,7 +103,10 @@ class DishesWidgetUpdateService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    override fun onBind(intent: Intent): IBinder? = null
+    override fun onBind(intent: Intent): IBinder? {
+        Log.d(TAG, "onBInd")
+        return null
+    }
 
     /**
      * If the result is successful, update the remote views
@@ -151,6 +164,7 @@ class DishesWidgetUpdateService : Service() {
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "onDestroy")
         subscription?.unsubscribe()
         super.onDestroy()
     }
