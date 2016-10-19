@@ -2,19 +2,21 @@ package com.cbruegg.mensaupb.downloader
 
 import android.content.Context
 import com.cbruegg.mensaupb.BuildConfig
+import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DataCache
 import com.cbruegg.mensaupb.extensions.ioObservable
-import com.cbruegg.mensaupb.httpClient
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.parser.parseDishes
 import com.cbruegg.mensaupb.parser.parseRestaurantsFromApi
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.funktionale.either.Either
 import rx.Observable
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 private val API_ID = BuildConfig.API_ID
 private val BASE_URL = "http://www.studentenwerk-pb.de/fileadmin/shareddata/access2.php?id=" + API_ID
@@ -25,7 +27,12 @@ private val RESTAURANT_URL = BASE_URL + "&getrestaurants=1";
  */
 class Downloader(context: Context) {
 
-    private val dataCache = DataCache.getInstance(context)
+    @Inject lateinit var dataCache: DataCache
+    @Inject lateinit var httpClient: OkHttpClient
+
+    init {
+        context.app.netComponent.inject(this)
+    }
 
     /**
      * Get a list of all restaurants.

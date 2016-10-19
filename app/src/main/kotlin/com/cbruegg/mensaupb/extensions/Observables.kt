@@ -6,7 +6,7 @@ import rx.Subscriber
 import rx.lang.kotlin.observable
 import java.io.IOException
 
-fun <T> ioObservable(completeOnError: Boolean = true, body: (s: Subscriber<in T>) -> Unit): Observable<Either<IOException, T>> {
+fun <T: Any> ioObservable(completeOnError: Boolean = true, body: (s: Subscriber<in T>) -> Unit): Observable<Either<IOException, T>> {
     return observable {
         try {
             body(it.mapToSingleNonEitherSubscriber())
@@ -22,14 +22,15 @@ fun <T> ioObservable(completeOnError: Boolean = true, body: (s: Subscriber<in T>
 /**
  * Only keep left items, mapping them to their left value.
  */
-fun <L, R> Observable<Either<L, R>>.filterLeft(): Observable<L> = filter { it.isLeft() }.map { it.left().get() }
+fun <L: Any, R: Any> Observable<Either<L, R>>.filterLeft(): Observable<L> = filter { it.isLeft() }.map { it.left().get() }
 
 /**
  * Only keep right items, mapping them to their right value.
  */
-fun <L, R> Observable<Either<L, R>>.filterRight(): Observable<R> = filter { it.isRight() }.map { it.right().get() }
+fun <L: Any, R: Any> Observable<Either<L, R>>.filterRight(): Observable<R> = filter { it.isRight() }.map { it.right().get() }
 
-private fun <T, T1> Subscriber<in Either<T, T1>>.mapToSingleNonEitherSubscriber(): Subscriber<in T1> = object : Subscriber<T1>() {
+
+private fun <T: Any, T1: Any> Subscriber<in Either<T, T1>>.mapToSingleNonEitherSubscriber(): Subscriber<in T1> = object : Subscriber<T1>() {
     override fun onNext(t: T1) {
         this@mapToSingleNonEitherSubscriber.onNext(Either.Right(t))
     }

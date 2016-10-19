@@ -6,7 +6,6 @@ import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.withLockAsync
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
-import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
@@ -15,26 +14,7 @@ import java.util.concurrent.locks.ReentrantLock
  * Class responsible for caching data used by the app.
  * Each restaurant has its own SharedPreferences file.
  */
-class DataCache private constructor(private val context: Context) {
-
-    companion object {
-        // Multiple instances of this class shouldn't happen,
-        // otherwise race conditions can occur while saving.
-        private var dataCacheRef: WeakReference<DataCache?> = WeakReference(null)
-
-        /**
-         * Get a singleton instance of this class.
-         */
-        fun getInstance(context: Context): DataCache {
-            return dataCacheRef.get() ?: createNewInstance(context)
-        }
-
-        private fun createNewInstance(context: Context): DataCache {
-            val dataCache = DataCache(context)
-            dataCacheRef = WeakReference(dataCache)
-            return dataCache
-        }
-    }
+class DataCache @Deprecated("Inject this.") constructor(private val context: Context) {
 
     /**
      * Log tag
