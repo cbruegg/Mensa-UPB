@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     // Enabling this doesn't play well with Kotlin
     compileOptions.incremental = false
@@ -54,7 +54,7 @@ dependencies {
 }
 
 buildscript {
-    ext.kotlin_version = '1.0.1'
+    ext.kotlin_version = '1.0.4'
     repositories {
         jcenter()
     }
