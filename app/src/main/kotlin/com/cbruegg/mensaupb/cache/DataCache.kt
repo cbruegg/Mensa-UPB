@@ -2,6 +2,7 @@ package com.cbruegg.mensaupb.cache
 
 import android.content.Context
 import android.util.Log
+import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.withLockAsync
 import com.cbruegg.mensaupb.model.Dish
@@ -15,11 +16,6 @@ import java.util.concurrent.locks.ReentrantLock
  * Each restaurant has its own SharedPreferences file.
  */
 class DataCache @Deprecated("Inject this.") constructor(private val context: Context) {
-
-    /**
-     * Log tag
-     */
-    private val TAG = "DataCache"
 
     private val PREFERENCES_PREFIX = "CACHE_"
     private val MASTER_PREFERENCE_NAME = PREFERENCES_PREFIX + "MASTER"
@@ -132,7 +128,8 @@ class DataCache @Deprecated("Inject this.") constructor(private val context: Con
         val keyForDate = SimpleDateFormat(DATE_FORMAT).format(date)
 
         val serializedDishes = store.getStringSet(keyForDate, null)
-        Log.d(TAG, (if (serializedDishes == null) "MISS" else "HIT") + ": " + restaurant.id + ", " + date.toString())
+        val missOrHit = if (serializedDishes == null) "MISS" else "HIT"
+        Log.d(TAG, "$missOrHit: ${restaurant.id}, $keyForDate")
         if (serializedDishes == null) {
             return null
         } else {

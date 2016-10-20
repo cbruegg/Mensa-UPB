@@ -31,6 +31,7 @@ import com.squareup.picasso.Picasso
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import java.io.IOException
 import java.util.*
 import javax.inject.Inject
 
@@ -100,7 +101,7 @@ class DishesFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    it.fold({ showNetworkError(adapter) }) {
+                    it.fold({ showNetworkError(adapter, it) }) {
                         noDishesMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
                         val dishViewModels = it.toDishViewModels(activity, userType)
                         tryShowArgDish(dishViewModels, germanDishName)
@@ -126,9 +127,10 @@ class DishesFragment : Fragment() {
         }
     }
 
-    private fun showNetworkError(adapter: DishViewModelAdapter) {
+    private fun showNetworkError(adapter: DishViewModelAdapter, e: IOException) {
         noDishesMessage.visibility = View.GONE
         adapter.list.setAll(emptyList())
+        e.printStackTrace()
     }
 
     /**
