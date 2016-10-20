@@ -64,6 +64,6 @@ class Downloader(context: Context) {
      */
     private fun generateDishesUrl(restaurant: Restaurant, date: Date): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-        return BASE_URL + "&date=" + dateFormat.format(date) + "&restaurant=" + restaurant.id
+        return "$BASE_URL&date=${dateFormat.format(date)}&restaurant=${restaurant.id}"
     }
 }
