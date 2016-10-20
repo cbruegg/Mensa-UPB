@@ -23,7 +23,6 @@ import com.cbruegg.mensaupb.extensions.toggleDrawer
 import com.cbruegg.mensaupb.fragment.RestaurantFragment
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
-import com.cbruegg.mensaupb.view.DividerItemDecoration
 import com.cbruegg.mensaupb.viewmodel.uiSorted
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -109,7 +108,6 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             showRestaurant(restaurant)
         }
-        restaurantList.addItemDecoration(DividerItemDecoration(this))
         restaurantList.adapter = restaurantAdapter
         restaurantList.layoutManager = LinearLayoutManager(this)
 

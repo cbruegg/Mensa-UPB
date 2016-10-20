@@ -15,23 +15,35 @@
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/header_gray"
+            android:visibility="@{dishViewModel.showDivider ? View.VISIBLE : View.GONE}" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:background="@color/header_gray"
+            android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
-            android:paddingEnd="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingStart="5dp"
+            android:paddingEnd="@dimen/activity_horizontal_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingStart="@dimen/activity_horizontal_margin"
             android:text="@{dishViewModel.headerText}"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:visibility="@{dishViewModel.hasHeader ? View.VISIBLE : View.GONE}" />
+            android:textColor="@color/header_gray"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="@{dishViewModel.hasHeader ? View.VISIBLE : View.GONE}"
+            tools:text="Essen"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,6 +53,8 @@
             android:onClick="@{onClickListener.onClick}"
             android:orientation="horizontal"
             android:paddingBottom="5dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="5dp">
 
             <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -63,7 +77,8 @@
                     android:layout_height="wrap_content"
                     android:text="@{dishViewModel.dish.germanName}"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:text="Schupfnudelpfanne" />
 
                 <TextView
                     android:layout_width="wrap_content"

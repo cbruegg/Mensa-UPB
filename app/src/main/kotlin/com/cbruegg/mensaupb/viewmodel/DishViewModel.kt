@@ -21,12 +21,13 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
                          @DataBindingProperty val userPrice: Double,
                          @DataBindingProperty val priceText: String,
                          @DataBindingProperty val allergensText: String,
-                         @DataBindingProperty val badgesText: String?) {
+                         @DataBindingProperty val badgesText: String?,
+                         @DataBindingProperty val position: Int) {
     companion object {
 
         private val NUMBER_FORMAT = DecimalFormat("0.00")
 
-        fun create(dish: Dish, headerText: String?, userType: UserType, context: Context): DishViewModel {
+        fun create(dish: Dish, headerText: String?, userType: UserType, context: Context, position: Int): DishViewModel {
             val userPrice = when (userType) {
                 UserType.STUDENT -> dish.studentPrice
                 UserType.WORKER -> dish.workerPrice
@@ -39,7 +40,7 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
                     .joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionId) })
                     .toString()
                     .capitalizeFirstChar()
-            return DishViewModel(dish, headerText, userPrice, priceText, allergensText, badgesText)
+            return DishViewModel(dish, headerText, userPrice, priceText, allergensText, badgesText, position)
         }
     }
 
@@ -49,6 +50,7 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
     @DataBindingProperty val hasThumbnail = !dish.thumbnailImageUrl.isNullOrEmpty()
     @DataBindingProperty val hasBigImage = !dish.imageUrl.isNullOrEmpty()
     @DataBindingProperty val hasHeader = headerText != null
+    @DataBindingProperty val showDivider = hasHeader && position > 0
 }
 
 /**
@@ -56,7 +58,7 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
  * for this user type.
  */
 val UserType.dishComparator: Comparator<Dish>
-    get() = compareByDescending<Dish> { it.germanCategory } // Sort by category
+    get() = compareByDescending<Dish>(Dish::germanCategory) // Sort by category
             .thenComparator { d1, d2 ->
                 if (d1.priceType == d2.priceType) 0 else if (d1.priceType == PriceType.FIXED) -1 else 1
             } // Weighted is worse
@@ -67,7 +69,9 @@ val UserType.dishComparator: Comparator<Dish>
  */
 fun List<Dish>.toDishViewModels(context: Context, userType: UserType): List<DishViewModel> {
     val sortedList = sortedWith(userType.dishComparator)
-    return sortedList.mapIndexed { position, dish -> DishViewModel.create(dish, headerTextForIndex(position, sortedList), userType, context) }
+    return sortedList.mapIndexed { position, dish ->
+        DishViewModel.create(dish, headerTextForIndex(position, sortedList), userType, context, position)
+    }
 }
 
 /**

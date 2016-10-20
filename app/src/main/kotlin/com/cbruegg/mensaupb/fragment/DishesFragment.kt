@@ -23,7 +23,6 @@ import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.model.Restaurant
-import com.cbruegg.mensaupb.view.DividerItemDecoration
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import com.squareup.picasso.Callback
@@ -86,7 +85,6 @@ class DishesFragment : Fragment() {
         val adapter = DishViewModelAdapter()
         adapter.onClickListener = { dishViewModel, position -> if (dishViewModel.hasBigImage) showDishDetailsDialog(dishViewModel) }
         dishList.adapter = adapter
-        dishList.addItemDecoration(DividerItemDecoration(activity))
         dishList.layoutManager = LinearLayoutManager(activity)
 
         val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))
