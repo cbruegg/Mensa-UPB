@@ -149,6 +149,8 @@ class DishesFragment : Fragment() {
     private fun showDishDetailsDialog(dishViewModel: DishViewModel) {
         val dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_dish_details, null, false)
         val imageView = dialogView.findViewById(R.id.dish_image) as ImageView
+        val allergensView = dialogView.findViewById(R.id.dish_allergens) as TextView
+        val dishInfoContainer = dialogView.findViewById(R.id.dish_info_container)
         val progressBar = dialogView.findViewById(R.id.dish_image_progressbar) as ProgressBar
 
         val alertDialog = AlertDialog.Builder(activity)
@@ -169,6 +171,7 @@ class DishesFragment : Fragment() {
                 .into(imageView, object : Callback {
                     override fun onSuccess() {
                         progressBar.visibility = View.GONE
+                        dishInfoContainer.visibility = View.VISIBLE
                     }
 
                     override fun onError() {
@@ -177,6 +180,11 @@ class DishesFragment : Fragment() {
                     }
 
                 })
+
+        if (dishViewModel.containsAllergens) {
+            allergensView.text = dishViewModel.allergensText
+            allergensView.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroyView() {

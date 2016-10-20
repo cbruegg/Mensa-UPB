@@ -88,12 +88,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{dishViewModel.allergensText}"
-                    android:visibility="@{dishViewModel.containsAllergens ? View.VISIBLE : View.GONE}" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="@{dishViewModel.badgesText}"
                     android:visibility="@{dishViewModel.hasBadges ? View.VISIBLE : View.GONE}" />
 

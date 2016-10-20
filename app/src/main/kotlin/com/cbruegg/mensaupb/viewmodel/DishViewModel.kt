@@ -33,7 +33,7 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
                 UserType.WORKER -> dish.workerPrice
                 UserType.GUEST -> dish.guestPrice
             }
-            val priceText = "${context.getString(R.string.price)} ${NUMBER_FORMAT.format(userPrice)} € ${if (dish.priceType == PriceType.WEIGHTED) context.getString(R.string.per_100_gramm) else ""}"
+            val priceText = "${NUMBER_FORMAT.format(userPrice)} € ${if (dish.priceType == PriceType.WEIGHTED) context.getString(R.string.per_100_gramm) else ""}"
             val allergensText = "${context.getString(R.string.allergens)} ${dish.allergens.replace("A1", "A1 (Gluten)").joinToString()}"
             val badgesText = dish.badges
                     .filterNotNull()

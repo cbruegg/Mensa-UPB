@@ -3,7 +3,6 @@
     <string name="app_name">Mensa UPB</string>
     <string name="dateTabFormat">EEE\', den \'dd\'.\'</string>
     <string name="per_100_gramm">pro 100g</string>
-    <string name="price">Preis:</string>
     <string name="allergens">Allergene:</string>
     <string name="vegan">vegan</string>
     <string name="vegetarian">vegetarisch</string>
