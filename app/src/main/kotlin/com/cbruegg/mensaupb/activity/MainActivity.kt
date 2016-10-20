@@ -28,6 +28,7 @@ import com.cbruegg.mensaupb.viewmodel.uiSorted
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -127,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    it.fold({ showNetworkError(restaurantAdapter) }) {
+                    it.fold({ showNetworkError(restaurantAdapter, it) }) {
                         val preparedList = it.uiSorted()
                         restaurantAdapter.list.setAll(preparedList)
                         checkShowFirstTimeDrawer()
@@ -137,9 +138,10 @@ class MainActivity : AppCompatActivity() {
                 }
     }
 
-    private fun showNetworkError(restaurantAdapter: RestaurantAdapter) {
+    private fun showNetworkError(restaurantAdapter: RestaurantAdapter, e: IOException) {
         restaurantAdapter.list.setAll(emptyList())
         Toast.makeText(this, R.string.network_error, Toast.LENGTH_LONG).show()
+        e.printStackTrace()
     }
 
     /**

@@ -5,7 +5,7 @@ import rx.Observable
 import rx.Subscriber
 import rx.lang.kotlin.observable
 import java.io.IOException
-
+// TODO Don't use Observable.create
 fun <T: Any> ioObservable(completeOnError: Boolean = true, body: (s: Subscriber<in T>) -> Unit): Observable<Either<IOException, T>> {
     return observable {
         try {

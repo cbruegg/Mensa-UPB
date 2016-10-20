@@ -21,6 +21,7 @@ import com.cbruegg.mensaupb.viewmodel.uiSorted
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import java.io.IOException
 
 /**
  * Activity used for configuring an app widget. It must
@@ -50,7 +51,7 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    it.fold({ showNetworkError() }) {
+                    it.fold({ showNetworkError(it) }) {
                         val preparedList = it.uiSorted()
                         restaurantList = preparedList
                         spinner.adapter = RestaurantSpinnerAdapter(this, preparedList)
@@ -77,8 +78,9 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
     /**
      * Notify the user about a network error.
      */
-    private fun showNetworkError() {
+    private fun showNetworkError(e: IOException) {
         Toast.makeText(this, R.string.network_error, Toast.LENGTH_LONG).show()
+        e.printStackTrace()
     }
 
     override fun onDestroy() {

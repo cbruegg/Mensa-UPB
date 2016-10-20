@@ -97,8 +97,10 @@ class DishesWidgetUpdateService : Service() {
                 .filterNotNull()
                 .timeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .onError { stopSelf() }
-                .doOnCompleted { stopSelf() }
-                .subscribe { updateAppWidget(it) }
+                .subscribe {
+                    updateAppWidget(it)
+                    stopSelf()
+                }
 
         return super.onStartCommand(intent, flags, startId)
     }

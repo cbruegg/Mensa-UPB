@@ -104,7 +104,7 @@ class RestaurantFragment : Fragment() {
 
         override fun getCount() = dates.size
 
-        override fun getPageTitle(position: Int) = dateFormatter.format(dates[position])
+        override fun getPageTitle(position: Int): String = dateFormatter.format(dates[position])
     }
 
 }
