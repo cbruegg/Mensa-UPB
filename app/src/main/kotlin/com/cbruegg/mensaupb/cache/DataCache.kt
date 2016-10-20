@@ -2,6 +2,7 @@ package com.cbruegg.mensaupb.cache
 
 import android.content.Context
 import android.util.Log
+import android.util.Pair
 import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.withLockAsync
@@ -16,6 +17,8 @@ import java.util.concurrent.locks.ReentrantLock
  * Each restaurant has its own SharedPreferences file.
  */
 class DataCache @Deprecated("Inject this.") constructor(private val context: Context) {
+
+    // TODO Move this to SQLite db
 
     private val PREFERENCES_PREFIX = "CACHE_"
     private val MASTER_PREFERENCE_NAME = PREFERENCES_PREFIX + "MASTER"
