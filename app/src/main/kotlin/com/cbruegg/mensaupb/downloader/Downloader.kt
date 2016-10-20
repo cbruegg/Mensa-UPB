@@ -44,8 +44,7 @@ class Downloader(context: Context) {
         return ioObservable {
             val cachedRestaurants = dataCache.retrieveRestaurants()
             val restaurants = cachedRestaurants ?: dataCache.cache(parseRestaurantsFromApi(httpClient.newCall(request).execute().body().source()))
-            it.onNext(restaurants.filter { !onlyActive || it.isActive })
-            it.onCompleted()
+            restaurants.filter { !onlyActive || it.isActive }
         }
     }
 
@@ -56,8 +55,7 @@ class Downloader(context: Context) {
         val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
         return ioObservable {
             val cachedDishes = dataCache.retrieve(restaurant, date)
-            it.onNext(cachedDishes ?: dataCache.cache(restaurant, date, parseDishes(httpClient.newCall(request).execute().body().source())))
-            it.onCompleted()
+            cachedDishes ?: dataCache.cache(restaurant, date, parseDishes(httpClient.newCall(request).execute().body().source()))
         }
     }
 
