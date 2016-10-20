@@ -100,6 +100,12 @@ class MainActivity : AppCompatActivity() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         setContentView(R.layout.activity_main)
 
+        supportActionBar!!.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeButtonEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_store_mall_directory_white_24dp)
+        }
+
         app.netComponent.inject(this)
 
         // Setup the restaurant list in the drawer
@@ -162,13 +168,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            android.R.id.home -> {
+                drawerLayout.toggleDrawer(GravityCompat.START)
+                return true
+            }
             R.id.settings -> {
                 val intent = Intent(this, PreferenceActivity::class.java)
                 startActivityForResult(intent, REQUEST_CODE_PREFERENCES)
-                return true
-            }
-            R.id.restaurants -> {
-                drawerLayout.toggleDrawer(GravityCompat.START)
                 return true
             }
             R.id.stw_url -> {

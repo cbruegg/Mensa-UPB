@@ -26,4 +26,6 @@
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
     <string name="dish_app_widget_error_restaurant_not_found">Restaurant not found</string>
+    <string name="show_restaurants">Shows Restaurants</string>
+    <string name="hide_restaurants">Hide Restaurants</string>
 </resources>
