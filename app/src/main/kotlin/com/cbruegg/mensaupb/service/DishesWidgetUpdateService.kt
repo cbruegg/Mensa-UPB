@@ -16,8 +16,6 @@ import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.filterRight
 import com.cbruegg.mensaupb.model.Restaurant
-import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Failure
-import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Success
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.filterNotNull
