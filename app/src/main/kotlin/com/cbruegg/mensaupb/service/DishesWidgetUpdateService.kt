@@ -16,6 +16,8 @@ import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.filterRight
 import com.cbruegg.mensaupb.model.Restaurant
+import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Failure
+import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Success
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.filterNotNull
@@ -97,10 +99,10 @@ class DishesWidgetUpdateService : Service() {
                 .onError { stopSelf() }
                 .subscribe {
                     updateAppWidget(it)
-                    stopSelf()
+                    stopSelf(startId)
                 }
 
-        return super.onStartCommand(intent, flags, startId)
+        return START_REDELIVER_INTENT
     }
 
     override fun onBind(intent: Intent): IBinder? {
