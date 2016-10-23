@@ -28,4 +28,7 @@
     <string name="dish_app_widget_error_restaurant_not_found">Restaurant not found</string>
     <string name="show_restaurants">Shows Restaurants</string>
     <string name="hide_restaurants">Hide Restaurants</string>
+    <string name="did_you_know">Did you know?</string>
+    <string name="appwidget_ad">This app now includes a widget for your homescreen! Simply press-and-hold on your homescreen to add it.</string>
+    <string name="ok">OK</string>
 </resources>

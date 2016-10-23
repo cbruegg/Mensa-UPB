@@ -31,7 +31,7 @@ class Downloader(context: Context) {
     @Inject lateinit var httpClient: OkHttpClient
 
     init {
-        context.app.netComponent.inject(this)
+        context.app.appComponent.inject(this)
     }
 
     /**

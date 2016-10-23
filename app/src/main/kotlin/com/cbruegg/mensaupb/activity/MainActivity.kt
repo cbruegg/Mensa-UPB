@@ -6,7 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.AlertDialog
 import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -23,6 +23,7 @@ import com.cbruegg.mensaupb.extensions.toggleDrawer
 import com.cbruegg.mensaupb.fragment.RestaurantFragment
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
+import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
 import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import rx.Subscription
@@ -93,8 +94,10 @@ class MainActivity : BaseActivity() {
                     .putString(PREFS_KEY_LAST_SELECTED_RESTAURANT, new)
                     .apply()
         }
+
     private var lastRestaurant: Restaurant? = null
     @Inject lateinit var downloader: Downloader
+    @Inject lateinit var oneOff: OneOff
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,7 +110,7 @@ class MainActivity : BaseActivity() {
             setHomeAsUpIndicator(R.drawable.ic_store_mall_directory_white_24dp)
         }
 
-        app.netComponent.inject(this)
+        app.appComponent.inject(this)
 
         // Setup the restaurant list in the drawer
         val restaurantAdapter = RestaurantAdapter()
@@ -120,6 +123,18 @@ class MainActivity : BaseActivity() {
 
         // Download data for the list
         reload()
+
+        runOneOffs()
+    }
+
+    fun runOneOffs() {
+        oneOff.launch("appwidget_ad") {
+            AlertDialog.Builder(this)
+                    .setTitle(R.string.did_you_know)
+                    .setMessage(R.string.appwidget_ad)
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
+        }
     }
 
     /**

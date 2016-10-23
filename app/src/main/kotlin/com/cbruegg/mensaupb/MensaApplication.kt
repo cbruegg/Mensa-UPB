@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class MensaApplication : Application() {
 
-    val netComponent: NetComponent = DaggerNetComponent.builder()
+    val appComponent: AppComponent = DaggerAppComponent.builder()
             .appModule(AppModule(this))
             .netModule(NetModule())
             .build()
@@ -19,7 +19,7 @@ class MensaApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        netComponent.inject(this)
+        appComponent.inject(this)
         initPicasso()
     }
 

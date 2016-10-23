@@ -8,7 +8,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = arrayOf(AppModule::class, NetModule::class))
-interface NetComponent {
+interface AppComponent {
     fun inject(downloader: Downloader)
     fun inject(app: MensaApplication)
     fun inject(mainActivity: MainActivity)
