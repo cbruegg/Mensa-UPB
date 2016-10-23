@@ -24,6 +24,7 @@ import com.cbruegg.mensaupb.fragment.RestaurantFragment
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.viewmodel.uiSorted
+import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -33,7 +34,7 @@ import javax.inject.Inject
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     companion object {
 
@@ -130,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         val restaurantAdapter = restaurantList.adapter as RestaurantAdapter
         subscription = downloader.downloadOrRetrieveRestaurants()
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread()).bindToLifecycle(this)
                 .subscribe {
                     it.fold({ showNetworkError(restaurantAdapter, it) }) {
                         val preparedList = it.uiSorted()

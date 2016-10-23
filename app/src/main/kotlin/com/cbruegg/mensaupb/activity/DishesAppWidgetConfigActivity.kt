@@ -18,6 +18,7 @@ import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import com.cbruegg.mensaupb.viewmodel.uiSorted
+import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -27,7 +28,7 @@ import java.io.IOException
  * Activity used for configuring an app widget. It must
  * be supplied an an AppWidgetId using [AppWidgetManager.EXTRA_APPWIDGET_ID].
  */
-class DishesAppWidgetConfigActivity : AppCompatActivity() {
+class DishesAppWidgetConfigActivity : BaseActivity() {
 
     private val spinner by bindView<Spinner>(R.id.widget_config_spinner)
 
@@ -50,6 +51,7 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
         subscription = Downloader(this).downloadOrRetrieveRestaurants()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .bindToLifecycle(this)
                 .subscribe {
                     it.fold({ showNetworkError(it) }) {
                         val preparedList = it.uiSorted()

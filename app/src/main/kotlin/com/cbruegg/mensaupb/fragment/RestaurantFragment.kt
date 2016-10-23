@@ -3,7 +3,6 @@ package com.cbruegg.mensaupb.fragment
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
@@ -21,7 +20,7 @@ import java.util.concurrent.TimeUnit
  * Fragment hosting a Pager of DishesFragments.
  * The factory method newInstance needs to be used.
  */
-class RestaurantFragment : Fragment() {
+class RestaurantFragment : BaseFragment() {
     companion object {
         private val ARG_RESTAURANT = "restaurant"
         private val ARG_PAGER_POSITION = "pager_position"

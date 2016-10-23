@@ -3,7 +3,6 @@ package com.cbruegg.mensaupb.fragment
 import android.content.Context
 import android.graphics.Point
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -27,6 +26,7 @@ import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import com.trello.rxlifecycle.kotlin.bindToLifecycle
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -38,7 +38,7 @@ import javax.inject.Inject
  * Fragment responsible for displaying the dishes of a restaurant at a specified date.
  * The factory method newInstance needs to be used.
  */
-class DishesFragment : Fragment() {
+class DishesFragment : BaseFragment() {
 
     companion object {
         private val ARG_RESTAURANT = "restaurant"
@@ -98,6 +98,7 @@ class DishesFragment : Fragment() {
         subscription = downloader.downloadOrRetrieveDishes(restaurant, date)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .bindToLifecycle(this)
                 .subscribe {
                     it.fold({ showNetworkError(adapter, it) }) {
                         noDishesMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
