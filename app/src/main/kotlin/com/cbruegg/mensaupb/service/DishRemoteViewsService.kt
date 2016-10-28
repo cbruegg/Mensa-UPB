@@ -75,7 +75,7 @@ class DishRemoteViewsService : RemoteViewsService() {
         override fun onCreate() {
         }
 
-        override fun getItemId(position: Int) = position.toLong()
+        override fun getItemId(position: Int) = dishes[position].hashCode().toLong()
 
         override fun onDataSetChanged() {
             val (restaurantId) = DishesWidgetConfigurationManager(context).retrieveConfiguration(appWidgetId) ?: return
@@ -98,7 +98,7 @@ class DishRemoteViewsService : RemoteViewsService() {
                     }
         }
 
-        override fun hasStableIds() = false
+        override fun hasStableIds() = true
 
         override fun getCount() = dishes.size
 

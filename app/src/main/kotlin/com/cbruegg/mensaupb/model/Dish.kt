@@ -31,7 +31,7 @@ data class Dish(@Json(name = "date") val date: Date = Date(),
         /**
          * Deserialize a Dish serialized with [serialize]
          */
-        fun deserialize(serialized: String) = MoshiProvider.provideJsonAdapter<Dish>().fromJson(serialized)
+        fun deserialize(serialized: String): Dish = MoshiProvider.provideJsonAdapter<Dish>().fromJson(serialized)
     }
 
     /**
