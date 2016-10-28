@@ -7,13 +7,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
-import android.util.Log
 import android.widget.RemoteViews
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.MainActivity
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.downloader.Downloader
-import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.filterRight
 import com.cbruegg.mensaupb.model.Restaurant
 import rx.Subscription
@@ -21,6 +19,8 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.filterNotNull
 import rx.lang.kotlin.onError
 import rx.schedulers.Schedulers
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -50,6 +50,24 @@ class DishesWidgetUpdateService : Service() {
         private const val REQUEST_CODE_DISH = 1
         private const val ARG_APPWIDGET_IDS = "app_widget_ids"
 
+        /**
+         * Show the dishes for the current date + this offset (in ms).
+         * This is useful since we don't want to show the dishes for the
+         * current day at 22:00.
+         */
+        val DATE_OFFSET = TimeUnit.HOURS.toMillis(2)
+
+        /**
+         * In addition to the [DATE_OFFSET], add this
+         * to the current Date to obtain the text that represents
+         * the displayed date on the widget. This is used to account
+         * for the delay introduced by the network, since the actual
+         * dish data is fetched later in [DishRemoteViewsService] and
+         * we don't want to show "TUE" when the [DishRemoteViewsService]
+         * actually already fetches data for "WED".
+         */
+        private val INTERNAL_DATE_OFFSET = TimeUnit.MINUTES.toMillis(5)
+
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
 
         /**
@@ -63,6 +81,8 @@ class DishesWidgetUpdateService : Service() {
     }
 
     private var subscription: Subscription? = null
+    private val shownDate: Date
+        get() = Date(System.currentTimeMillis() + DATE_OFFSET + INTERNAL_DATE_OFFSET)
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val downloader = Downloader(this)
@@ -130,9 +150,10 @@ class DishesWidgetUpdateService : Service() {
         mainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         val dishPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_DISH, mainActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
+        val day = SimpleDateFormat("EEE").format(shownDate)
         val remoteViews = RemoteViews(packageName, R.layout.app_widget_dishes)
         remoteViews.setOnClickPendingIntent(R.id.dishes_widget_restaurant_name, restaurantPendingIntent)
-        remoteViews.setTextViewText(R.id.dishes_widget_restaurant_name, restaurant.name)
+        remoteViews.setTextViewText(R.id.dishes_widget_restaurant_name, "${restaurant.name} ($day)")
         remoteViews.setRemoteAdapter(R.id.dishes_widget_list, dishRemoteViewsServiceIntent)
         remoteViews.setPendingIntentTemplate(R.id.dishes_widget_list, dishPendingIntent)
         remoteViews.setEmptyView(R.id.dishes_widget_list, R.id.dishes_widget_empty_view)

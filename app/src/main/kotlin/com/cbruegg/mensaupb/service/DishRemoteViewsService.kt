@@ -37,6 +37,9 @@ class DishRemoteViewsService : RemoteViewsService() {
      */
     class DishRemoteViewsFactory(private val context: Context, private val appWidgetId: Int) : RemoteViewsFactory {
 
+        private val shownDate: Date
+            get() = Date(System.currentTimeMillis() + DishesWidgetUpdateService.DATE_OFFSET)
+
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
         private var dishes = emptyList<Dish>()
         private var restaurant: Restaurant? = null
@@ -84,7 +87,7 @@ class DishRemoteViewsService : RemoteViewsService() {
                         it.firstOrNull { restaurant -> restaurant.id == restaurantId }
                                 ?.apply { restaurant = this }
                     }
-                    .flatMap { it?.let { downloader.downloadOrRetrieveDishes(it, Date()) } }
+                    .flatMap { it?.let { downloader.downloadOrRetrieveDishes(it, shownDate) } }
                     .filterNotNull()
                     .timeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
                     .onErrorReturn { Either.Left(IOException("Timeout.")) }
