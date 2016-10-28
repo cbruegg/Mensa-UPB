@@ -64,13 +64,7 @@ class DishesWidgetUpdateService : Service() {
 
     private var subscription: Subscription? = null
 
-    override fun onCreate() {
-        super.onCreate()
-        Log.d(TAG, "onCreate")
-    }
-
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.d(TAG, "onStartCommand")
         val downloader = Downloader(this)
         val appWidgetIds = intent.getIntArrayExtra(ARG_APPWIDGET_IDS)
         val configManager = DishesWidgetConfigurationManager(this)
@@ -104,7 +98,6 @@ class DishesWidgetUpdateService : Service() {
     }
 
     override fun onBind(intent: Intent): IBinder? {
-        Log.d(TAG, "onBInd")
         return null
     }
 
@@ -164,7 +157,6 @@ class DishesWidgetUpdateService : Service() {
     }
 
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy")
         subscription?.unsubscribe()
         super.onDestroy()
     }
