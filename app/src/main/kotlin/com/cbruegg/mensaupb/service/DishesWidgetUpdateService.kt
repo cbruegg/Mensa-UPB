@@ -148,6 +148,7 @@ class DishesWidgetUpdateService : Service() {
         dishRemoteViewsServiceIntent.data = Uri.parse(dishRemoteViewsServiceIntent.toUri(Intent.URI_INTENT_SCHEME))
         val mainActivityIntent = Intent(this, MainActivity::class.java)
         mainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        mainActivityIntent.makeUnique(appWidgetId)
         val dishPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_DISH, mainActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         val day = SimpleDateFormat("EEE").format(shownDate)
@@ -182,4 +183,14 @@ class DishesWidgetUpdateService : Service() {
         super.onDestroy()
     }
 
+}
+
+/**
+ * To avoid PendingIntents being collapsed when they're actually
+ * different, use this method. WARNING: This overrides the data Uri!
+ *
+ * See also http://stackoverflow.com/questions/4011178/multiple-instances-of-widget-only-updating-last-widget.
+ */
+private fun Intent.makeUnique(id: Int) {
+    data = Uri.withAppendedPath(Uri.parse("madandroid://widget/id/"), id.toString())
 }
