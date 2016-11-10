@@ -1,10 +1,8 @@
 # Mensa-UPB
 
-<p align="center">
-<img src="/screenshot_main.png"></img>
-</p>
-
 There already exist a few Android apps for the restaurants of the University of Paderborn, yet I've found no one functional enough to be a daily driver. Some have a great design, yet lack image previews; others are outdated and don't work anymore as they rely on parsing the website of the Studierendenwerk.
+
+Please find screenshots and more information about the app's features in the [Play Store](https://play.google.com/store/apps/details?id=com.cbruegg.mensaupb).
 
 # Advantages of this project
 Mensa-UPB works with the official API of the Studierendenwerk, so it's unlikely to break anytime soon.
