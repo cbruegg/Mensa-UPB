@@ -1,5 +1,7 @@
 package com.cbruegg.mensaupb.parser
 
+import android.util.Log
+import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import okio.BufferedSource
@@ -17,4 +19,12 @@ fun parseRestaurantsFromApi(restaurantListSource: BufferedSource): List<Restaura
 /**
  * Parse dishes from the API response.
  */
-fun parseDishes(dishSource: BufferedSource): List<Dish> = MoshiProvider.provideListJsonAdapter<Dish>().fromJson(dishSource)
+fun parseDishes(dishSource: BufferedSource): List<Dish> {
+    if (BuildConfig.DEBUG) {
+        return dishSource.use {
+            val dishesStr = dishSource.readUtf8()
+            Log.d("parseDishes", dishesStr)
+            MoshiProvider.provideListJsonAdapter<Dish>().fromJson(dishesStr)
+        }
+    } else return MoshiProvider.provideListJsonAdapter<Dish>().fromJson(dishSource)
+}

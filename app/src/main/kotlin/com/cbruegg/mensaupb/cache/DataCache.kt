@@ -159,7 +159,7 @@ class DataCache @Deprecated("Inject this.") constructor(private val context: Con
     /**
      * Serialize dishes for storing them in a SharedPreference.
      */
-    private fun List<Dish>.serialize(): List<String> = map { it.serialize() }
+    private fun List<Dish>.serialize(): List<String> = map(Dish::serialize)
 
     /**
      * Deserialize dishes from a SharedPreference.
