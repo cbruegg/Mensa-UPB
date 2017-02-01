@@ -224,10 +224,10 @@
     <orderEntry type="library" exported="" name="baseLibrary-2.2.3" level="project" />
     <orderEntry type="library" exported="" name="design-24.2.1" level="project" />
     <orderEntry type="library" exported="" name="support-media-compat-24.2.1" level="project" />
-    <orderEntry type="library" exported="" name="kotlin-stdlib-1.0.4" level="project" />
     <orderEntry type="library" exported="" name="funktionale-0.9.5" level="project" />
     <orderEntry type="library" exported="" name="support-core-ui-24.2.1" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-24.2.1" level="project" />
+    <orderEntry type="library" exported="" name="kotlin-stdlib-1.0.6" level="project" />
     <orderEntry type="library" exported="" name="rxkotlin-0.60.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-24.2.1" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-24.2.1" level="project" />
@@ -240,9 +240,9 @@
     <orderEntry type="library" exported="" name="okio-1.11.0" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-24.2.1" level="project" />
     <orderEntry type="library" exported="" name="rxbinding-0.4.0" level="project" />
+    <orderEntry type="library" exported="" name="kotlin-runtime-1.0.6" level="project" />
     <orderEntry type="library" exported="" name="okhttp-3.4.1" level="project" />
     <orderEntry type="library" exported="" name="dagger-2.7" level="project" />
-    <orderEntry type="library" exported="" name="kotlin-runtime-1.0.4" level="project" />
     <orderEntry type="library" exported="" name="commons-codec-1.10" level="project" />
     <orderEntry type="library" exported="" name="compilerCommon-2.2.3" level="project" />
     <orderEntry type="library" exported="" name="annotations-24.5.0" level="project" />
