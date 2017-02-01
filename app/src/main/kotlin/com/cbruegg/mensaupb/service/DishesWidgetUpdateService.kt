@@ -159,6 +159,7 @@ class DishesWidgetUpdateService : Service() {
         remoteViews.setPendingIntentTemplate(R.id.dishes_widget_list, dishPendingIntent)
         remoteViews.setEmptyView(R.id.dishes_widget_list, R.id.dishes_widget_empty_view)
 
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.dishes_widget_list)
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
     }
 
