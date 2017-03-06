@@ -38,7 +38,7 @@ android {
 
 kotlin {
     experimental {
-        coroutines 'enable'
+        coroutines "enable"
     }
 }
 
@@ -69,7 +69,6 @@ dependencies {
     compile 'com.trello:rxlifecycle-kotlin:1.0'
 
     compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.12'
-    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-rx1:0.12'
 }
 
 buildscript {

@@ -5,18 +5,17 @@ import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DataCache
 import com.cbruegg.mensaupb.extensions.eitherTryIo
-import com.cbruegg.mensaupb.extensions.ioObservable
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.parser.parseDishes
 import com.cbruegg.mensaupb.parser.parseRestaurantsFromApi
-import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.funktionale.either.Either
-import rx.Observable
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,7 +43,7 @@ class Downloader(context: Context) {
      * @param onlyActive If true, only return restaurants marked as active.
      */
     fun downloadOrRetrieveRestaurantsAsync(onlyActive: Boolean = true):
-            Deferred<Either<IOException, List<Restaurant>>> = async(CommonPool) {
+            Deferred<Either<IOException, List<Restaurant>>> = async(Unconfined) {
         eitherTryIo {
             val request = Request.Builder().url(RESTAURANT_URL).build()
             val cachedRestaurants = dataCache.retrieveRestaurants()
@@ -59,7 +58,7 @@ class Downloader(context: Context) {
      * Get a list of all dishes in a restaurant at the specified date. The list might be empty.
      */
     fun downloadOrRetrieveDishesAsync(restaurant: Restaurant, date: Date):
-            Deferred<Either<IOException, List<Dish>>> = async(CommonPool) {
+            Deferred<Either<IOException, List<Dish>>> = async(Unconfined) {
         eitherTryIo {
             val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
             val cachedDishes = dataCache.retrieve(restaurant, date)

@@ -14,6 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import butterknife.bindView
+import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantAdapter
 import com.cbruegg.mensaupb.app
@@ -26,7 +27,7 @@ import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.launch
 import java.io.IOException
 import javax.inject.Inject
 
@@ -140,17 +141,18 @@ class MainActivity : BaseActivity() {
      * or the network, reloading the fragments afterwards.
      * This is useful for reloading after receiving a new intent.
      */
-    private fun reload() = runBlocking {
-        val restaurantAdapter = restaurantList.adapter as RestaurantAdapter
-        downloader.downloadOrRetrieveRestaurantsAsync()
-                .also { job = it }
-                .await()
-                .fold({ showNetworkError(restaurantAdapter, it) }) {
-                    val preparedList = it.uiSorted()
-                    restaurantAdapter.list.setAll(preparedList)
-                    checkShowFirstTimeDrawer()
-                    loadDefaultRestaurant(preparedList)
-                }
+    private fun reload() {
+        job = launch(MainThread) {
+            val restaurantAdapter = restaurantList.adapter as RestaurantAdapter
+            downloader.downloadOrRetrieveRestaurantsAsync()
+                    .await()
+                    .fold({ showNetworkError(restaurantAdapter, it) }) {
+                        val preparedList = it.uiSorted()
+                        restaurantAdapter.list.setAll(preparedList)
+                        checkShowFirstTimeDrawer()
+                        loadDefaultRestaurant(preparedList)
+                    }
+        }
     }
 
     private fun showNetworkError(restaurantAdapter: RestaurantAdapter, e: IOException) {

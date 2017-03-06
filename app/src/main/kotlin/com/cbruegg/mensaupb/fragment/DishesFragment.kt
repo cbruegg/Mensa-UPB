@@ -15,6 +15,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import butterknife.bindView
+import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.userType
 import com.cbruegg.mensaupb.adapter.DishViewModelAdapter
@@ -27,7 +28,7 @@ import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.launch
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
@@ -74,7 +75,7 @@ class DishesFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.fragment_dishes, container, false)
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = runBlocking {
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         /**
@@ -87,21 +88,19 @@ class DishesFragment : BaseFragment() {
 
         val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))
         val date = Date(arguments.getLong(ARG_DATE))
-        val userType = getContext().userType
+        val userType = context.userType
         val germanDishName: String? = arguments.getString(ARG_GERMAN_DISH_NAME, null)
 
-        /**
-         * Download data for the list
-         */
-        downloader.downloadOrRetrieveDishesAsync(restaurant, date)
-                .also { job = it }
-                .await()
-                .fold({ showNetworkError(adapter, it) }) {
-                    noDishesMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
-                    val dishViewModels = it.toDishViewModels(activity, userType)
-                    tryShowArgDish(dishViewModels, germanDishName)
-                    adapter.list.setAll(dishViewModels)
-                }
+        job = launch(MainThread) {
+            downloader.downloadOrRetrieveDishesAsync(restaurant, date)
+                    .await()
+                    .fold({ showNetworkError(adapter, it) }) {
+                        noDishesMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+                        val dishViewModels = it.toDishViewModels(activity, userType)
+                        tryShowArgDish(dishViewModels, germanDishName)
+                        adapter.list.setAll(dishViewModels)
+                    }
+        }
     }
 
     /**

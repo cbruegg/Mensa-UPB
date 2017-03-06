@@ -9,6 +9,7 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
 import butterknife.bindView
+import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfiguration
@@ -18,7 +19,7 @@ import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import com.cbruegg.mensaupb.viewmodel.uiSorted
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.launch
 import java.io.IOException
 
 /**
@@ -41,7 +42,7 @@ class DishesAppWidgetConfigActivity : BaseActivity() {
 
     private var job: Job? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) = runBlocking {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_widget_config)
         setResult(RESULT_CANCELED)
@@ -60,17 +61,18 @@ class DishesAppWidgetConfigActivity : BaseActivity() {
         }
         cancelButton.setOnClickListener { finish() }
 
-        Downloader(this@DishesAppWidgetConfigActivity)
-                .downloadOrRetrieveRestaurantsAsync()
-                .also { job = it }
-                .await()
-                .fold({ showNetworkError(it) }) {
-                    val preparedList = it.uiSorted()
-                    restaurantList = preparedList
-                    spinner.adapter = RestaurantSpinnerAdapter(this@DishesAppWidgetConfigActivity, preparedList)
-                    confirmButton.isEnabled = true
-                }
-        progressBar.visibility = View.INVISIBLE
+        job = launch(MainThread) {
+            Downloader(this@DishesAppWidgetConfigActivity)
+                    .downloadOrRetrieveRestaurantsAsync()
+                    .await()
+                    .fold({ showNetworkError(it) }) {
+                        val preparedList = it.uiSorted()
+                        restaurantList = preparedList
+                        spinner.adapter = RestaurantSpinnerAdapter(this@DishesAppWidgetConfigActivity, preparedList)
+                        confirmButton.isEnabled = true
+                    }
+            progressBar.visibility = View.INVISIBLE
+        }
     }
 
     /**

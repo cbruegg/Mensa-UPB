@@ -18,7 +18,6 @@ import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeout
 import java.io.IOException
@@ -45,7 +44,6 @@ class DishRemoteViewsService : RemoteViewsService() {
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
         private var dishes = emptyList<Dish>()
         private var restaurant: Restaurant? = null
-        private var job: Job? = null
 
         override fun getLoadingView(): RemoteViews? = null // Use default
 
@@ -99,19 +97,17 @@ class DishRemoteViewsService : RemoteViewsService() {
 
             withTimeout(TIMEOUT_MS) {
                 val restaurant = downloader.downloadOrRetrieveRestaurantsAsync()
-                        .also { job = it }
                         .await()
                         .component2()
                         ?.firstOrNull { (id) -> id == restaurantId }
                         ?: return@withTimeout
                 dishes = downloader.downloadOrRetrieveDishesAsync(restaurant, shownDate)
-                        .also { job = it }
                         .await()
                         .component2()
                         ?.sortedWith(ctx.userType.dishComparator)
                         ?: return@withTimeout
             }
-            Log.d(TAG, "RETURNED onDataSetChanged()")
+            Log.d(TAG, "RETURNED coroutine onDataSetChanged()")
         }
 
         override fun hasStableIds() = true
@@ -124,7 +120,6 @@ class DishRemoteViewsService : RemoteViewsService() {
 
         override fun onDestroy() {
             Log.d(TAG, "CALLED onDestroy()")
-            job?.cancel()
         }
 
     }

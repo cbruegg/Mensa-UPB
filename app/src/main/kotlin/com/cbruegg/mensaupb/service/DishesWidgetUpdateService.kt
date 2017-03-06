@@ -8,13 +8,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
 import android.widget.RemoteViews
+import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.MainActivity
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.model.Restaurant
+import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Failure
+import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Success
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withTimeout
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,7 +35,7 @@ class DishesWidgetUpdateService : Service() {
      * @see Failure
      * @see Success
      */
-    private sealed class DishAppWidgetResult(val appWidgetId: Int) {
+    sealed class DishAppWidgetResult(val appWidgetId: Int) {
         class Success(appWidgetId: Int, val restaurant: Restaurant) : DishAppWidgetResult(appWidgetId)
         class Failure(appWidgetId: Int, val reason: Reason) : DishAppWidgetResult(appWidgetId) {
             enum class Reason {
@@ -80,34 +83,35 @@ class DishesWidgetUpdateService : Service() {
     private val shownDate: Date
         get() = Date(System.currentTimeMillis() + DATE_OFFSET + INTERNAL_DATE_OFFSET)
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int = runBlocking {
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val downloader = Downloader(this@DishesWidgetUpdateService)
         val appWidgetIds = intent.getIntArrayExtra(ARG_APPWIDGET_IDS)
         val configManager = DishesWidgetConfigurationManager(this@DishesWidgetUpdateService)
 
-        withTimeout(TIMEOUT_MS) {
-            val restaurantsById = downloader.downloadOrRetrieveRestaurantsAsync()
-                    .also { job = it }
-                    .await()
-                    .component2()
-                    ?.associateBy { it.id }
-                    ?: return@withTimeout
+        job = launch(MainThread) {
+            withTimeout(TIMEOUT_MS) {
+                val restaurantsById = downloader.downloadOrRetrieveRestaurantsAsync()
+                        .await()
+                        .component2()
+                        ?.associateBy { it.id }
+                        ?: return@withTimeout
 
-            appWidgetIds
-                    .map { appWidgetId ->
-                        val config = configManager.retrieveConfiguration(appWidgetId)
-                                ?: return@map null
-                        val restaurant = restaurantsById[config.restaurantId]
-                                ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
+                appWidgetIds
+                        .map { appWidgetId ->
+                            val config = configManager.retrieveConfiguration(appWidgetId)
+                                    ?: return@map null
+                            val restaurant = restaurantsById[config.restaurantId]
+                                    ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
 
-                        DishAppWidgetResult.Success(appWidgetId, restaurant)
-                    }
-                    .filterNotNull()
-                    .forEach { updateAppWidget(it) }
-            stopSelf()
+                            DishAppWidgetResult.Success(appWidgetId, restaurant)
+                        }
+                        .filterNotNull()
+                        .forEach { updateAppWidget(it) }
+                stopSelf()
+            }
         }
 
-        return@runBlocking START_REDELIVER_INTENT
+        return START_REDELIVER_INTENT
     }
 
     override fun onBind(intent: Intent): IBinder? {

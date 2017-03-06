@@ -19,6 +19,10 @@ class MensaApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        if (BuildConfig.DEBUG) {
+            System.setProperty("kotlinx.coroutines.debug", "")
+        }
+
         appComponent.inject(this)
         initPicasso()
     }
