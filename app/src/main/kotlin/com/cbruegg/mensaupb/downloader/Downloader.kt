@@ -9,6 +9,7 @@ import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.parser.parseDishes
 import com.cbruegg.mensaupb.parser.parseRestaurantsFromApi
+import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
@@ -42,7 +43,7 @@ class Downloader(context: Context) {
      * @param onlyActive If true, only return restaurants marked as active.
      */
     fun downloadOrRetrieveRestaurantsAsync(onlyActive: Boolean = true):
-            Deferred<Either<IOException, List<Restaurant>>> = async(Unconfined) {
+            Deferred<Either<IOException, List<Restaurant>>> = async(CommonPool) {
         eitherTryIo {
             val request = Request.Builder().url(RESTAURANT_URL).build()
             val cachedRestaurants = dataCache.retrieveRestaurants()
@@ -57,7 +58,7 @@ class Downloader(context: Context) {
      * Get a list of all dishes in a restaurant at the specified date. The list might be empty.
      */
     fun downloadOrRetrieveDishesAsync(restaurant: Restaurant, date: Date):
-            Deferred<Either<IOException, List<Dish>>> = async(Unconfined) {
+            Deferred<Either<IOException, List<Dish>>> = async(CommonPool) {
         eitherTryIo {
             val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
             val cachedDishes = dataCache.retrieve(restaurant, date)
