@@ -26,10 +26,9 @@ import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import com.trello.rxlifecycle.kotlin.bindToLifecycle
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
@@ -65,8 +64,8 @@ class DishesFragment : BaseFragment() {
 
     private val dishList: RecyclerView by bindView(R.id.dish_list)
     private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)
-    private var subscription: Subscription? = null
     @Inject lateinit var downloader: Downloader
+    private var job: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,19 +94,16 @@ class DishesFragment : BaseFragment() {
         /**
          * Download data for the list
          */
-        subscription = downloader.downloadOrRetrieveDishes(restaurant, date)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .bindToLifecycle(this)
-                .subscribe {
-                    it.fold({ showNetworkError(adapter, it) }) {
+        job = launch(CommonPool) {
+            downloader.downloadOrRetrieveDishesAsync(restaurant, date)
+                    .await()
+                    .fold({ showNetworkError(adapter, it) }) {
                         noDishesMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
                         val dishViewModels = it.toDishViewModels(activity, userType)
                         tryShowArgDish(dishViewModels, germanDishName)
                         adapter.list.setAll(dishViewModels)
                     }
-                    subscription?.unsubscribe()
-                }
+        }
     }
 
     /**
@@ -193,7 +189,7 @@ class DishesFragment : BaseFragment() {
     }
 
     override fun onDestroyView() {
-        subscription?.unsubscribe()
+        job?.cancel()
         super.onDestroyView()
     }
 }

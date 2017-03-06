@@ -12,13 +12,11 @@ import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.MainActivity
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.downloader.Downloader
-import com.cbruegg.mensaupb.extensions.filterRight
 import com.cbruegg.mensaupb.model.Restaurant
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.lang.kotlin.filterNotNull
-import rx.lang.kotlin.onError
-import rx.schedulers.Schedulers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withTimeout
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -42,7 +40,6 @@ class DishesWidgetUpdateService : Service() {
                 RESTAURANT_NOT_FOUND
             }
         }
-
     }
 
     companion object {
@@ -80,41 +77,39 @@ class DishesWidgetUpdateService : Service() {
 
     }
 
-    private var subscription: Subscription? = null
+    private var job: Job? = null
     private val shownDate: Date
         get() = Date(System.currentTimeMillis() + DATE_OFFSET + INTERNAL_DATE_OFFSET)
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val downloader = Downloader(this)
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int = runBlocking {
+        val downloader = Downloader(this@DishesWidgetUpdateService)
         val appWidgetIds = intent.getIntArrayExtra(ARG_APPWIDGET_IDS)
-        val configManager = DishesWidgetConfigurationManager(this)
+        val configManager = DishesWidgetConfigurationManager(this@DishesWidgetUpdateService)
 
-        subscription = downloader.downloadOrRetrieveRestaurants()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .filterRight() // On errors, do nothing
-                .map { it.associate { it.id to it } } // Map by id
-                .flatMapIterable { restaurantsById ->
-                    appWidgetIds.map { appWidgetId ->
-                        // When no config exists, just don't update this widget
-                        // (null is filtered out later)
-                        val config = configManager.retrieveConfiguration(appWidgetId)
-                                ?: return@map null
-                        val restaurant = restaurantsById[config.restaurantId]
-                                ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
+        job = launch(context) {
+            withTimeout(TIMEOUT_MS) {
+                val restaurantsById = downloader.downloadOrRetrieveRestaurantsAsync()
+                        .await()
+                        .component2()
+                        ?.associateBy { it.id }
+                        ?: return@withTimeout
 
-                        return@map DishAppWidgetResult.Success(appWidgetId, restaurant)
-                    }
-                }
-                .filterNotNull()
-                .timeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
-                .onError { stopSelf() }
-                .subscribe {
-                    updateAppWidget(it)
-                    stopSelf(startId)
-                }
+                appWidgetIds
+                        .map { appWidgetId ->
+                            val config = configManager.retrieveConfiguration(appWidgetId)
+                                    ?: return@map null
+                            val restaurant = restaurantsById[config.restaurantId]
+                                    ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
 
-        return START_REDELIVER_INTENT
+                            DishAppWidgetResult.Success(appWidgetId, restaurant)
+                        }
+                        .filterNotNull()
+                        .forEach { updateAppWidget(it) }
+                stopSelf()
+            }
+        }
+
+        return@runBlocking START_REDELIVER_INTENT
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -180,7 +175,7 @@ class DishesWidgetUpdateService : Service() {
     }
 
     override fun onDestroy() {
-        subscription?.unsubscribe()
+        job?.cancel()
         super.onDestroy()
     }
 

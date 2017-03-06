@@ -25,10 +25,9 @@ import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
-import com.trello.rxlifecycle.kotlin.bindToLifecycle
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 import java.io.IOException
 import javax.inject.Inject
 
@@ -85,7 +84,7 @@ class MainActivity : BaseActivity() {
      * Other vars
      */
 
-    private var subscription: Subscription? = null
+    private var job: Job? = null
     private var lastRestaurantId: String?
         get() = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE).getString(PREFS_KEY_LAST_SELECTED_RESTAURANT, null)
         set(new) {
@@ -142,20 +141,18 @@ class MainActivity : BaseActivity() {
      * or the network, reloading the fragments afterwards.
      * This is useful for reloading after receiving a new intent.
      */
-    private fun reload() {
-        val restaurantAdapter = restaurantList.adapter as RestaurantAdapter
-        subscription = downloader.downloadOrRetrieveRestaurants()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).bindToLifecycle(this)
-                .subscribe {
-                    it.fold({ showNetworkError(restaurantAdapter, it) }) {
+    private fun reload() = runBlocking {
+        job = launch(context) {
+            val restaurantAdapter = restaurantList.adapter as RestaurantAdapter
+            downloader.downloadOrRetrieveRestaurantsAsync()
+                    .await()
+                    .fold({ showNetworkError(restaurantAdapter, it) }) {
                         val preparedList = it.uiSorted()
                         restaurantAdapter.list.setAll(preparedList)
                         checkShowFirstTimeDrawer()
                         loadDefaultRestaurant(preparedList)
                     }
-                    subscription?.unsubscribe()
-                }
+        }
     }
 
     private fun showNetworkError(restaurantAdapter: RestaurantAdapter, e: IOException) {
@@ -257,7 +254,7 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
-        subscription?.unsubscribe()
+        job?.cancel()
         super.onDestroy()
     }
 

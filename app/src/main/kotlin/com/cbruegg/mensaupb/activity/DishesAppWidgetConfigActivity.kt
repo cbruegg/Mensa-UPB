@@ -3,7 +3,6 @@ package com.cbruegg.mensaupb.activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
@@ -18,10 +17,9 @@ import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import com.cbruegg.mensaupb.viewmodel.uiSorted
-import com.trello.rxlifecycle.kotlin.bindToLifecycle
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 import java.io.IOException
 
 /**
@@ -36,32 +34,18 @@ class DishesAppWidgetConfigActivity : BaseActivity() {
     private val confirmButton by bindView<Button>(R.id.widget_config_confirm)
     private val progressBar by bindView<ProgressBar>(R.id.widget_config_progressbar)
 
-    private var subscription: Subscription? = null
     private var restaurantList: List<Restaurant>? = null
     private val appWidgetId by lazy {
         intent.extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private var job: Job? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) = runBlocking {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_widget_config)
         setResult(RESULT_CANCELED)
-
-        subscription = Downloader(this).downloadOrRetrieveRestaurants()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .bindToLifecycle(this)
-                .subscribe {
-                    it.fold({ showNetworkError(it) }) {
-                        val preparedList = it.uiSorted()
-                        restaurantList = preparedList
-                        spinner.adapter = RestaurantSpinnerAdapter(this, preparedList)
-                        confirmButton.isEnabled = true
-                    }
-                    progressBar.visibility = View.INVISIBLE
-                    subscription?.unsubscribe()
-                }
 
         progressBar.visibility = View.VISIBLE
         confirmButton.isEnabled = false
@@ -69,12 +53,26 @@ class DishesAppWidgetConfigActivity : BaseActivity() {
             // Non-Null assertion is safe, the button is only enabled after receiving
             // the list
             val selectedRestaurant = restaurantList!![spinner.selectedItemPosition]
-            DishesWidgetConfigurationManager(this).putConfiguration(appWidgetId, DishesWidgetConfiguration(selectedRestaurant.id))
+            DishesWidgetConfigurationManager(this@DishesAppWidgetConfigActivity)
+                    .putConfiguration(appWidgetId, DishesWidgetConfiguration(selectedRestaurant.id))
             updateWidget()
             setResult(RESULT_OK, Intent().apply { putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId) })
             finish()
         }
         cancelButton.setOnClickListener { finish() }
+
+        job = launch(context) {
+            Downloader(this@DishesAppWidgetConfigActivity)
+                    .downloadOrRetrieveRestaurantsAsync()
+                    .await()
+                    .fold({ showNetworkError(it) }) {
+                        val preparedList = it.uiSorted()
+                        restaurantList = preparedList
+                        spinner.adapter = RestaurantSpinnerAdapter(this@DishesAppWidgetConfigActivity, preparedList)
+                        confirmButton.isEnabled = true
+                    }
+            progressBar.visibility = View.INVISIBLE
+        }
     }
 
     /**
@@ -86,7 +84,7 @@ class DishesAppWidgetConfigActivity : BaseActivity() {
     }
 
     override fun onDestroy() {
-        subscription?.unsubscribe()
+        job?.cancel()
         super.onDestroy()
     }
 

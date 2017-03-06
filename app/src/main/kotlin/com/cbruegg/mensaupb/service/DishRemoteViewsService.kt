@@ -13,17 +13,16 @@ import com.cbruegg.mensaupb.activity.userType
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.TAG
-import com.cbruegg.mensaupb.extensions.filterRight
 import com.cbruegg.mensaupb.extensions.stackTraceString
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import com.squareup.picasso.Picasso
-import org.funktionale.either.Either
-import rx.Subscription
-import rx.lang.kotlin.filterNotNull
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withTimeout
 import java.io.IOException
-import java.net.SocketTimeoutException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -39,7 +38,7 @@ class DishRemoteViewsService : RemoteViewsService() {
     /**
      * Factory for the remote dish views.
      */
-    class DishRemoteViewsFactory(private val context: Context, private val appWidgetId: Int) : RemoteViewsFactory {
+    class DishRemoteViewsFactory(private val ctx: Context, private val appWidgetId: Int) : RemoteViewsFactory {
 
         private val shownDate: Date
             get() = Date(System.currentTimeMillis() + DishesWidgetUpdateService.DATE_OFFSET)
@@ -47,7 +46,7 @@ class DishRemoteViewsService : RemoteViewsService() {
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
         private var dishes = emptyList<Dish>()
         private var restaurant: Restaurant? = null
-        private var subscription: Subscription? = null
+        private var job: Job? = null
 
         override fun getLoadingView(): RemoteViews? = null // Use default
 
@@ -57,14 +56,14 @@ class DishRemoteViewsService : RemoteViewsService() {
             val thumbnailVisibility = if (dish.thumbnailImageUrl.isNullOrEmpty()) View.GONE else View.VISIBLE
 
             val dishIntent = Intent().apply { MainActivity.fillIntent(this, restaurant, dish) }
-            val remoteViews = RemoteViews(context.packageName, R.layout.row_dish_widget)
+            val remoteViews = RemoteViews(ctx.packageName, R.layout.row_dish_widget)
             remoteViews.setTextViewText(R.id.dish_widget_name, dish.germanName)
             remoteViews.setViewVisibility(R.id.dish_widget_image, thumbnailVisibility)
             remoteViews.setOnClickFillInIntent(R.id.dish_widget_row, dishIntent)
 
             if (!dish.thumbnailImageUrl.isNullOrEmpty()) {
                 try {
-                    val bitmap = Picasso.with(context)
+                    val bitmap = Picasso.with(ctx)
                             .load(dish.thumbnailImageUrl)
                             .resizeDimen(R.dimen.row_dish_widget_image_size, R.dimen.row_dish_widget_image_size)
                             .onlyScaleDown()
@@ -91,30 +90,28 @@ class DishRemoteViewsService : RemoteViewsService() {
 
         override fun getItemId(position: Int) = dishes[position].hashCode().toLong()
 
-        override fun onDataSetChanged() {
+        override fun onDataSetChanged() = runBlocking {
             Log.d(TAG, "CALLED onDataSetChanged()")
 
-            val (restaurantId) = DishesWidgetConfigurationManager(context).retrieveConfiguration(appWidgetId) ?: return
-            val downloader = Downloader(context)
+            val (restaurantId) = DishesWidgetConfigurationManager(ctx)
+                    .retrieveConfiguration(appWidgetId)
+                    ?: return@runBlocking
+            val downloader = Downloader(ctx)
 
-            subscription = downloader.downloadOrRetrieveRestaurants()
-                    .filterRight() // Just do nothing on errors
-                    .map {
-                        it.firstOrNull { restaurant -> restaurant.id == restaurantId }
-                                ?.apply { restaurant = this }
-                    }
-                    .flatMap { it?.let { downloader.downloadOrRetrieveDishes(it, shownDate) } }
-                    .filterNotNull()
-                    .timeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
-                    .onErrorReturn { Either.Left(IOException("Timeout.")) }
-                    .subscribe {
-                        it.fold({
-                            Log.d(TAG, "FAILED onDataSetChanged()")
-                        }) {
-                            dishes = it.sortedWith(context.userType.dishComparator)
-                            Log.d(TAG, "Set dish in onDataSetChanged()")
-                        }
-                    }
+            job = launch(context) {
+                withTimeout(TIMEOUT_MS) {
+                    val restaurant = downloader.downloadOrRetrieveRestaurantsAsync()
+                            .await()
+                            .component2()
+                            ?.firstOrNull { (id) -> id == restaurantId }
+                            ?: return@withTimeout
+                    dishes = downloader.downloadOrRetrieveDishesAsync(restaurant, shownDate)
+                            .await()
+                            .component2()
+                            ?.sortedWith(ctx.userType.dishComparator)
+                            ?: return@withTimeout
+                }
+            }
             Log.d(TAG, "RETURNED onDataSetChanged()")
         }
 
@@ -128,7 +125,7 @@ class DishRemoteViewsService : RemoteViewsService() {
 
         override fun onDestroy() {
             Log.d(TAG, "CALLED onDestroy()")
-            subscription?.unsubscribe()
+            job?.cancel()
         }
 
     }

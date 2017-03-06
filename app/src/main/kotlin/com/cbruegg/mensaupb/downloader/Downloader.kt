@@ -4,11 +4,15 @@ import android.content.Context
 import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DataCache
+import com.cbruegg.mensaupb.extensions.ioEither
 import com.cbruegg.mensaupb.extensions.ioObservable
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.parser.parseDishes
 import com.cbruegg.mensaupb.parser.parseRestaurantsFromApi
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.funktionale.either.Either
@@ -39,11 +43,14 @@ class Downloader(context: Context) {
      *
      * @param onlyActive If true, only return restaurants marked as active.
      */
-    fun downloadOrRetrieveRestaurants(onlyActive: Boolean = true): Observable<Either<IOException, List<Restaurant>>> {
-        val request = Request.Builder().url(RESTAURANT_URL).build()
-        return ioObservable {
+    fun downloadOrRetrieveRestaurantsAsync(onlyActive: Boolean = true):
+            Deferred<Either<IOException, List<Restaurant>>> = async(CommonPool) {
+        ioEither {
+            val request = Request.Builder().url(RESTAURANT_URL).build()
             val cachedRestaurants = dataCache.retrieveRestaurants()
-            val restaurants = cachedRestaurants ?: dataCache.cache(parseRestaurantsFromApi(httpClient.newCall(request).execute().body().source()))
+
+            val restaurants = cachedRestaurants ?:
+                    dataCache.cache(parseRestaurantsFromApi(httpClient.newCall(request).execute().body().source()))
             restaurants.filter { !onlyActive || it.isActive }
         }
     }
@@ -51,11 +58,13 @@ class Downloader(context: Context) {
     /**
      * Get a list of all dishes in a restaurant at the specified date. The list might be empty.
      */
-    fun downloadOrRetrieveDishes(restaurant: Restaurant, date: Date): Observable<Either<IOException, List<Dish>>> {
-        val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
-        return ioObservable {
+    fun downloadOrRetrieveDishesAsync(restaurant: Restaurant, date: Date):
+            Deferred<Either<IOException, List<Dish>>> = async(CommonPool) {
+        ioEither {
+            val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
             val cachedDishes = dataCache.retrieve(restaurant, date)
-            cachedDishes ?: dataCache.cache(restaurant, date, parseDishes(httpClient.newCall(request).execute().body().source()))
+            cachedDishes ?:
+                    dataCache.cache(restaurant, date, parseDishes(httpClient.newCall(request).execute().body().source()))
         }
     }
 
