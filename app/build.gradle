@@ -49,9 +49,6 @@ dependencies {
     compile 'com.android.support:design:25.2.0'
     compile 'com.android.support:preference-v7:25.2.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'io.reactivex:rxkotlin:0.60.0'
-    compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'io.reactivex:rxjava:1.2.7'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.squareup.moshi:moshi-parent:1.4.0'
     compile 'com.squareup.moshi:moshi-adapters:1.4.0'

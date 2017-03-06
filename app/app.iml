@@ -165,15 +165,14 @@
     <orderEntry type="library" exported="" name="funktionale-collections-1.0.0-final" level="project" />
     <orderEntry type="library" exported="" name="kotlinx-coroutines-rx1-0.12" level="project" />
     <orderEntry type="library" exported="" name="preference-v7-25.2.0" level="project" />
-    <orderEntry type="library" exported="" name="rxjava-1.2.7" level="project" />
-    <orderEntry type="library" exported="" name="rxkotlin-0.60.0" level="project" />
+    <orderEntry type="library" exported="" name="rxjava-1.2.6" level="project" />
     <orderEntry type="library" exported="" name="funktionale-utils-1.0.0-final" level="project" />
     <orderEntry type="library" exported="" name="rxlifecycle-kotlin-1.0" level="project" />
     <orderEntry type="library" exported="" name="annotations-13.0" level="project" />
     <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
+    <orderEntry type="library" exported="" name="rxandroid-1.1.0" level="project" />
     <orderEntry type="library" exported="" name="kotlin-stdlib-1.1.0" level="project" />
     <orderEntry type="library" exported="" name="kotterknife-0.1.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" exported="" name="rxandroid-1.2.1" level="project" />
     <orderEntry type="library" exported="" name="okio-1.11.0" level="project" />
     <orderEntry type="library" exported="" name="okhttp-3.6.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-25.2.0" level="project" />
