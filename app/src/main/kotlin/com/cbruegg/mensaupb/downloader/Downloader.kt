@@ -4,7 +4,7 @@ import android.content.Context
 import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DataCache
-import com.cbruegg.mensaupb.extensions.ioEither
+import com.cbruegg.mensaupb.extensions.eitherTryIo
 import com.cbruegg.mensaupb.extensions.ioObservable
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
@@ -45,7 +45,7 @@ class Downloader(context: Context) {
      */
     fun downloadOrRetrieveRestaurantsAsync(onlyActive: Boolean = true):
             Deferred<Either<IOException, List<Restaurant>>> = async(CommonPool) {
-        ioEither {
+        eitherTryIo {
             val request = Request.Builder().url(RESTAURANT_URL).build()
             val cachedRestaurants = dataCache.retrieveRestaurants()
 
@@ -60,7 +60,7 @@ class Downloader(context: Context) {
      */
     fun downloadOrRetrieveDishesAsync(restaurant: Restaurant, date: Date):
             Deferred<Either<IOException, List<Dish>>> = async(CommonPool) {
-        ioEither {
+        eitherTryIo {
             val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
             val cachedDishes = dataCache.retrieve(restaurant, date)
             cachedDishes ?:
