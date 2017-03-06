@@ -18,7 +18,6 @@ import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import com.cbruegg.mensaupb.viewmodel.uiSorted
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import java.io.IOException
 
@@ -61,18 +60,17 @@ class DishesAppWidgetConfigActivity : BaseActivity() {
         }
         cancelButton.setOnClickListener { finish() }
 
-        job = launch(context) {
-            Downloader(this@DishesAppWidgetConfigActivity)
-                    .downloadOrRetrieveRestaurantsAsync()
-                    .await()
-                    .fold({ showNetworkError(it) }) {
-                        val preparedList = it.uiSorted()
-                        restaurantList = preparedList
-                        spinner.adapter = RestaurantSpinnerAdapter(this@DishesAppWidgetConfigActivity, preparedList)
-                        confirmButton.isEnabled = true
-                    }
-            progressBar.visibility = View.INVISIBLE
-        }
+        Downloader(this@DishesAppWidgetConfigActivity)
+                .downloadOrRetrieveRestaurantsAsync()
+                .also { job = it }
+                .await()
+                .fold({ showNetworkError(it) }) {
+                    val preparedList = it.uiSorted()
+                    restaurantList = preparedList
+                    spinner.adapter = RestaurantSpinnerAdapter(this@DishesAppWidgetConfigActivity, preparedList)
+                    confirmButton.isEnabled = true
+                }
+        progressBar.visibility = View.INVISIBLE
     }
 
     /**

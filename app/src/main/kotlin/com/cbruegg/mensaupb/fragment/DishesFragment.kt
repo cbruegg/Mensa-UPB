@@ -26,9 +26,8 @@ import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
@@ -75,35 +74,34 @@ class DishesFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.fragment_dishes, container, false)
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) = runBlocking {
         super.onViewCreated(view, savedInstanceState)
 
         /**
          * Set up the list of dishes
          */
         val adapter = DishViewModelAdapter()
-        adapter.onClickListener = { dishViewModel, position -> if (dishViewModel.hasBigImage) showDishDetailsDialog(dishViewModel) }
+        adapter.onClickListener = { dishViewModel, _ -> if (dishViewModel.hasBigImage) showDishDetailsDialog(dishViewModel) }
         dishList.adapter = adapter
         dishList.layoutManager = LinearLayoutManager(activity)
 
         val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))
         val date = Date(arguments.getLong(ARG_DATE))
-        val userType = context.userType
+        val userType = getContext().userType
         val germanDishName: String? = arguments.getString(ARG_GERMAN_DISH_NAME, null)
 
         /**
          * Download data for the list
          */
-        job = launch(CommonPool) {
-            downloader.downloadOrRetrieveDishesAsync(restaurant, date)
-                    .await()
-                    .fold({ showNetworkError(adapter, it) }) {
-                        noDishesMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
-                        val dishViewModels = it.toDishViewModels(activity, userType)
-                        tryShowArgDish(dishViewModels, germanDishName)
-                        adapter.list.setAll(dishViewModels)
-                    }
-        }
+        downloader.downloadOrRetrieveDishesAsync(restaurant, date)
+                .also { job = it }
+                .await()
+                .fold({ showNetworkError(adapter, it) }) {
+                    noDishesMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+                    val dishViewModels = it.toDishViewModels(activity, userType)
+                    tryShowArgDish(dishViewModels, germanDishName)
+                    adapter.list.setAll(dishViewModels)
+                }
     }
 
     /**

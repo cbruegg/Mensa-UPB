@@ -26,7 +26,6 @@ import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import java.io.IOException
 import javax.inject.Inject
@@ -142,17 +141,16 @@ class MainActivity : BaseActivity() {
      * This is useful for reloading after receiving a new intent.
      */
     private fun reload() = runBlocking {
-        job = launch(context) {
-            val restaurantAdapter = restaurantList.adapter as RestaurantAdapter
-            downloader.downloadOrRetrieveRestaurantsAsync()
-                    .await()
-                    .fold({ showNetworkError(restaurantAdapter, it) }) {
-                        val preparedList = it.uiSorted()
-                        restaurantAdapter.list.setAll(preparedList)
-                        checkShowFirstTimeDrawer()
-                        loadDefaultRestaurant(preparedList)
-                    }
-        }
+        val restaurantAdapter = restaurantList.adapter as RestaurantAdapter
+        downloader.downloadOrRetrieveRestaurantsAsync()
+                .also { job = it }
+                .await()
+                .fold({ showNetworkError(restaurantAdapter, it) }) {
+                    val preparedList = it.uiSorted()
+                    restaurantAdapter.list.setAll(preparedList)
+                    checkShowFirstTimeDrawer()
+                    loadDefaultRestaurant(preparedList)
+                }
     }
 
     private fun showNetworkError(restaurantAdapter: RestaurantAdapter, e: IOException) {

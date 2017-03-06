@@ -14,7 +14,6 @@ import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.model.Restaurant
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeout
 import java.text.SimpleDateFormat
@@ -86,27 +85,26 @@ class DishesWidgetUpdateService : Service() {
         val appWidgetIds = intent.getIntArrayExtra(ARG_APPWIDGET_IDS)
         val configManager = DishesWidgetConfigurationManager(this@DishesWidgetUpdateService)
 
-        job = launch(context) {
-            withTimeout(TIMEOUT_MS) {
-                val restaurantsById = downloader.downloadOrRetrieveRestaurantsAsync()
-                        .await()
-                        .component2()
-                        ?.associateBy { it.id }
-                        ?: return@withTimeout
+        withTimeout(TIMEOUT_MS) {
+            val restaurantsById = downloader.downloadOrRetrieveRestaurantsAsync()
+                    .also { job = it }
+                    .await()
+                    .component2()
+                    ?.associateBy { it.id }
+                    ?: return@withTimeout
 
-                appWidgetIds
-                        .map { appWidgetId ->
-                            val config = configManager.retrieveConfiguration(appWidgetId)
-                                    ?: return@map null
-                            val restaurant = restaurantsById[config.restaurantId]
-                                    ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
+            appWidgetIds
+                    .map { appWidgetId ->
+                        val config = configManager.retrieveConfiguration(appWidgetId)
+                                ?: return@map null
+                        val restaurant = restaurantsById[config.restaurantId]
+                                ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
 
-                            DishAppWidgetResult.Success(appWidgetId, restaurant)
-                        }
-                        .filterNotNull()
-                        .forEach { updateAppWidget(it) }
-                stopSelf()
-            }
+                        DishAppWidgetResult.Success(appWidgetId, restaurant)
+                    }
+                    .filterNotNull()
+                    .forEach { updateAppWidget(it) }
+            stopSelf()
         }
 
         return@runBlocking START_REDELIVER_INTENT

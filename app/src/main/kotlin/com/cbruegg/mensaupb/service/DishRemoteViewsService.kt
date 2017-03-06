@@ -19,7 +19,6 @@ import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeout
 import java.io.IOException
@@ -98,19 +97,19 @@ class DishRemoteViewsService : RemoteViewsService() {
                     ?: return@runBlocking
             val downloader = Downloader(ctx)
 
-            job = launch(context) {
-                withTimeout(TIMEOUT_MS) {
-                    val restaurant = downloader.downloadOrRetrieveRestaurantsAsync()
-                            .await()
-                            .component2()
-                            ?.firstOrNull { (id) -> id == restaurantId }
-                            ?: return@withTimeout
-                    dishes = downloader.downloadOrRetrieveDishesAsync(restaurant, shownDate)
-                            .await()
-                            .component2()
-                            ?.sortedWith(ctx.userType.dishComparator)
-                            ?: return@withTimeout
-                }
+            withTimeout(TIMEOUT_MS) {
+                val restaurant = downloader.downloadOrRetrieveRestaurantsAsync()
+                        .also { job = it }
+                        .await()
+                        .component2()
+                        ?.firstOrNull { (id) -> id == restaurantId }
+                        ?: return@withTimeout
+                dishes = downloader.downloadOrRetrieveDishesAsync(restaurant, shownDate)
+                        .also { job = it }
+                        .await()
+                        .component2()
+                        ?.sortedWith(ctx.userType.dishComparator)
+                        ?: return@withTimeout
             }
             Log.d(TAG, "RETURNED onDataSetChanged()")
         }
