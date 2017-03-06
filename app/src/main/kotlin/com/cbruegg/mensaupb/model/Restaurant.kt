@@ -15,7 +15,7 @@ data class Restaurant(@Json(name = "id") val id: String,
         /**
          * Deserialize a Restaurant serialized with [serialize]
          */
-        fun deserialize(serialized: String) = MoshiProvider.provideJsonAdapter<Restaurant>().fromJson(serialized)
+        fun deserialize(serialized: String): Restaurant = MoshiProvider.provideJsonAdapter<Restaurant>().fromJson(serialized)
     }
 
     /**

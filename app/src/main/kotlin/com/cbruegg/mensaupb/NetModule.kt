@@ -9,7 +9,7 @@ import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 @Module(includes = arrayOf(AppModule::class))
-class NetModule() {
+class NetModule {
 
     @Provides @Singleton
     fun provideDownloader(context: Context): Downloader = Downloader(context)

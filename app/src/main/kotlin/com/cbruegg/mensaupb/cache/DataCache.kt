@@ -107,7 +107,7 @@ class DataCache @Deprecated("Inject this.") constructor(private val context: Con
             return dishes
         }
 
-        Log.d(TAG, "Storing dishes for ${restaurant.id} and date ${date.toString()}")
+        Log.d(TAG, "Storing dishes for ${restaurant.id} and date $date")
 
         writeLock.withLockAsync {
             storeRestaurantId(restaurant)

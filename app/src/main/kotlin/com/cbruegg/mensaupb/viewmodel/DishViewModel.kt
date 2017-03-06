@@ -53,12 +53,14 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
     @DataBindingProperty val showDivider = hasHeader && position > 0
 }
 
+
 /**
  * A comparator that sorts by the dish category and the price
  * for this user type.
  */
+@Suppress("Destructure")
 val UserType.dishComparator: Comparator<Dish>
-    get() = compareByDescending<Dish>(Dish::germanCategory) // Sort by category
+    get() = compareByDescending(Dish::germanCategory) // Sort by category
             .thenComparator { d1, d2 ->
                 if (d1.priceType == d2.priceType) 0 else if (d1.priceType == PriceType.FIXED) -1 else 1
             } // Weighted is worse

@@ -12,7 +12,6 @@ import com.cbruegg.mensaupb.parser.parseRestaurantsFromApi
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.funktionale.either.Either
@@ -23,7 +22,7 @@ import javax.inject.Inject
 
 private val API_ID = BuildConfig.API_ID
 private val BASE_URL = "http://www.studentenwerk-pb.de/fileadmin/shareddata/access2.php?id=" + API_ID
-private val RESTAURANT_URL = BASE_URL + "&getrestaurants=1";
+private val RESTAURANT_URL = BASE_URL + "&getrestaurants=1"
 
 /**
  * Class responsible for downloading data from the API
