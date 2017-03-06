@@ -6,8 +6,8 @@ Please find screenshots and more information about the app's features in the [Pl
 
 # Advantages of this project
 Mensa-UPB works with the official API of the Studierendenwerk, so it's unlikely to break anytime soon.
-I've also tried to make it use modern technologies, like Google's support libraries, RxJava and many others. It's also written almost entirely in Kotlin, JetBrains relatively new language that's a more innovative alternative to Java, yet preserves Java-Interop as much as possible.
-In addition to that, the app uses the new data binding feature and targets the Marshmallow SDK.
+I've also tried to make it use modern technologies, like Google's support libraries, Kotlin coroutines and many others. It's also written almost entirely in Kotlin, JetBrains relatively new language that's a more innovative alternative to Java, yet preserves Java-Interop as much as possible.
+In addition to that, the app uses the new data binding feature and targets the Nougat SDK.
 
 # Contributions
 Contributions are of course welcome, but unfortunately an API key is required for communicating with the official API. It has to be put into the api_id.properties file in the root directory of the project.
