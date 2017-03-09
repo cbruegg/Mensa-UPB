@@ -64,7 +64,7 @@ private fun <T> inventArgsFor(constructor: Constructor<T>): Array<Any> {
             parameterType.isEnum && parameterType.enumConstants.isNotEmpty() -> parameterType.enumConstants[0]
             else -> try {
                 KotlinDataClassFactory(parameterType).newInstance()
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 ClassFactory.get<Any>(parameterType).newInstance()
             }
         }
