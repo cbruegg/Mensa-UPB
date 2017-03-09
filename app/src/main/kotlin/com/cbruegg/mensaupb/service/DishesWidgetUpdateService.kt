@@ -35,9 +35,9 @@ class DishesWidgetUpdateService : Service() {
      * @see Failure
      * @see Success
      */
-    sealed class DishAppWidgetResult(val appWidgetId: Int) {
-        class Success(appWidgetId: Int, val restaurant: Restaurant) : DishAppWidgetResult(appWidgetId)
-        class Failure(appWidgetId: Int, val reason: Reason) : DishAppWidgetResult(appWidgetId) {
+    sealed class DishAppWidgetResult(open val appWidgetId: Int) {
+        data class Success(override val appWidgetId: Int, val restaurant: Restaurant) : DishAppWidgetResult(appWidgetId)
+        data class Failure(override val appWidgetId: Int, val reason: Reason) : DishAppWidgetResult(appWidgetId) {
             enum class Reason {
                 RESTAURANT_NOT_FOUND
             }
