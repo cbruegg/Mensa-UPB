@@ -3,6 +3,7 @@ package com.cbruegg.mensaupb
 import android.app.Application
 import android.content.Context
 import android.support.v4.app.Fragment
+import com.cbruegg.mensaupb.compat.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -27,7 +28,7 @@ class MensaApplication : Application() {
     }
 
     private fun initPicasso() {
-        Picasso.setSingletonInstance(Picasso.Builder(this).downloader(com.cbruegg.mensaupb.compat.OkHttp3Downloader(httpClient)).build())
+        Picasso.setSingletonInstance(Picasso.Builder(this).downloader(OkHttp3Downloader(httpClient)).build())
     }
 }
 

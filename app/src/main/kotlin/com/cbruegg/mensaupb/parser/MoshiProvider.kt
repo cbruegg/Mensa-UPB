@@ -1,6 +1,8 @@
 package com.cbruegg.mensaupb.parser
 
+import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.PriceType
+import com.cbruegg.mensaupb.model.Restaurant
 import com.squareup.moshi.*
 import java.util.*
 
@@ -12,6 +14,8 @@ object MoshiProvider {
     val moshi: Moshi = Moshi.Builder()
             .add(PriceTypeJsonAdapter())
             .add(Date::class.java, Rfc3339DateJsonAdapter())
+            .addUserClassFactory(Dish::class.java, KotlinDataClassFactory())
+            .addUserClassFactory(Restaurant::class.java, KotlinDataClassFactory())
             .build()
 
     /**

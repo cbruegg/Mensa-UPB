@@ -50,8 +50,9 @@ dependencies {
     compile 'com.android.support:preference-v7:25.2.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
-    compile 'com.squareup.moshi:moshi-parent:1.4.0'
-    compile 'com.squareup.moshi:moshi-adapters:1.4.0'
+
+    compile 'com.github.cbruegg.moshi:moshi-parent:8f7d17f9c61199ec83d3f4927161de2ca5f5ade1'
+    compile 'com.github.cbruegg.moshi:moshi-adapters:8f7d17f9c61199ec83d3f4927161de2ca5f5ade1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
     compile 'org.funktionale:funktionale:1.0.0-final'
