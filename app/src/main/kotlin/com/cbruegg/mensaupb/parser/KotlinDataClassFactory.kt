@@ -46,26 +46,28 @@ private fun <T> inventArgsFor(constructor: Constructor<T>): Array<Any> {
     val parameterTypes = constructor.parameterTypes
     return Array(parameterTypes.size) { i ->
         val parameterType = parameterTypes[i]
-        when {
-            parameterType == Byte::class.javaPrimitiveType || parameterType == Byte::class.java -> 0.toByte()
-            parameterType == Short::class.javaPrimitiveType || parameterType == Short::class.java -> 0.toShort()
-            parameterType == Int::class.javaPrimitiveType || parameterType == Int::class.java -> 0
-            parameterType == Long::class.javaPrimitiveType || parameterType == Long::class.java -> 0L
-            parameterType == Float::class.javaPrimitiveType || parameterType == Float::class.java -> 0f
-            parameterType == Double::class.javaPrimitiveType || parameterType == Double::class.java -> 0.0
-            parameterType == Char::class.javaPrimitiveType || parameterType == Char::class.java -> '\u0000'
-            parameterType == Boolean::class.javaPrimitiveType || parameterType == Boolean::class.java -> false
-            parameterType == String::class.java -> ""
-            parameterType.isInterface -> Proxy.newProxyInstance(constructor.javaClass.classLoader, arrayOf(parameterType)) { _, _, _ ->
-                throw UnsupportedOperationException("Trying to call a method on a " +
-                        "stub object created by Moshi as requested using the JsonConstructor" +
-                        "annotation.")
-            }
-            parameterType.isEnum && parameterType.enumConstants.isNotEmpty() -> parameterType.enumConstants[0]
-            else -> try {
-                KotlinDataClassFactory(parameterType).newInstance()
-            } catch (_: Exception) {
-                ClassFactory.get<Any>(parameterType).newInstance()
+        when (parameterType) {
+            Byte::class.javaPrimitiveType, Byte::class.java -> 0.toByte()
+            Short::class.javaPrimitiveType, Short::class.java -> 0.toShort()
+            Int::class.javaPrimitiveType, Int::class.java -> 0
+            Long::class.javaPrimitiveType, Long::class.java -> 0L
+            Float::class.javaPrimitiveType, Float::class.java -> 0f
+            Double::class.javaPrimitiveType, Double::class.java -> 0.0
+            Char::class.javaPrimitiveType, Char::class.java -> '\u0000'
+            Boolean::class.javaPrimitiveType, Boolean::class.java -> false
+            String::class.java -> ""
+            else -> when {
+                parameterType.isInterface -> Proxy.newProxyInstance(constructor.javaClass.classLoader, arrayOf(parameterType)) { _, _, _ ->
+                    throw UnsupportedOperationException("Trying to call a method on a " +
+                            "stub object created by Moshi as requested using the JsonConstructor" +
+                            "annotation.")
+                }
+                parameterType.isEnum && parameterType.enumConstants.isNotEmpty() -> parameterType.enumConstants[0]
+                else -> try {
+                    KotlinDataClassFactory(parameterType).newInstance()
+                } catch (_: Exception) {
+                    ClassFactory.get<Any>(parameterType).newInstance()
+                }
             }
         }
     }
