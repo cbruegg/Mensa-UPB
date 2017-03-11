@@ -1,6 +1,7 @@
 package com.cbruegg.mensaupb
 
 import android.os.Handler
+import android.os.HandlerThread
 import android.os.Looper
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import java.util.concurrent.Semaphore
@@ -22,21 +23,7 @@ object MainThread : CoroutineDispatcher() {
 
 object DbThread : CoroutineDispatcher() {
 
-    private val handler: Handler
-
-    init {
-        val looperReadyLock = Semaphore(0)
-        var looper: Looper? = null
-        thread {
-            Looper.prepare()
-            looper = Looper.myLooper()
-            looperReadyLock.release()
-            Looper.loop()
-        }
-        looperReadyLock.acquire()
-        Thread.sleep(10) // Just to be sure the looper loops
-        handler = Handler(looper)
-    }
+    private val handler = Handler(HandlerThread("DbThread").apply { start() }.looper)
 
     override fun dispatch(context: CoroutineContext, block: Runnable) {
         handler.post(block)
