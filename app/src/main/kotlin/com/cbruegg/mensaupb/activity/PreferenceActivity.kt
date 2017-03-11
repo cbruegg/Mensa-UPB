@@ -10,7 +10,7 @@ import com.cbruegg.mensaupb.model.UserType
 /**
  * Activity managing the user preferences.
  */
-class PreferenceActivity : BaseActivity() {
+class PreferenceActivity : NoMvpBaseActivity() {
 
     companion object {
         val KEY_PREF_USER_TYPE = "user_type_preference"

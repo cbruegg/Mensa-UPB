@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="com.cbruegg.mensaupb.activity.DishesAppWidgetConfigActivity"
+    android:configure="com.cbruegg.mensaupb.appwidget.DishesAppWidgetConfigActivity"
     android:initialLayout="@layout/app_widget_dishes"
     android:minHeight="80dp"
     android:minResizeHeight="80dp"

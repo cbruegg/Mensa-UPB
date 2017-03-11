@@ -33,7 +33,7 @@ import javax.inject.Inject
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
  */
-class MainActivity : BaseActivity() {
+class MainActivity : NoMvpBaseActivity() {
 
     companion object {
 

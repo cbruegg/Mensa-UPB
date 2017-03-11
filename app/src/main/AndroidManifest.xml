@@ -29,7 +29,7 @@
             android:label="@string/settings" />
 
         <activity
-            android:name=".activity.DishesAppWidgetConfigActivity"
+            android:name=".appwidget.DishesAppWidgetConfigActivity"
             android:label="@string/configure_app_widget"
             android:theme="@style/Theme.AppCompat.Dialog">
             <intent-filter>

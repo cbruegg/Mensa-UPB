@@ -1,24 +1,15 @@
 package com.cbruegg.mensaupb.fragment
 
 import android.support.v4.app.Fragment
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.Job
-import java.util.*
+import com.cbruegg.mensaupb.mvp.JobHandler
+import com.cbruegg.mensaupb.mvp.JobHandlerDelegate
 
-abstract class BaseFragment : Fragment() {
-    private val jobs: MutableList<Job> = Collections.synchronizedList(mutableListOf())
-
-    /**
-     * Register a job to be cancelled in [onPause].
-     */
-    protected fun Job.register() {
-        jobs += this
-        invokeOnCompletion { jobs -= this }
-    }
+abstract class BaseFragment @JvmOverloads constructor(
+        private val jobHandler: JobHandler = JobHandlerDelegate()
+) : Fragment(), JobHandler by jobHandler {
 
     override fun onPause() {
-        jobs.forEach { it.cancel(CancellationException("onPause() called")) }
-        jobs.clear()
+        jobHandler.onPause()
         super.onPause()
     }
 }
