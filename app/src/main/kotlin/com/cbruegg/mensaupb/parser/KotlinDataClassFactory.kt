@@ -22,7 +22,7 @@ class KotlinDataClassFactory<T : Any>(rawType: Class<T>) : ClassFactory<T>() {
                     "or no constructor annotated with @JsonConstructor.")
         }
         @Suppress("UNCHECKED_CAST")
-        (constructor) = annotatedConstructors.first() as Constructor<T>
+        constructor = annotatedConstructors.first() as Constructor<T>
         constructor.isAccessible = true
 
         constructorArgs = inventArgsFor(constructor)
