@@ -65,7 +65,6 @@ class DishesFragment : BaseFragment() {
     private val dishList: RecyclerView by bindView(R.id.dish_list)
     private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)
     @Inject lateinit var downloader: Downloader
-    private var job: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +90,7 @@ class DishesFragment : BaseFragment() {
         val userType = context.userType
         val germanDishName: String? = arguments.getString(ARG_GERMAN_DISH_NAME, null)
 
-        job = launch(MainThread) {
+        launch(MainThread) {
             downloader.downloadOrRetrieveDishesAsync(restaurant, date)
                     .await()
                     .fold({ showNetworkError(adapter, it) }) {
@@ -100,7 +99,7 @@ class DishesFragment : BaseFragment() {
                         tryShowArgDish(dishViewModels, germanDishName)
                         adapter.list.setAll(dishViewModels)
                     }
-        }
+        }.register()
     }
 
     /**
@@ -185,8 +184,4 @@ class DishesFragment : BaseFragment() {
         descriptionView.text = fullTextBuilder
     }
 
-    override fun onDestroyView() {
-        job?.cancel()
-        super.onDestroyView()
-    }
 }

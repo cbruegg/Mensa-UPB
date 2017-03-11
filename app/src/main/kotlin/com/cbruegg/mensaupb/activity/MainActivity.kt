@@ -84,7 +84,6 @@ class MainActivity : BaseActivity() {
      * Other vars
      */
 
-    private var job: Job? = null
     private var lastRestaurantId: String?
         get() = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE).getString(PREFS_KEY_LAST_SELECTED_RESTAURANT, null)
         set(new) {
@@ -142,7 +141,7 @@ class MainActivity : BaseActivity() {
      * This is useful for reloading after receiving a new intent.
      */
     private fun reload() {
-        job = launch(MainThread) {
+        launch(MainThread) {
             val restaurantAdapter = restaurantList.adapter as RestaurantAdapter
             downloader.downloadOrRetrieveRestaurantsAsync()
                     .await()
@@ -152,7 +151,7 @@ class MainActivity : BaseActivity() {
                         checkShowFirstTimeDrawer()
                         loadDefaultRestaurant(preparedList)
                     }
-        }
+        }.register()
     }
 
     private fun showNetworkError(restaurantAdapter: RestaurantAdapter, e: IOException) {
@@ -251,11 +250,6 @@ class MainActivity : BaseActivity() {
         super.onNewIntent(intent)
         this.intent = intent
         reload()
-    }
-
-    override fun onDestroy() {
-        job?.cancel()
-        super.onDestroy()
     }
 
 }

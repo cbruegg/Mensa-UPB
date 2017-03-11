@@ -61,7 +61,7 @@ class DishesAppWidgetConfigActivity : BaseActivity() {
         }
         cancelButton.setOnClickListener { finish() }
 
-        job = launch(MainThread) {
+        launch(MainThread) {
             Downloader(this@DishesAppWidgetConfigActivity)
                     .downloadOrRetrieveRestaurantsAsync()
                     .await()
@@ -72,7 +72,7 @@ class DishesAppWidgetConfigActivity : BaseActivity() {
                         confirmButton.isEnabled = true
                     }
             progressBar.visibility = View.INVISIBLE
-        }
+        }.register()
     }
 
     /**
@@ -81,11 +81,6 @@ class DishesAppWidgetConfigActivity : BaseActivity() {
     private fun showNetworkError(e: IOException) {
         Toast.makeText(this, R.string.network_error, Toast.LENGTH_LONG).show()
         e.printStackTrace()
-    }
-
-    override fun onDestroy() {
-        job?.cancel()
-        super.onDestroy()
     }
 
     /**
