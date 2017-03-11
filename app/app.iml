@@ -144,11 +144,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="moshi-adapters-8f7d17f9c61199ec83d3f4927161de2ca5f5ade1" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.5.2" level="project" />
-    <orderEntry type="library" exported="" name="rxlifecycle-components-1.0" level="project" />
-    <orderEntry type="library" exported="" name="jsr305-3.0.1" level="project" />
     <orderEntry type="library" exported="" name="kotlinx-coroutines-core-0.12" level="project" />
-    <orderEntry type="library" exported="" name="rxlifecycle-android-1.0" level="project" />
-    <orderEntry type="library" exported="" name="rxlifecycle-1.0" level="project" />
     <orderEntry type="library" exported="" name="design-25.2.0" level="project" />
     <orderEntry type="library" exported="" name="transition-25.2.0" level="project" />
     <orderEntry type="library" exported="" name="funktionale-either-1.0.0-final" level="project" />
@@ -164,19 +160,15 @@
     <orderEntry type="library" exported="" name="funktionale-collections-1.0.0-final" level="project" />
     <orderEntry type="library" exported="" name="preference-v7-25.2.0" level="project" />
     <orderEntry type="library" exported="" name="funktionale-utils-1.0.0-final" level="project" />
-    <orderEntry type="library" exported="" name="rxlifecycle-kotlin-1.0" level="project" />
     <orderEntry type="library" exported="" name="annotations-13.0" level="project" />
     <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
-    <orderEntry type="library" exported="" name="rxandroid-1.1.0" level="project" />
     <orderEntry type="library" exported="" name="kotlin-stdlib-1.1.0" level="project" />
-    <orderEntry type="library" exported="" name="rxjava-1.2.1" level="project" />
     <orderEntry type="library" exported="" name="kotterknife-0.1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" exported="" name="okio-1.11.0" level="project" />
     <orderEntry type="library" exported="" name="okhttp-3.6.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-25.2.0" level="project" />
     <orderEntry type="library" exported="" name="support-compat-25.2.0" level="project" />
     <orderEntry type="library" exported="" name="dagger-2.9" level="project" />
-    <orderEntry type="library" exported="" name="rxbinding-0.4.0" level="project" />
     <orderEntry type="library" exported="" name="support-media-compat-25.2.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-25.2.0" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-25.2.0" level="project" />

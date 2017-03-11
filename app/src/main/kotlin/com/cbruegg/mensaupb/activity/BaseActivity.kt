@@ -1,5 +1,5 @@
 package com.cbruegg.mensaupb.activity
 
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity
+import android.support.v7.app.AppCompatActivity
 
-abstract class BaseActivity : RxAppCompatActivity()
+abstract class BaseActivity : AppCompatActivity()

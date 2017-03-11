@@ -1,5 +1,5 @@
 package com.cbruegg.mensaupb.fragment
 
-import com.trello.rxlifecycle.components.support.RxFragment
+import android.support.v4.app.Fragment
 
-abstract class BaseFragment : RxFragment()
+abstract class BaseFragment : Fragment()
