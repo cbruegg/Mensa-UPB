@@ -21,19 +21,18 @@ import javax.inject.Inject
 
 /**
  * Class responsible for caching data used by the app.
- * Each restaurant has its own SharedPreferences file.
  */
 class DataCache @Deprecated("Inject this.") constructor(context: Context) {
 
     @Inject lateinit var data: BlockingEntityStore<Persistable>
 
-    private val cacheValidity = TimeUnit.DAYS.toMillis(1)
+    private val cacheValidityMs = TimeUnit.DAYS.toMillis(1)
 
     /**
      * If any cache entry is older than this, discard it.
      */
     private val oldestAllowedCacheDate: Date
-        get() = Date() - cacheValidity
+        get() = Date() - cacheValidityMs
 
     init {
         context.app.appComponent.inject(this)
