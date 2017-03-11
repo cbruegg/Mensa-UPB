@@ -12,6 +12,9 @@ import android.view.ViewGroup
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.cache.DbRestaurant
+import com.cbruegg.mensaupb.dishes.DishesFragment
+import com.cbruegg.mensaupb.mvp.MvpPresenter
+import com.cbruegg.mensaupb.mvp.MvpView
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -20,7 +23,7 @@ import java.util.concurrent.TimeUnit
  * Fragment hosting a Pager of DishesFragments.
  * The factory method newInstance needs to be used.
  */
-class RestaurantFragment : BaseFragment() {
+class RestaurantFragment : NoMvpBaseFragment() {
     companion object {
         private val ARG_RESTAURANT = "restaurant"
         private val ARG_PAGER_POSITION = "pager_position"
@@ -54,7 +57,7 @@ class RestaurantFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
             = inflater.inflate(R.layout.fragment_restaurant, container, false)
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         /**

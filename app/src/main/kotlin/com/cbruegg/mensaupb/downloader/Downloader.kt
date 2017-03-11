@@ -28,7 +28,7 @@ private val RESTAURANT_URL = BASE_URL + "&getrestaurants=1"
 /**
  * Class responsible for downloading data from the API
  */
-class Downloader(context: Context) {
+class Downloader @Deprecated("Inject this.") constructor(context: Context) {
 
     @Inject lateinit var dataCache: DataCache
     @Inject lateinit var httpClient: OkHttpClient

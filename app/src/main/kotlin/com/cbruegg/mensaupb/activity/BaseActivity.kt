@@ -27,7 +27,7 @@ abstract class BaseActivity<V : MvpView, P : MvpPresenter<V>> @JvmOverloads cons
     protected abstract fun createPresenter(): P
 }
 
-abstract class NoMvpBaseActivity: BaseActivity<NoMvpView, NoMvpPresenter>(), NoMvpView {
+abstract class NoMvpBaseActivity : BaseActivity<NoMvpView, NoMvpPresenter>(), NoMvpView {
     override val mvpViewType: Class<NoMvpView>
         get() = NoMvpView::class.java
 

@@ -3,7 +3,7 @@ package com.cbruegg.mensaupb
 import com.cbruegg.mensaupb.activity.MainActivity
 import com.cbruegg.mensaupb.cache.DataCache
 import com.cbruegg.mensaupb.downloader.Downloader
-import com.cbruegg.mensaupb.fragment.DishesFragment
+import com.cbruegg.mensaupb.dishes.DishesFragment
 import dagger.Component
 import javax.inject.Singleton
 
