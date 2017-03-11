@@ -60,7 +60,7 @@ class DishesFragment : BaseFragment<DishesView, DishesPresenter>(), DishesView {
         get() = DishesView::class.java
 
     override fun createPresenter() = DishesPresenter(
-            downloader, // TODO Let Dagger inject this by having Dagger provide a DishesPresenterFactory
+            downloader,
             arguments.getParcelable(ARG_RESTAURANT),
             Date(arguments.getLong(ARG_DATE)),
             context.userType,
