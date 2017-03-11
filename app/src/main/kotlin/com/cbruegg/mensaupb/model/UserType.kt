@@ -1,5 +1,7 @@
 package com.cbruegg.mensaupb.model
 
+import com.cbruegg.mensaupb.cache.DbDish
+
 /**
  * Enum of different users of the app. These correspond to the price types in the API.
  */
@@ -17,7 +19,7 @@ enum class UserType(internal val id: String) {
     /**
      * For a Student, select the studentPrice, ...
      */
-    fun selectPrice(dish: Dish): Double = when (this) {
+    fun selectPrice(dish: DbDish): Double = when (this) {
         STUDENT -> dish.studentPrice
         WORKER -> dish.workerPrice
         GUEST -> dish.guestPrice

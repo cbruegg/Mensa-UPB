@@ -2,13 +2,14 @@ package com.cbruegg.mensaupb.adapter
 
 import android.content.Context
 import android.widget.ArrayAdapter
+import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.model.Restaurant
 
 /**
  * A convenience implementation of an ArrayAdapter
  * specific for [Restaurant]s.
  */
-class RestaurantSpinnerAdapter(context: Context, val restaurants: List<Restaurant>) :
+class RestaurantSpinnerAdapter(context: Context, val restaurants: List<DbRestaurant>) :
         ArrayAdapter<String>(context, android.R.layout.simple_spinner_item) {
 
     init {

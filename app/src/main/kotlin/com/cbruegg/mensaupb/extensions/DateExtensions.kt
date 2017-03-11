@@ -14,3 +14,13 @@ fun Date.atMidnight(): Date {
     calendar.set(Calendar.MILLISECOND, 0)
     return calendar.time
 }
+
+/**
+ * Returns a date +timeMs from this date's time.
+ */
+operator fun Date.plus(timeMs: Long) = Date(time + timeMs)
+
+/**
+ * Returns a date -timeMs from this date's time.
+ */
+operator fun Date.minus(timeMs: Long) = Date(time - timeMs)

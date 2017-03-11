@@ -6,8 +6,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
 
-    // Enabling this doesn't play well with Kotlin
-    compileOptions.incremental = false
+    compileOptions.incremental = true
 
     defaultConfig {
         applicationId "com.cbruegg.mensaupb"
@@ -65,6 +64,11 @@ dependencies {
     provided 'javax.annotation:jsr250-api:1.0'
 
     compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.12'
+
+    compile 'com.github.cbruegg.requery:requery:fixes-SNAPSHOT'
+    compile 'com.github.cbruegg.requery:requery-android:fixes-SNAPSHOT'
+    compile 'com.github.cbruegg.requery:requery-kotlin:fixes-SNAPSHOT'
+    kapt 'com.github.cbruegg.requery:requery-processor:fixes-SNAPSHOT'
 }
 
 buildscript {

@@ -20,14 +20,13 @@ import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.userType
 import com.cbruegg.mensaupb.adapter.DishViewModelAdapter
 import com.cbruegg.mensaupb.app
+import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
-import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
 import java.io.IOException
 import java.util.*
@@ -50,10 +49,10 @@ class DishesFragment : BaseFragment() {
          * shows its image.
          * @see DishesFragment
          */
-        fun newInstance(restaurant: Restaurant, date: Date, germanDishName: String? = null): DishesFragment {
+        fun newInstance(restaurant: DbRestaurant, date: Date, germanDishName: String? = null): DishesFragment {
             val fragment = DishesFragment()
             fragment.arguments = Bundle().apply {
-                putString(ARG_RESTAURANT, restaurant.serialize())
+                putParcelable(ARG_RESTAURANT, restaurant)
                 putLong(ARG_DATE, date.time)
                 putString(ARG_GERMAN_DISH_NAME, germanDishName)
             }
@@ -84,7 +83,7 @@ class DishesFragment : BaseFragment() {
         dishList.adapter = adapter
         dishList.layoutManager = LinearLayoutManager(activity)
 
-        val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))
+        val restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT)
         val date = Date(arguments.getLong(ARG_DATE))
         val userType = context.userType
         val germanDishName: String? = arguments.getString(ARG_GERMAN_DISH_NAME, null)

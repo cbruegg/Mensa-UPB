@@ -2,39 +2,40 @@ package com.cbruegg.mensaupb.cache
 
 import android.content.Context
 import android.util.Log
-import android.util.Pair
+import com.cbruegg.mensaupb.DbThread
+import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.atMidnight
-import com.cbruegg.mensaupb.extensions.withLockAsync
+import com.cbruegg.mensaupb.extensions.minus
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
-import java.text.SimpleDateFormat
+import io.requery.Persistable
+import io.requery.kotlin.BlockingEntityStore
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 import java.util.*
-import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
  * Class responsible for caching data used by the app.
- * Each restaurant has its own SharedPreferences file.
  */
-class DataCache @Deprecated("Inject this.") constructor(private val context: Context) {
+class DataCache @Deprecated("Inject this.") constructor(context: Context) {
 
-    // TODO Move this to SQLite db
+    @Inject lateinit var data: BlockingEntityStore<Persistable>
 
-    private val PREFERENCES_PREFIX = "CACHE_"
-    private val MASTER_PREFERENCE_NAME = PREFERENCES_PREFIX + "MASTER"
-    private val MASTER_PREFERENCE_RESTAURANT_IDS_KEY = "restaurants"
-    private val MASTER_PREFERENCE_RESTAURANTS_SET_KEY = "restaurant_data"
-    private val MASTER_PREFERENCE_RESTAURANTS_SET_SAVED_DATE_KEY = "restaurant_data_saved_date"
-    private val DATE_FORMAT = "yyyy-MM-dd"
-
-    private val writeLock = ReentrantLock()
+    private val cacheValidityMs = TimeUnit.DAYS.toMillis(1)
 
     /**
-     * SharedPreferences for cache metadata.
+     * If any cache entry is older than this, discard it.
      */
-    private val masterPreference = context.getSharedPreferences(MASTER_PREFERENCE_NAME, Context.MODE_PRIVATE)
+    private val oldestAllowedCacheDate: Date
+        get() = Date() - cacheValidityMs
 
     init {
+        context.app.appComponent.inject(this)
         cleanUp()
     }
 
@@ -42,83 +43,104 @@ class DataCache @Deprecated("Inject this.") constructor(private val context: Con
      * Delete entries in all caches older than the current date.
      */
     private fun cleanUp() {
-        writeLock.withLockAsync {
-            val restaurantIds: Set<String> = masterPreference.getStringSet(MASTER_PREFERENCE_RESTAURANT_IDS_KEY, Collections.emptySet())
-            val today = Date().atMidnight()
-            val dateFormatter = SimpleDateFormat(DATE_FORMAT)
-            restaurantIds.forEach { restaurantId ->
-                val store = sharedPreferenceForRestaurantId(restaurantId)
-                val storeEditor = store.edit()
-                val datesInStore = store.all.keys.map { stringDate -> Pair(stringDate, dateFormatter.parse(stringDate)) }
-
-                datesInStore.filter {
-                    it.second.before(today)
-                }.forEach { oldStringDatePair ->
-                    storeEditor.remove(oldStringDatePair.first)
+        val threshold = oldestAllowedCacheDate
+        runBlocking {
+            launch(DbThread) {
+                data.withTransaction {
+                    // Restaurants don't need to be cleaned here since they are cleaned on every update in cache(restaurants)
+                    delete(DbRestaurantCacheEntry::class)
+                            .where(DbRestaurantCacheEntryEntity.LAST_UPDATE lt threshold)
+                            .get()
+                            .call()
+                    delete(DbDish::class)
+                            .where()
+                            .notExists(
+                                    select(DbRestaurantCacheEntry::class)
+                                            .where(DbRestaurantCacheEntryEntity.LAST_UPDATE gte threshold)
+                                            .and(DbRestaurantCacheEntryEntity.RESTAURANT eq DbDishEntity.RESTAURANT)
+                                            .and(DbRestaurantCacheEntryEntity.DISHES_FOR_DATE eq DbDishEntity.DATE)
+                            )
+                            .get()
+                            .call()
                 }
-                storeEditor.apply()
-            }
-
-            if (masterPreference.getLong(MASTER_PREFERENCE_RESTAURANTS_SET_SAVED_DATE_KEY, today.time) < today.time) {
-                // Clear cached restaurants
-                masterPreference.edit().remove(MASTER_PREFERENCE_RESTAURANTS_SET_KEY).apply()
             }
         }
     }
 
     /**
-     * Cache the list of restaurants and return the original list.
+     * Cache the list of restaurants and return the list of DB entries.
      */
-    fun cache(restaurants: List<Restaurant>): List<Restaurant> {
-        if (restaurants.isEmpty()) {
-            return restaurants
+    fun cache(restaurants: List<Restaurant>): Deferred<List<DbRestaurant>> = async(DbThread) {
+        Log.d(TAG, "Caching new list of restaurants.")
+        restaurants.map { (id, name, location, isActive) ->
+            DbRestaurantEntity().apply {
+                setId(id)
+                setActive(isActive)
+                setLocation(location)
+                setName(name)
+            }
+        }.also {
+            data.withTransaction {
+                // Don't just delete everything and re-insert here,
+                // otherwise dishes will be deleted (cascade)
+                delete(DbRestaurant::class)
+                        .where(DbRestaurantEntity.ID notIn restaurants.map { it.id })
+                        .get()
+                        .call()
+                upsert(it)
+                upsert(DbRestaurantListCacheMetaEntity().apply { setLastUpdate(Date()) })
+            }
         }
-
-        Log.d(TAG, "Storing restaurants")
-
-        writeLock.withLockAsync {
-            val serialized = restaurants.map { it.serialize() }.toSet()
-            masterPreference
-                    .edit()
-                    .putStringSet(MASTER_PREFERENCE_RESTAURANTS_SET_KEY, serialized)
-                    .putLong(MASTER_PREFERENCE_RESTAURANTS_SET_SAVED_DATE_KEY, System.currentTimeMillis())
-                    .apply()
-        }
-
-        return restaurants
     }
 
     /**
-     * Retrieve the list of cached restaurants, which may be null
-     * if the entry is expired or not entered yet.
+     * Retrieve the list of cached restaurants.
      */
-    fun retrieveRestaurants(): List<Restaurant>? =
-            masterPreference.getStringSet(MASTER_PREFERENCE_RESTAURANTS_SET_KEY, null)
-                    ?.map { Restaurant.deserialize(it) }
+    fun retrieveRestaurants(): Deferred<List<DbRestaurant>?> = async(DbThread) {
+        data {
+            val cacheValid = select(DbRestaurantListCacheMetaEntity::class)
+                    .where(DbRestaurantListCacheMetaEntity.LAST_UPDATE gte oldestAllowedCacheDate)
+                    .get()
+                    .any()
+            val result = if (cacheValid) {
+                select(DbRestaurantEntity::class).get().toList()
+            } else null
 
+            Log.d(TAG, "${if (result != null) "HIT" else "MISS"}: retrieveRestaurants()")
+
+            result
+        }
+    }
 
     /**
      * Put the dishes of the restaurant into the cache.
      * Only the day, month and year of the date are used.
      * @return The original dish list
      */
-    fun cache(restaurant: Restaurant, date: Date, dishes: List<Dish>): List<Dish> {
-        if (dishes.isEmpty()) {
-            return dishes
+    fun cache(restaurant: DbRestaurant, date: Date, dishes: List<Dish>): Deferred<List<DbDish>> = async(DbThread) {
+        val dateAtMidnight = date.atMidnight()
+        val dbDishes = dishes.toDbDishes(restaurant)
+        Log.d(TAG, "Storing dishes for ${restaurant.id} and date $dateAtMidnight")
+
+        data.withTransaction {
+            delete(DbDishEntity::class)
+                    .where(DbDishEntity.DATE eq dateAtMidnight)
+                    .and(DbDishEntity.RESTAURANT eq restaurant)
+                    .get()
+                    .call()
+            insert(dbDishes)
+            delete(DbRestaurantCacheEntry::class)
+                    .where(DbRestaurantCacheEntryEntity.DISHES_FOR_DATE eq dateAtMidnight)
+                    .and(DbRestaurantCacheEntryEntity.RESTAURANT eq restaurant)
+                    .get()
+                    .call()
+            insert(DbRestaurantCacheEntryEntity().apply {
+                setDishesForDate(dateAtMidnight)
+                setRestaurant(restaurant)
+                setLastUpdate(Date())
+            })
         }
-
-        Log.d(TAG, "Storing dishes for ${restaurant.id} and date $date")
-
-        writeLock.withLockAsync {
-            storeRestaurantId(restaurant)
-            val store = sharedPreferenceForRestaurantId(restaurant.id)
-            val keyForDate = SimpleDateFormat(DATE_FORMAT).format(date)
-            val serializedDishes = dishes.serialize()
-
-            store.edit().putStringSet(keyForDate, serializedDishes.toSet()).apply()
-        }
-
-        return dishes
+        dbDishes
     }
 
     /**
@@ -126,46 +148,33 @@ class DataCache @Deprecated("Inject this.") constructor(private val context: Con
      * Only the day, month and year of the date are used.
      * If no data is found in the cache, this returns null.
      */
-    fun retrieve(restaurant: Restaurant, date: Date): List<Dish>? {
-        val store = sharedPreferenceForRestaurantId(restaurant.id)
-        val keyForDate = SimpleDateFormat(DATE_FORMAT).format(date)
+    fun retrieve(restaurant: DbRestaurant, date: Date): Deferred<List<DbDish>?> = async(DbThread) {
+        val dateAtMidnight = date.atMidnight()
+        data {
+            val cacheValid = select(DbRestaurantCacheEntry::class)
+                    .where(DbRestaurantCacheEntryEntity.RESTAURANT eq restaurant)
+                    .and(DbRestaurantCacheEntryEntity.DISHES_FOR_DATE eq dateAtMidnight)
+                    .and(DbRestaurantCacheEntryEntity.LAST_UPDATE gte oldestAllowedCacheDate)
+                    .get()
+                    .any()
+            val result = if (cacheValid) {
+                select(DbDish::class)
+                        .where(DbDishEntity.DATE eq dateAtMidnight)
+                        .and(DbDishEntity.RESTAURANT eq restaurant)
+                        .get()
+                        .toList()
 
-        val serializedDishes = store.getStringSet(keyForDate, null)
-        val missOrHit = if (serializedDishes == null) "MISS" else "HIT"
-        Log.d(TAG, "$missOrHit: ${restaurant.id}, $keyForDate")
-        if (serializedDishes == null) {
-            return null
-        } else {
-            return deserializeDishes(serializedDishes)
+            } else null
+
+            if (result != null) {
+                Log.d(TAG, "HIT: ${restaurant.name} at $dateAtMidnight")
+            } else {
+                Log.d(TAG, "MISS: ${restaurant.name} at $dateAtMidnight")
+            }
+
+            result
         }
     }
-
-    /**
-     * Add the restaurantId to the list of restaurants in the cache.
-     * Required for cleaning the cache.
-     */
-    private fun storeRestaurantId(restaurant: Restaurant) {
-        val restaurantIds = masterPreference.getStringSet(MASTER_PREFERENCE_RESTAURANT_IDS_KEY, HashSet())
-        restaurantIds.add(restaurant.id)
-        masterPreference.edit().putStringSet(MASTER_PREFERENCE_RESTAURANT_IDS_KEY, restaurantIds).apply()
-    }
-
-    /**
-     * Get the SharedPreference for the specified restaurant.
-     */
-    private fun sharedPreferenceForRestaurantId(restaurantId: String)
-            = context.getSharedPreferences(PREFERENCES_PREFIX + restaurantId, Context.MODE_PRIVATE)
-
-    /**
-     * Serialize dishes for storing them in a SharedPreference.
-     */
-    private fun List<Dish>.serialize(): List<String> = map(Dish::serialize)
-
-    /**
-     * Deserialize dishes from a SharedPreference.
-     */
-    private fun deserializeDishes(serializedDishes: Set<String>): List<Dish>
-            = serializedDishes.map { Dish.deserialize(it) }.filterNotNull()
 
 }
 

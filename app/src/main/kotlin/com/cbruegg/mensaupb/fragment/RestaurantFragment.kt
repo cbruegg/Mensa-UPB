@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
-import com.cbruegg.mensaupb.model.Restaurant
+import com.cbruegg.mensaupb.cache.DbRestaurant
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -33,12 +33,12 @@ class RestaurantFragment : BaseFragment() {
          * @param germanDishName If set, the fragment looks for a matching
          * dish on the first page only and shows its image
          */
-        fun newInstance(restaurant: Restaurant,
+        fun newInstance(restaurant: DbRestaurant,
                         pagerPosition: Int = 0,
                         germanDishName: String? = null): RestaurantFragment {
             val fragment = RestaurantFragment()
             fragment.arguments = Bundle().apply {
-                putString(ARG_RESTAURANT, restaurant.serialize())
+                putParcelable(ARG_RESTAURANT, restaurant)
                 putInt(ARG_PAGER_POSITION, Math.min(pagerPosition, DAY_COUNT))
                 putString(ARG_GERMAN_DISH_NAME, germanDishName)
             }
@@ -60,7 +60,7 @@ class RestaurantFragment : BaseFragment() {
         /**
          * Set up the view pager
          */
-        val restaurant = Restaurant.deserialize(arguments.getString(ARG_RESTAURANT))
+        val restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT)
         val pagerPosition = arguments.getInt(ARG_PAGER_POSITION)
         val dates = computePagerDates()
         val adapter = DishesPagerAdapter(activity, childFragmentManager, restaurant, dates,
@@ -90,7 +90,7 @@ class RestaurantFragment : BaseFragment() {
      */
     private class DishesPagerAdapter(context: Context,
                                      fm: FragmentManager,
-                                     private val restaurant: Restaurant,
+                                     private val restaurant: DbRestaurant,
                                      private val dates: List<Date>,
                                      /**
                                       * If set, look for a matching dish on the first page
