@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
             android:gravity="center_vertical"
-            android:onClick="@{onClickListener.onClick}"
+            android:onClick="@{onClickListener::onClick}"
             android:orientation="horizontal"
             android:paddingBottom="5dp"
             android:paddingLeft="@dimen/activity_horizontal_margin"

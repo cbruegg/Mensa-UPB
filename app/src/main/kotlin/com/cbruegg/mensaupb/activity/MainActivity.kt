@@ -18,12 +18,12 @@ import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantAdapter
 import com.cbruegg.mensaupb.app
+import com.cbruegg.mensaupb.cache.DbDish
+import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.extensions.toggleDrawer
 import com.cbruegg.mensaupb.fragment.RestaurantFragment
-import com.cbruegg.mensaupb.model.Dish
-import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
 import kotlinx.coroutines.experimental.launch
@@ -46,7 +46,7 @@ class MainActivity : BaseActivity() {
          * the activity tries to locate it in today's list of dishes
          * of the given restaurant.
          */
-        fun createStartIntent(context: Context, restaurant: Restaurant? = null, dish: Dish? = null): Intent
+        fun createStartIntent(context: Context, restaurant: DbRestaurant? = null, dish: DbDish? = null): Intent
                 = Intent(context, MainActivity::class.java).apply {
             fillIntent(this, restaurant, dish)
         }
@@ -54,7 +54,7 @@ class MainActivity : BaseActivity() {
         /**
          * Same as [createStartIntent], except this fills an existing intent.
          */
-        fun fillIntent(intent: Intent, restaurant: Restaurant? = null, dish: Dish? = null) {
+        fun fillIntent(intent: Intent, restaurant: DbRestaurant? = null, dish: DbDish? = null) {
             intent.putExtra(ARG_RESTAURANT_ID, restaurant?.id)
             intent.putExtra(ARG_DISH_GERMAN_NAME, dish?.germanName)
         }
@@ -94,7 +94,7 @@ class MainActivity : BaseActivity() {
                     .apply()
         }
 
-    private var lastRestaurant: Restaurant? = null
+    private var lastRestaurant: DbRestaurant? = null
     @Inject lateinit var downloader: Downloader
     @Inject lateinit var oneOff: OneOff
 
@@ -113,7 +113,7 @@ class MainActivity : BaseActivity() {
 
         // Setup the restaurant list in the drawer
         val restaurantAdapter = RestaurantAdapter()
-        restaurantAdapter.onClickListener = { restaurant, position ->
+        restaurantAdapter.onClickListener = { restaurant, _ ->
             drawerLayout.closeDrawer(GravityCompat.START)
             restaurant.load()
         }
@@ -209,7 +209,7 @@ class MainActivity : BaseActivity() {
      * the last used restaurant or else if found the [DEFAULT_RESTAURANT_NAME] is used,
      * else the first item in the list.
      */
-    private fun loadDefaultRestaurant(preparedList: List<Restaurant>) {
+    private fun loadDefaultRestaurant(preparedList: List<DbRestaurant>) {
         val restaurant = preparedList.firstOrNull { it.id == intent.getStringExtra(ARG_RESTAURANT_ID) }
                 ?: preparedList.firstOrNull { it.id == lastRestaurantId }
                 ?: preparedList.firstOrNull { it.name.toLowerCase() == DEFAULT_RESTAURANT_NAME.toLowerCase() }
@@ -221,7 +221,7 @@ class MainActivity : BaseActivity() {
      * Show a fragment that displays the dishes for the specified restaurant.
      * Also updates the [lastRestaurantId].
      */
-    private fun Restaurant.load() {
+    private fun DbRestaurant.load() {
         val currentPagerPosition = (supportFragmentManager
                 .findFragmentById(R.id.fragment_container) as? RestaurantFragment)
                 ?.pagerPosition

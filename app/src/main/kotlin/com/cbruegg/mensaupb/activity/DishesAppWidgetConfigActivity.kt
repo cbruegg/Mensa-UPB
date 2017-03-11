@@ -14,11 +14,10 @@ import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfiguration
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
+import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
-import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import com.cbruegg.mensaupb.viewmodel.uiSorted
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
 import java.io.IOException
 
@@ -34,7 +33,7 @@ class DishesAppWidgetConfigActivity : BaseActivity() {
     private val confirmButton by bindView<Button>(R.id.widget_config_confirm)
     private val progressBar by bindView<ProgressBar>(R.id.widget_config_progressbar)
 
-    private var restaurantList: List<Restaurant>? = null
+    private var restaurantList: List<DbRestaurant>? = null
     private val appWidgetId by lazy {
         intent.extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID)

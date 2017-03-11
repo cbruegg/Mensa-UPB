@@ -11,10 +11,11 @@ import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.MainActivity
 import com.cbruegg.mensaupb.activity.userType
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
+import com.cbruegg.mensaupb.cache.DbDish
+import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.stackTraceString
-import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import com.squareup.picasso.Picasso
@@ -42,8 +43,8 @@ class DishRemoteViewsService : RemoteViewsService() {
             get() = Date(System.currentTimeMillis() + DishesWidgetUpdateService.DATE_OFFSET)
 
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
-        private var dishes = emptyList<Dish>()
-        private var restaurant: Restaurant? = null
+        private var dishes = emptyList<DbDish>()
+        private var restaurant: DbRestaurant? = null
 
         override fun getLoadingView(): RemoteViews? = null // Use default
 
@@ -53,9 +54,9 @@ class DishRemoteViewsService : RemoteViewsService() {
 
             val dishIntent = Intent().apply { MainActivity.fillIntent(this, restaurant, dish) }
             val remoteViews = RemoteViews(ctx.packageName, R.layout.row_dish_widget).apply {
-               setTextViewText(R.id.dish_widget_name, dish.germanName)
-               setViewVisibility(R.id.dish_widget_image, thumbnailVisibility)
-               setOnClickFillInIntent(R.id.dish_widget_row, dishIntent)
+                setTextViewText(R.id.dish_widget_name, dish.germanName)
+                setViewVisibility(R.id.dish_widget_image, thumbnailVisibility)
+                setOnClickFillInIntent(R.id.dish_widget_row, dishIntent)
             }
 
             if (!dish.thumbnailImageUrl.isNullOrEmpty()) {
@@ -93,7 +94,7 @@ class DishRemoteViewsService : RemoteViewsService() {
                 val restaurant = downloader.downloadOrRetrieveRestaurantsAsync()
                         .await()
                         .component2()
-                        ?.firstOrNull { (id) -> id == restaurantId }
+                        ?.firstOrNull { it -> it.id == restaurantId }
                         ?: return@withTimeout
                 dishes = downloader.downloadOrRetrieveDishesAsync(restaurant, shownDate)
                         .await()

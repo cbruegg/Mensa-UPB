@@ -2,6 +2,7 @@ package com.cbruegg.mensaupb.viewmodel
 
 import android.content.Context
 import com.cbruegg.mensaupb.R
+import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.extensions.capitalizeFirstChar
 import com.cbruegg.mensaupb.extensions.replace
 import com.cbruegg.mensaupb.model.Dish
@@ -16,7 +17,7 @@ import kotlin.comparisons.thenComparator
 /**
  * Wrapper for [Dish] objects providing easy access to various attributes for data binding.
  */
-data class DishViewModel(@DataBindingProperty val dish: Dish,
+data class DishViewModel(@DataBindingProperty val dish: DbDish,
                          @DataBindingProperty val headerText: String?,
                          @DataBindingProperty val userPrice: Double,
                          @DataBindingProperty val priceText: String,
@@ -27,7 +28,7 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
 
         private val NUMBER_FORMAT = DecimalFormat("0.00")
 
-        fun create(dish: Dish, headerText: String?, userType: UserType, context: Context, position: Int): DishViewModel {
+        fun create(dish: DbDish, headerText: String?, userType: UserType, context: Context, position: Int): DishViewModel {
             val userPrice = when (userType) {
                 UserType.STUDENT -> dish.studentPrice
                 UserType.WORKER -> dish.workerPrice
@@ -59,8 +60,8 @@ data class DishViewModel(@DataBindingProperty val dish: Dish,
  * for this user type.
  */
 @Suppress("Destructure")
-val UserType.dishComparator: Comparator<Dish>
-    get() = compareByDescending(Dish::germanCategory) // Sort by category
+val UserType.dishComparator: Comparator<DbDish>
+    get() = compareByDescending(DbDish::germanCategory) // Sort by category
             .thenComparator { d1, d2 ->
                 if (d1.priceType == d2.priceType) 0 else if (d1.priceType == PriceType.FIXED) -1 else 1
             } // Weighted is worse
@@ -69,7 +70,7 @@ val UserType.dishComparator: Comparator<Dish>
 /**
  * Compute the DishViewModels for a list of Dishes.
  */
-fun List<Dish>.toDishViewModels(context: Context, userType: UserType): List<DishViewModel> {
+fun List<DbDish>.toDishViewModels(context: Context, userType: UserType): List<DishViewModel> {
     val sortedList = sortedWith(userType.dishComparator)
     return sortedList.mapIndexed { position, dish ->
         DishViewModel.create(dish, headerTextForIndex(position, sortedList), userType, context, position)
@@ -80,11 +81,11 @@ fun List<Dish>.toDishViewModels(context: Context, userType: UserType): List<Dish
  * Check if the dish is the first element of a category in the list.
  * Useful for determining whether a header should be displayed.
  */
-private fun isFirstInCategory(index: Int, dishes: List<Dish>): Boolean {
+private fun isFirstInCategory(index: Int, dishes: List<DbDish>): Boolean {
     val indexDish = dishes[index]
     val previousDish = if (index - 1 >= 0) dishes[index - 1] else null
     return indexDish.germanCategory != previousDish?.germanCategory
 }
 
-private fun headerTextForIndex(index: Int, dishes: List<Dish>): String?
+private fun headerTextForIndex(index: Int, dishes: List<DbDish>): String?
         = if (isFirstInCategory(index, dishes)) dishes[index].germanCategory else null

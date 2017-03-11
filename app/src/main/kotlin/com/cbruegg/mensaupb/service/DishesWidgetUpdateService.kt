@@ -12,8 +12,8 @@ import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.MainActivity
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
+import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
-import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Failure
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Success
 import kotlinx.coroutines.experimental.Job
@@ -36,7 +36,7 @@ class DishesWidgetUpdateService : Service() {
      * @see Success
      */
     sealed class DishAppWidgetResult(open val appWidgetId: Int) {
-        data class Success(override val appWidgetId: Int, val restaurant: Restaurant) : DishAppWidgetResult(appWidgetId)
+        data class Success(override val appWidgetId: Int, val restaurant: DbRestaurant) : DishAppWidgetResult(appWidgetId)
         data class Failure(override val appWidgetId: Int, val reason: Reason) : DishAppWidgetResult(appWidgetId) {
             enum class Reason {
                 RESTAURANT_NOT_FOUND
@@ -141,8 +141,8 @@ class DishesWidgetUpdateService : Service() {
         val restaurantPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_RESTAURANT, restaurantIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         val dishRemoteViewsServiceIntent = Intent(this, DishRemoteViewsService::class.java).apply {
-           putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-           data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
         }
         val mainActivityIntent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
