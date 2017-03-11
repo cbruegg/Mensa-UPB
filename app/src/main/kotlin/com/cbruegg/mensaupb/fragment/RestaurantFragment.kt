@@ -63,7 +63,7 @@ class RestaurantFragment : BaseFragment() {
         val restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT)
         val pagerPosition = arguments.getInt(ARG_PAGER_POSITION)
         val dates = computePagerDates()
-        val adapter = DishesPagerAdapter(activity, fragmentManager, restaurant, dates,
+        val adapter = DishesPagerAdapter(activity, childFragmentManager, restaurant, dates,
                 arguments.getString(ARG_GERMAN_DISH_NAME))
         dayPager.adapter = adapter
         dayPagerTabs.setupWithViewPager(dayPager)
