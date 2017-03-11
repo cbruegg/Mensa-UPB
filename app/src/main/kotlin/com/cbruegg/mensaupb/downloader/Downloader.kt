@@ -25,6 +25,8 @@ private val API_ID = BuildConfig.API_ID
 private val BASE_URL = "http://www.studentenwerk-pb.de/fileadmin/shareddata/access2.php?id=" + API_ID
 private val RESTAURANT_URL = BASE_URL + "&getrestaurants=1"
 
+// TODO Use Retrofit
+
 /**
  * Class responsible for downloading data from the API
  */

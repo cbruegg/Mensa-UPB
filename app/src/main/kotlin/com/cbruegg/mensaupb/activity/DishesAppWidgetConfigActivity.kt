@@ -40,8 +40,6 @@ class DishesAppWidgetConfigActivity : BaseActivity() {
                 AppWidgetManager.INVALID_APPWIDGET_ID)
     }
 
-    private var job: Job? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_widget_config)

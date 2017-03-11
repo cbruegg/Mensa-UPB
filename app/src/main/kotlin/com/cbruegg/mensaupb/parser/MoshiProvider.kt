@@ -1,9 +1,11 @@
 package com.cbruegg.mensaupb.parser
 
 import com.cbruegg.mensaupb.model.Dish
-import com.cbruegg.mensaupb.model.PriceType
 import com.cbruegg.mensaupb.model.Restaurant
-import com.squareup.moshi.*
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Rfc3339DateJsonAdapter
+import com.squareup.moshi.Types
 import java.util.*
 
 object MoshiProvider {
@@ -12,7 +14,6 @@ object MoshiProvider {
      * [provideJsonAdapter] instead.
      */
     val moshi: Moshi = Moshi.Builder()
-            .add(PriceTypeJsonAdapter())
             .add(Date::class.java, Rfc3339DateJsonAdapter())
             .addUserClassFactory(Dish::class.java, KotlinDataClassFactory())
             .addUserClassFactory(Restaurant::class.java, KotlinDataClassFactory())
@@ -32,21 +33,4 @@ object MoshiProvider {
         return moshi.adapter<List<T>>(Types.newParameterizedType(List::class.java, T::class.java))
     }
 
-}
-
-private class PriceTypeJsonAdapter {
-    @FromJson fun priceTypeFromJson(priceType: String?): PriceType? =
-            when (priceType) {
-                "weighted" -> PriceType.WEIGHTED
-                "fixed" -> PriceType.FIXED
-                null -> null
-                else -> throw IllegalArgumentException("Unsupported PriceType")
-            }
-
-    @ToJson fun priceTypeToJson(priceType: PriceType?): String? =
-            when (priceType) {
-                PriceType.FIXED -> "fixed"
-                PriceType.WEIGHTED -> "weighted"
-                null -> null
-            }
 }

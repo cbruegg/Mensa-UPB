@@ -16,7 +16,7 @@ class DishesWidgetConfigurationManager(context: Context) {
      * Save a [DishesWidgetConfiguration] for an app widget.
      */
     fun putConfiguration(appWidgetId: Int, dishesWidgetConfiguration: DishesWidgetConfiguration) {
-        store.edit().apply { dishesWidgetConfiguration.writeTo(appWidgetId, this) }.commit()
+        store.edit().apply { dishesWidgetConfiguration.writeTo(appWidgetId, this) }.apply()
     }
 
     /**

@@ -14,7 +14,6 @@ class PreferenceActivity : BaseActivity() {
 
     companion object {
         val KEY_PREF_USER_TYPE = "user_type_preference"
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -36,16 +36,17 @@ class RestaurantFragment : BaseFragment() {
         fun newInstance(restaurant: Restaurant,
                         pagerPosition: Int = 0,
                         germanDishName: String? = null): RestaurantFragment {
-            val args = Bundle()
-            args.putString(ARG_RESTAURANT, restaurant.serialize())
-            args.putInt(ARG_PAGER_POSITION, Math.min(pagerPosition, DAY_COUNT))
-            args.putString(ARG_GERMAN_DISH_NAME, germanDishName)
-
             val fragment = RestaurantFragment()
-            fragment.arguments = args
+            fragment.arguments = Bundle().apply {
+                putString(ARG_RESTAURANT, restaurant.serialize())
+                putInt(ARG_PAGER_POSITION, Math.min(pagerPosition, DAY_COUNT))
+                putString(ARG_GERMAN_DISH_NAME, germanDishName)
+            }
             return fragment
         }
     }
+
+    // TODO Don't save current position but selected day and restore it
 
     private val dayPager: ViewPager by bindView(R.id.day_pager)
     private val dayPagerTabs: TabLayout by bindView(R.id.day_pager_tabs)
@@ -72,7 +73,8 @@ class RestaurantFragment : BaseFragment() {
     /**
      * Get the current position of the pager
      */
-    fun pagerPosition(): Int = dayPager.currentItem
+    val pagerPosition: Int
+        get() = dayPager.currentItem
 
     /**
      * Return a list of dates to be used for fetching dishes.

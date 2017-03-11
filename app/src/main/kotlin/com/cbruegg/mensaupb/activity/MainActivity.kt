@@ -26,7 +26,6 @@ import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
-import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -67,7 +66,6 @@ class MainActivity : BaseActivity() {
 
     private val DEFAULT_RESTAURANT_NAME = "Mensa Academica"
     private val PREFS_FILE_NAME = "main_activity_prefs"
-    private val PREFS_KEY_FIRST_LAUNCH = "main_activity_first_launch"
     private val PREFS_KEY_LAST_SELECTED_RESTAURANT = "last_selected_restaurant"
     private val STUDENTENWERK_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/")
     private val STUDENTENWERK_OPENING_HOURS_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/oeffnungszeiten")
@@ -84,6 +82,9 @@ class MainActivity : BaseActivity() {
      * Other vars
      */
 
+    /**
+     * Persistent property that saves the last viewed restaurant id.
+     */
     private var lastRestaurantId: String?
         get() = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE).getString(PREFS_KEY_LAST_SELECTED_RESTAURANT, null)
         set(new) {
@@ -114,18 +115,17 @@ class MainActivity : BaseActivity() {
         val restaurantAdapter = RestaurantAdapter()
         restaurantAdapter.onClickListener = { restaurant, position ->
             drawerLayout.closeDrawer(GravityCompat.START)
-            showRestaurant(restaurant)
+            restaurant.load()
         }
         restaurantList.adapter = restaurantAdapter
         restaurantList.layoutManager = LinearLayoutManager(this)
 
         // Download data for the list
         reload()
-
         runOneOffs()
     }
 
-    fun runOneOffs() {
+    private fun runOneOffs() {
         oneOff.launch("appwidget_ad") {
             AlertDialog.Builder(this)
                     .setTitle(R.string.did_you_know)
@@ -165,11 +165,8 @@ class MainActivity : BaseActivity() {
      * the user knows about its existence.
      */
     private fun checkShowFirstTimeDrawer() {
-        val sharedPreferences = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE)
-        val firstLaunch = sharedPreferences.getBoolean(PREFS_KEY_FIRST_LAUNCH, true)
-        if (firstLaunch) {
+        oneOff.launch("showFirstTimeDrawer") {
             drawerLayout.openDrawer(GravityCompat.START)
-            sharedPreferences.edit().putBoolean(PREFS_KEY_FIRST_LAUNCH, false).apply()
         }
     }
 
@@ -178,34 +175,32 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                drawerLayout.toggleDrawer(GravityCompat.START)
-                return true
-            }
-            R.id.settings -> {
-                val intent = Intent(this, PreferenceActivity::class.java)
-                startActivityForResult(intent, REQUEST_CODE_PREFERENCES)
-                return true
-            }
-            R.id.stw_url -> {
-                startActivity(Intent(Intent.ACTION_VIEW, STUDENTENWERK_URI))
-                return true
-            }
-            R.id.opening_hours -> {
-                startActivity(Intent(Intent.ACTION_VIEW, STUDENTENWERK_OPENING_HOURS_URI))
-                return true
-            }
-            else -> return super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        android.R.id.home -> {
+            drawerLayout.toggleDrawer(GravityCompat.START)
+            true
         }
+        R.id.settings -> {
+            val intent = Intent(this, PreferenceActivity::class.java)
+            startActivityForResult(intent, REQUEST_CODE_PREFERENCES)
+            true
+        }
+        R.id.stw_url -> {
+            startActivity(Intent(Intent.ACTION_VIEW, STUDENTENWERK_URI))
+            true
+        }
+        R.id.opening_hours -> {
+            startActivity(Intent(Intent.ACTION_VIEW, STUDENTENWERK_OPENING_HOURS_URI))
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == REQUEST_CODE_PREFERENCES) {
-            lastRestaurant?.let { showRestaurant(it) }
+            lastRestaurant?.load()
         }
     }
 
@@ -219,27 +214,27 @@ class MainActivity : BaseActivity() {
                 ?: preparedList.firstOrNull { it.id == lastRestaurantId }
                 ?: preparedList.firstOrNull { it.name.toLowerCase() == DEFAULT_RESTAURANT_NAME.toLowerCase() }
                 ?: preparedList.firstOrNull()
-        if (restaurant != null) {
-            showRestaurant(restaurant)
-        }
+        restaurant?.load()
     }
 
     /**
      * Show a fragment that displays the dishes for the specified restaurant.
      * Also updates the [lastRestaurantId].
      */
-    private fun showRestaurant(restaurant: Restaurant) {
+    private fun Restaurant.load() {
         val currentPagerPosition = (supportFragmentManager
                 .findFragmentById(R.id.fragment_container) as? RestaurantFragment)
-                ?.pagerPosition()
+                ?.pagerPosition
 
-        lastRestaurant = restaurant
-        lastRestaurantId = restaurant.id
-        supportActionBar?.title = restaurant.name
+        lastRestaurant = this
+        lastRestaurantId = id
+        supportActionBar?.title = name
         val germanDishName: String? = intent.getStringExtra(ARG_DISH_GERMAN_NAME)
-        val restaurantFragment = RestaurantFragment.newInstance(restaurant,
+        val restaurantFragment = RestaurantFragment.newInstance(
+                this,
                 currentPagerPosition ?: 0,
-                germanDishName)
+                germanDishName
+        )
         supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.fragment_container, restaurantFragment)

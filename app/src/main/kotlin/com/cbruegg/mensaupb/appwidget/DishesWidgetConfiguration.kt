@@ -25,8 +25,6 @@ data class DishesWidgetConfiguration(val restaurantId: String) {
      * Save the data for the specified appWidgetId in the supplied editor.
      */
     fun writeTo(appWidgetId: Int, editor: SharedPreferences.Editor) {
-        editor.apply {
-            putString("$appWidgetId$SUFFIX_ID", restaurantId)
-        }
+        editor.putString("$appWidgetId$SUFFIX_ID", restaurantId)
     }
 }

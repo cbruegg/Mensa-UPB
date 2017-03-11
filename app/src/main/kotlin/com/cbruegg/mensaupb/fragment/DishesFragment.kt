@@ -51,13 +51,12 @@ class DishesFragment : BaseFragment() {
          * @see DishesFragment
          */
         fun newInstance(restaurant: Restaurant, date: Date, germanDishName: String? = null): DishesFragment {
-            val args = Bundle()
-            args.putString(ARG_RESTAURANT, restaurant.serialize())
-            args.putLong(ARG_DATE, date.time)
-            args.putString(ARG_GERMAN_DISH_NAME, germanDishName)
-
             val fragment = DishesFragment()
-            fragment.arguments = args
+            fragment.arguments = Bundle().apply {
+                putString(ARG_RESTAURANT, restaurant.serialize())
+                putLong(ARG_DATE, date.time)
+                putString(ARG_GERMAN_DISH_NAME, germanDishName)
+            }
             return fragment
         }
     }

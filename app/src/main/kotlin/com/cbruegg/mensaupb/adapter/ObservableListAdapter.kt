@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import com.cbruegg.mensaupb.extensions.addOnListChangedCallback
 
 /**
- * An abstract RecyclerView-Adapter that listents for changes in the provided observable list.
+ * An abstract RecyclerView-Adapter that listens for changes in the provided observable list.
  * It also features support for a lambda onClickListener.
  */
-abstract class ObservableListAdapter<DATA, VH : RecyclerView.ViewHolder>(val list: ObservableArrayList<DATA> = ObservableArrayList(),
-                                                                         var onClickListener: ((data: DATA, position: Int) -> Unit)? = null) : RecyclerView.Adapter<VH>() {
+abstract class ObservableListAdapter<DATA, VH : RecyclerView.ViewHolder>(
+        val list: ObservableArrayList<DATA> = ObservableArrayList(),
+        var onClickListener: ((data: DATA, position: Int) -> Unit)? = null
+) : RecyclerView.Adapter<VH>() {
 
     init {
         list.addOnListChangedCallback({ notifyDataSetChanged() })

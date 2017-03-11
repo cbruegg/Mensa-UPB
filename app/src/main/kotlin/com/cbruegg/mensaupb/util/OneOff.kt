@@ -10,7 +10,7 @@ class OneOff(context: Context) {
      * Launch the operation if it never happened before.
      */
     fun launch(key: String, f: () -> Unit) {
-        synchronized(this) {
+        synchronized(prefs) {
             if (!prefs.contains(key)) {
                 prefs.edit().putInt(key, 0).apply()
                 f()

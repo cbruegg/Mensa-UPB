@@ -48,15 +48,15 @@ class DishRemoteViewsService : RemoteViewsService() {
         override fun getLoadingView(): RemoteViews? = null // Use default
 
         override fun getViewAt(position: Int): RemoteViews? {
-            Log.d(TAG, "CALLED getViewAt($position)")
             val dish = dishes[position]
             val thumbnailVisibility = if (dish.thumbnailImageUrl.isNullOrEmpty()) View.GONE else View.VISIBLE
 
             val dishIntent = Intent().apply { MainActivity.fillIntent(this, restaurant, dish) }
-            val remoteViews = RemoteViews(ctx.packageName, R.layout.row_dish_widget)
-            remoteViews.setTextViewText(R.id.dish_widget_name, dish.germanName)
-            remoteViews.setViewVisibility(R.id.dish_widget_image, thumbnailVisibility)
-            remoteViews.setOnClickFillInIntent(R.id.dish_widget_row, dishIntent)
+            val remoteViews = RemoteViews(ctx.packageName, R.layout.row_dish_widget).apply {
+               setTextViewText(R.id.dish_widget_name, dish.germanName)
+               setViewVisibility(R.id.dish_widget_image, thumbnailVisibility)
+               setOnClickFillInIntent(R.id.dish_widget_row, dishIntent)
+            }
 
             if (!dish.thumbnailImageUrl.isNullOrEmpty()) {
                 try {
@@ -73,23 +73,17 @@ class DishRemoteViewsService : RemoteViewsService() {
                 }
             }
 
-            Log.d(TAG, "RETURNING getViewAt($position)")
-
             return remoteViews
         }
 
         override fun getViewTypeCount() = 1
 
         override fun onCreate() {
-            Log.d(TAG, "CALLED onCreate()")
-            Log.d(TAG, "RETURNED onCreate()")
         }
 
         override fun getItemId(position: Int) = dishes[position].hashCode().toLong()
 
         override fun onDataSetChanged() = runBlocking {
-            Log.d(TAG, "CALLED onDataSetChanged()")
-
             val (restaurantId) = DishesWidgetConfigurationManager(ctx)
                     .retrieveConfiguration(appWidgetId)
                     ?: return@runBlocking
@@ -107,19 +101,13 @@ class DishRemoteViewsService : RemoteViewsService() {
                         ?.sortedWith(ctx.userType.dishComparator)
                         ?: return@withTimeout
             }
-            Log.d(TAG, "RETURNED coroutine onDataSetChanged()")
         }
 
         override fun hasStableIds() = true
 
-        override fun getCount(): Int {
-            Log.d(TAG, "CALLED getCount()")
-            Log.d(TAG, "RETURNING getCount(): ${dishes.size}")
-            return dishes.size
-        }
+        override fun getCount() = dishes.size
 
         override fun onDestroy() {
-            Log.d(TAG, "CALLED onDestroy()")
         }
 
     }

@@ -1,6 +1,5 @@
 package com.cbruegg.mensaupb.viewmodel
 
-import com.cbruegg.mensaupb.extensions.sortBy
 import com.cbruegg.mensaupb.model.Restaurant
 
 /**
@@ -9,5 +8,4 @@ import com.cbruegg.mensaupb.model.Restaurant
  * applicable for display in the whole app.
  */
 fun List<Restaurant>.uiSorted(): List<Restaurant>
-        = sortBy { first, second -> first.location.compareTo(second.location) }
-        .reversed() // Paderborn should be at the top of the list
+        = sortedBy { it.location }.reversed() // Paderborn should be at the top of the list

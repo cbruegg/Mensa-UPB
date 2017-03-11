@@ -5,7 +5,7 @@ import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
 
-val Throwable.stackTraceString: String
+val Throwable.stackTraceString
     get() = StringWriter().apply {
         PrintWriter(this).use {
             printStackTrace(it)

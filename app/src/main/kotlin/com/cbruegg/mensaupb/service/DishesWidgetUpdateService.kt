@@ -140,21 +140,24 @@ class DishesWidgetUpdateService : Service() {
         restaurantIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         val restaurantPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_RESTAURANT, restaurantIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
-        val dishRemoteViewsServiceIntent = Intent(this, DishRemoteViewsService::class.java)
-        dishRemoteViewsServiceIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        dishRemoteViewsServiceIntent.data = Uri.parse(dishRemoteViewsServiceIntent.toUri(Intent.URI_INTENT_SCHEME))
-        val mainActivityIntent = Intent(this, MainActivity::class.java)
-        mainActivityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        mainActivityIntent.makeUnique(appWidgetId)
+        val dishRemoteViewsServiceIntent = Intent(this, DishRemoteViewsService::class.java).apply {
+           putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+           data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+        }
+        val mainActivityIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            makeUnique(appWidgetId)
+        }
         val dishPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_DISH, mainActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         val day = SimpleDateFormat("EEE").format(shownDate)
-        val remoteViews = RemoteViews(packageName, R.layout.app_widget_dishes)
-        remoteViews.setOnClickPendingIntent(R.id.dishes_widget_restaurant_name, restaurantPendingIntent)
-        remoteViews.setTextViewText(R.id.dishes_widget_restaurant_name, "${restaurant.name} ($day)")
-        remoteViews.setRemoteAdapter(R.id.dishes_widget_list, dishRemoteViewsServiceIntent)
-        remoteViews.setPendingIntentTemplate(R.id.dishes_widget_list, dishPendingIntent)
-        remoteViews.setEmptyView(R.id.dishes_widget_list, R.id.dishes_widget_empty_view)
+        val remoteViews = RemoteViews(packageName, R.layout.app_widget_dishes).apply {
+            setOnClickPendingIntent(R.id.dishes_widget_restaurant_name, restaurantPendingIntent)
+            setTextViewText(R.id.dishes_widget_restaurant_name, "${restaurant.name} ($day)")
+            setRemoteAdapter(R.id.dishes_widget_list, dishRemoteViewsServiceIntent)
+            setPendingIntentTemplate(R.id.dishes_widget_list, dishPendingIntent)
+            setEmptyView(R.id.dishes_widget_list, R.id.dishes_widget_empty_view)
+        }
 
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.dishes_widget_list)
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
