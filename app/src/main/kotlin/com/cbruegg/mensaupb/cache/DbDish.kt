@@ -79,7 +79,7 @@ fun Iterable<Dish>.toDbDishes(restaurant: DbRestaurant) = map { dish ->
     DbDishEntity().apply {
         require(restaurant.id == dish.restaurantId) { "dish.restaurantId must equal restaurant parameter." }
 
-        setDate(dish.date.atMidnight())
+        setDate(dish.date.atMidnight)
         setGermanName(dish.germanName)
         setGermanDescription(dish.germanDescription)
         setCategory(dish.category)

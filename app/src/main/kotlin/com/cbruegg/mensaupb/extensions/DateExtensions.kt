@@ -5,15 +5,14 @@ import java.util.*
 /**
  * Return a clone of this Date set to 0:00:00:0000
  */
-fun Date.atMidnight(): Date {
-    val calendar = Calendar.getInstance()
-    calendar.time = this
-    calendar.set(Calendar.HOUR_OF_DAY, 0)
-    calendar.set(Calendar.MINUTE, 0)
-    calendar.set(Calendar.SECOND, 0)
-    calendar.set(Calendar.MILLISECOND, 0)
-    return calendar.time
-}
+val Date.atMidnight: Date
+    get() = Calendar.getInstance().apply {
+        time = this@atMidnight
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.time
 
 /**
  * Returns a date +timeMs from this date's time.
@@ -27,3 +26,15 @@ operator fun Date.minus(timeMs: Long) = Date(time - timeMs)
 
 fun Date.inRangeOrElse(min: Date, max: Date, orElse: Date) =
         if (min <= this && this < max) this else orElse
+
+/**
+ * Current date.
+ */
+val now: Date
+    get() = Date()
+
+/**
+ * Current date at midnight.
+ */
+val midnight: Date
+    get() = now.atMidnight

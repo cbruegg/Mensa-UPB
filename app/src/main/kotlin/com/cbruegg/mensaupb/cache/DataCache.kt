@@ -7,6 +7,7 @@ import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.minus
+import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import io.requery.Persistable
@@ -32,7 +33,7 @@ class DataCache @Deprecated("Inject this.") constructor(context: Context) {
      * If any cache entry is older than this, discard it.
      */
     private val oldestAllowedCacheDate: Date
-        get() = Date() - cacheValidityMs
+        get() = now - cacheValidityMs
 
     init {
         context.app.appComponent.inject(this)
@@ -88,7 +89,7 @@ class DataCache @Deprecated("Inject this.") constructor(context: Context) {
                         .get()
                         .call()
                 upsert(it)
-                upsert(DbRestaurantListCacheMetaEntity().apply { setLastUpdate(Date()) })
+                upsert(DbRestaurantListCacheMetaEntity().apply { setLastUpdate(now) })
             }
         }
     }
@@ -118,7 +119,7 @@ class DataCache @Deprecated("Inject this.") constructor(context: Context) {
      * @return The original dish list
      */
     fun cache(restaurant: DbRestaurant, date: Date, dishes: List<Dish>): Deferred<List<DbDish>> = async(DbThread) {
-        val dateAtMidnight = date.atMidnight()
+        val dateAtMidnight = date.atMidnight
         val dbDishes = dishes.toDbDishes(restaurant)
         Log.d(TAG, "Storing dishes for ${restaurant.id} and date $dateAtMidnight")
 
@@ -137,7 +138,7 @@ class DataCache @Deprecated("Inject this.") constructor(context: Context) {
             insert(DbRestaurantCacheEntryEntity().apply {
                 setDishesForDate(dateAtMidnight)
                 setRestaurant(restaurant)
-                setLastUpdate(Date())
+                setLastUpdate(now)
             })
         }
         dbDishes
@@ -149,7 +150,7 @@ class DataCache @Deprecated("Inject this.") constructor(context: Context) {
      * If no data is found in the cache, this returns null.
      */
     fun retrieve(restaurant: DbRestaurant, date: Date): Deferred<List<DbDish>?> = async(DbThread) {
-        val dateAtMidnight = date.atMidnight()
+        val dateAtMidnight = date.atMidnight
         data {
             val cacheValid = select(DbRestaurantCacheEntry::class)
                     .where(DbRestaurantCacheEntryEntity.RESTAURANT eq restaurant)

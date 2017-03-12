@@ -36,13 +36,13 @@ class RestaurantFragment : NoMvpBaseFragment() {
          * dish on the first page only and shows its image
          */
         fun newInstance(restaurant: DbRestaurant,
-                        pagerPosition: Date = Date().atMidnight(), // TODO Replace project-wide with midnight / now
+                        pagerPosition: Date = midnight,
                         germanDishName: String? = null): RestaurantFragment {
             val fragment = RestaurantFragment()
             val restrictedPagerPosition = pagerPosition.inRangeOrElse(
-                    Date().atMidnight(),
-                    Date().atMidnight() + TimeUnit.DAYS.toMillis(DAY_COUNT - 1),
-                    Date().atMidnight()
+                    midnight,
+                    midnight + TimeUnit.DAYS.toMillis(DAY_COUNT - 1),
+                    midnight
             )
             fragment.arguments = Bundle().apply {
                 putParcelable(ARG_RESTAURANT, restaurant)
@@ -52,8 +52,6 @@ class RestaurantFragment : NoMvpBaseFragment() {
             return fragment
         }
     }
-
-    // TODO Don't save current position but selected day and restore it
 
     private val dayPager: ViewPager by bindView(R.id.day_pager)
     private val dayPagerTabs: TabLayout by bindView(R.id.day_pager_tabs)
@@ -91,7 +89,7 @@ class RestaurantFragment : NoMvpBaseFragment() {
     private fun computePagerDates(): List<Date> {
         val today = System.currentTimeMillis()
         val dayInMs = TimeUnit.DAYS.toMillis(1)
-        return (0..DAY_COUNT - 1).map { Date(today + it * dayInMs).atMidnight() }
+        return (0..DAY_COUNT - 1).map { Date(today + it * dayInMs).atMidnight }
     }
 
     /**

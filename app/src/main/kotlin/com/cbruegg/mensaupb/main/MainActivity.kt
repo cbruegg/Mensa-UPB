@@ -226,7 +226,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
         supportActionBar?.title = name
         val restaurantFragment = RestaurantFragment.newInstance(
                 this,
-                day ?: Date().atMidnight(),
+                day ?: midnight,
                 showDishWithGermanName
         )
         supportFragmentManager
