@@ -19,13 +19,23 @@ abstract class BaseFragment<V : MvpView, P : MvpPresenter<V>> @JvmOverloads cons
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter = createPresenter()
-        presenter.attachView(mvpViewType.cast(this))
+        presenter.attachView(mvpViewType.cast(this), savedInstanceState, runInit = true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.attachView(mvpViewType.cast(this), savedInstanceState = null, runInit = false)
     }
 
     override fun onPause() {
         presenter.detachView()
         jobHandler.onPause()
         super.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        presenter.saveState(outState)
     }
 
     protected abstract fun createPresenter(): P

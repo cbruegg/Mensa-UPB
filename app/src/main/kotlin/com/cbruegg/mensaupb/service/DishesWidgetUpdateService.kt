@@ -10,7 +10,7 @@ import android.os.IBinder
 import android.widget.RemoteViews
 import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.R
-import com.cbruegg.mensaupb.activity.MainActivity
+import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.cache.DbRestaurant

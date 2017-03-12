@@ -42,8 +42,8 @@ class DishesPresenter(
         }
     }
 
-    override fun onViewAttached() {
-        super.onViewAttached()
+    override fun initView() {
+        super.initView()
 
         launch(MainThread) {
             downloader.downloadOrRetrieveDishesAsync(restaurant, date)

@@ -24,8 +24,8 @@ class DishesAppWidgetConfigPresenter(
         view?.close(true)
     }
 
-    override fun onViewAttached() {
-        super.onViewAttached()
+    override fun initView() {
+        super.initView()
 
         view?.setConfirmButtonStatus(false)
         view?.setProgressBarVisible(true)

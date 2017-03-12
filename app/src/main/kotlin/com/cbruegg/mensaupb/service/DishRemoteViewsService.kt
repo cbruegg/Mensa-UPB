@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.cbruegg.mensaupb.R
-import com.cbruegg.mensaupb.activity.MainActivity
+import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.activity.userType
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.cache.DbDish
@@ -16,7 +16,6 @@ import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.stackTraceString
-import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.experimental.runBlocking
@@ -52,7 +51,10 @@ class DishRemoteViewsService : RemoteViewsService() {
             val dish = dishes[position]
             val thumbnailVisibility = if (dish.thumbnailImageUrl.isNullOrEmpty()) View.GONE else View.VISIBLE
 
-            val dishIntent = Intent().apply { MainActivity.fillIntent(this, restaurant, dish) }
+            val dishIntent = Intent().apply {
+                MainActivity.fillIntent(this, restaurant, dish)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
             val remoteViews = RemoteViews(ctx.packageName, R.layout.row_dish_widget).apply {
                 setTextViewText(R.id.dish_widget_name, dish.germanName)
                 setViewVisibility(R.id.dish_widget_image, thumbnailVisibility)
@@ -88,7 +90,7 @@ class DishRemoteViewsService : RemoteViewsService() {
             val (restaurantId) = DishesWidgetConfigurationManager(ctx)
                     .retrieveConfiguration(appWidgetId)
                     ?: return@runBlocking
-            val downloader = Downloader(ctx)
+            val downloader = Downloader(ctx) // TODO inject
 
             withTimeout(TIMEOUT_MS) {
                 val restaurant = downloader.downloadOrRetrieveRestaurantsAsync()
@@ -96,6 +98,7 @@ class DishRemoteViewsService : RemoteViewsService() {
                         .component2()
                         ?.firstOrNull { it -> it.id == restaurantId }
                         ?: return@withTimeout
+                this@DishRemoteViewsFactory.restaurant = restaurant
                 dishes = downloader.downloadOrRetrieveDishesAsync(restaurant, shownDate)
                         .await()
                         .component2()

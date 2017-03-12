@@ -1,6 +1,6 @@
 package com.cbruegg.mensaupb
 
-import com.cbruegg.mensaupb.activity.MainActivity
+import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.cache.DataCache
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.dishes.DishesFragment

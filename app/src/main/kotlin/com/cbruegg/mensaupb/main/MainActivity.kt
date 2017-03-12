@@ -1,4 +1,4 @@
-package com.cbruegg.mensaupb.activity
+package com.cbruegg.mensaupb.main
 
 import android.content.Context
 import android.content.Intent
@@ -14,8 +14,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import butterknife.bindView
-import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.R
+import com.cbruegg.mensaupb.activity.BaseActivity
+import com.cbruegg.mensaupb.activity.PreferenceActivity
 import com.cbruegg.mensaupb.adapter.RestaurantAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbDish
@@ -25,15 +26,14 @@ import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.extensions.toggleDrawer
 import com.cbruegg.mensaupb.fragment.RestaurantFragment
 import com.cbruegg.mensaupb.util.OneOff
-import com.cbruegg.mensaupb.viewmodel.uiSorted
-import kotlinx.coroutines.experimental.launch
+import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
 import java.io.IOException
 import javax.inject.Inject
 
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
  */
-class MainActivity : NoMvpBaseActivity() {
+class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
 
     companion object {
 
@@ -57,6 +57,7 @@ class MainActivity : NoMvpBaseActivity() {
         fun fillIntent(intent: Intent, restaurant: DbRestaurant? = null, dish: DbDish? = null) {
             intent.putExtra(ARG_RESTAURANT_ID, restaurant?.id)
             intent.putExtra(ARG_DISH_GERMAN_NAME, dish?.germanName)
+            // TODO Add param to request show first day for widget
         }
     }
 
@@ -64,7 +65,6 @@ class MainActivity : NoMvpBaseActivity() {
      * Constants
      */
 
-    private val DEFAULT_RESTAURANT_NAME = "Mensa Academica"
     private val PREFS_FILE_NAME = "main_activity_prefs"
     private val PREFS_KEY_LAST_SELECTED_RESTAURANT = "last_selected_restaurant"
     private val STUDENTENWERK_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/")
@@ -82,21 +82,54 @@ class MainActivity : NoMvpBaseActivity() {
      * Other vars
      */
 
-    /**
-     * Persistent property that saves the last viewed restaurant id.
-     */
-    private var lastRestaurantId: String?
-        get() = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE).getString(PREFS_KEY_LAST_SELECTED_RESTAURANT, null)
-        set(new) {
-            getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE)
-                    .edit()
-                    .putString(PREFS_KEY_LAST_SELECTED_RESTAURANT, new)
-                    .apply()
-        }
-
-    private var lastRestaurant: DbRestaurant? = null
     @Inject lateinit var downloader: Downloader
     @Inject lateinit var oneOff: OneOff
+
+    override val mvpViewType: Class<MainView>
+        get() = MainView::class.java
+
+    override val currentlyDisplayedDay: Int?
+        get() = (supportFragmentManager
+                .findFragmentById(R.id.fragment_container) as? RestaurantFragment)
+                ?.pagerPosition
+
+    override fun showAppWidgetAd() {
+        AlertDialog.Builder(this)
+                .setTitle(R.string.did_you_know)
+                .setMessage(R.string.appwidget_ad)
+                .setPositiveButton(R.string.ok, null)
+                .show()
+    }
+
+    override fun setRestaurants(restaurants: List<DbRestaurant>) {
+        (restaurantList.adapter as RestaurantAdapter).list.setAll(restaurants)
+    }
+
+    override fun setDrawerStatus(visible: Boolean) {
+        if (visible) {
+            drawerLayout.openDrawer(GravityCompat.START)
+        } else {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
+    }
+
+    override fun showDishesForRestaurant(restaurant: DbRestaurant, day: Int?, showDishWithGermanName: String?) {
+        restaurant.load(day, showDishWithGermanName)
+    }
+
+    override fun createPresenter() = MainPresenter(
+            downloader,
+            oneOff,
+            MainModel(
+                    intent.getStringExtra(ARG_RESTAURANT_ID),
+                    intent.getStringExtra(ARG_DISH_GERMAN_NAME),
+                    StringSharedPreferencesPropertyDelegate<String?>(
+                            sharedPreferences = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE),
+                            key = PREFS_KEY_LAST_SELECTED_RESTAURANT,
+                            defaultValue = null
+                    )
+            )
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,60 +147,15 @@ class MainActivity : NoMvpBaseActivity() {
         // Setup the restaurant list in the drawer
         val restaurantAdapter = RestaurantAdapter()
         restaurantAdapter.onClickListener = { restaurant, _ ->
-            drawerLayout.closeDrawer(GravityCompat.START)
-            restaurant.load()
+            presenter.onRestaurantClick(restaurant)
         }
         restaurantList.adapter = restaurantAdapter
         restaurantList.layoutManager = LinearLayoutManager(this)
-
-        // Download data for the list
-        reload()
-        runOneOffs()
     }
 
-    private fun runOneOffs() {
-        oneOff.launch("appwidget_ad") {
-            AlertDialog.Builder(this)
-                    .setTitle(R.string.did_you_know)
-                    .setMessage(R.string.appwidget_ad)
-                    .setPositiveButton(R.string.ok, null)
-                    .show()
-        }
-    }
-
-    /**
-     * Refetch the list of restaurants from the cache
-     * or the network, reloading the fragments afterwards.
-     * This is useful for reloading after receiving a new intent.
-     */
-    private fun reload() {
-        launch(MainThread) {
-            val restaurantAdapter = restaurantList.adapter as RestaurantAdapter
-            downloader.downloadOrRetrieveRestaurantsAsync()
-                    .await()
-                    .fold({ showNetworkError(restaurantAdapter, it) }) {
-                        val preparedList = it.uiSorted()
-                        restaurantAdapter.list.setAll(preparedList)
-                        checkShowFirstTimeDrawer()
-                        loadDefaultRestaurant(preparedList)
-                    }
-        }.register()
-    }
-
-    private fun showNetworkError(restaurantAdapter: RestaurantAdapter, e: IOException) {
-        restaurantAdapter.list.setAll(emptyList())
+    override fun showNetworkError(ioException: IOException) {
         Toast.makeText(this, R.string.network_error, Toast.LENGTH_LONG).show()
-        e.printStackTrace()
-    }
-
-    /**
-     * If this is the first time the user opens the app, show the drawer so
-     * the user knows about its existence.
-     */
-    private fun checkShowFirstTimeDrawer() {
-        oneOff.launch("showFirstTimeDrawer") {
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
+        ioException.printStackTrace()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -200,40 +188,21 @@ class MainActivity : NoMvpBaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == REQUEST_CODE_PREFERENCES) {
-            lastRestaurant?.load()
+            presenter.onCameBackFromPreferences()
         }
     }
 
     /**
-     * Load a default restaurant fragment. If found in the list of restaurants,
-     * the last used restaurant or else if found the [DEFAULT_RESTAURANT_NAME] is used,
-     * else the first item in the list.
-     */
-    private fun loadDefaultRestaurant(preparedList: List<DbRestaurant>) {
-        val restaurant = preparedList.firstOrNull { it.id == intent.getStringExtra(ARG_RESTAURANT_ID) }
-                ?: preparedList.firstOrNull { it.id == lastRestaurantId }
-                ?: preparedList.firstOrNull { it.name.toLowerCase() == DEFAULT_RESTAURANT_NAME.toLowerCase() }
-                ?: preparedList.firstOrNull()
-        restaurant?.load()
-    }
-
-    /**
      * Show a fragment that displays the dishes for the specified restaurant.
-     * Also updates the [lastRestaurantId].
+     * @param [day] The day to display inside the fragment.
+     * @param [showDishWithGermanName] If non-null, the fragment tries to load the dish details for this dish.
      */
-    private fun DbRestaurant.load() {
-        val currentPagerPosition = (supportFragmentManager
-                .findFragmentById(R.id.fragment_container) as? RestaurantFragment)
-                ?.pagerPosition
-
-        lastRestaurant = this
-        lastRestaurantId = id
+    private fun DbRestaurant.load(day: Int?, showDishWithGermanName: String?) {
         supportActionBar?.title = name
-        val germanDishName: String? = intent.getStringExtra(ARG_DISH_GERMAN_NAME)
         val restaurantFragment = RestaurantFragment.newInstance(
                 this,
-                currentPagerPosition ?: 0,
-                germanDishName
+                day ?: 0,
+                showDishWithGermanName
         )
         supportFragmentManager
                 .beginTransaction()
@@ -244,7 +213,11 @@ class MainActivity : NoMvpBaseActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         this.intent = intent
-        reload()
+        if (intent != null) {
+            presenter.model.requestedRestaurantId = intent.getStringExtra(ARG_RESTAURANT_ID)
+            presenter.model.showDishWithGermanName = intent.getStringExtra(ARG_DISH_GERMAN_NAME)
+        }
+        presenter.onRestaurantsReloadRequested()
     }
 
 }
