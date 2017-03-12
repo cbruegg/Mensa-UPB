@@ -1,9 +1,10 @@
 package com.cbruegg.mensaupb
 
-import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.cache.DataCache
-import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.dishes.DishesFragment
+import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.main.MainActivity
+import com.cbruegg.mensaupb.service.DishRemoteViewsService
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import dagger.Component
 import javax.inject.Singleton
@@ -17,4 +18,5 @@ interface AppComponent {
     fun inject(dishesFragment: DishesFragment)
     fun inject(dataCache: DataCache)
     fun inject(dishesWidgetUpdateService: DishesWidgetUpdateService)
+    fun inject(dishRemoteViewsFactory: DishRemoteViewsService.DishRemoteViewsFactory)
 }

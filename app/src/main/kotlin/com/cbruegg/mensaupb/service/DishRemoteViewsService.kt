@@ -10,6 +10,7 @@ import android.widget.RemoteViewsService
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.activity.userType
+import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
@@ -23,6 +24,7 @@ import kotlinx.coroutines.experimental.withTimeout
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
  * A [RemoteViewsService] that is only responsible
@@ -44,6 +46,11 @@ class DishRemoteViewsService : RemoteViewsService() {
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
         private var dishes = emptyList<DbDish>()
         private var restaurant: DbRestaurant? = null
+        @Inject lateinit var downloader: Downloader
+
+        init {
+            ctx.app.appComponent.inject(this)
+        }
 
         override fun getLoadingView(): RemoteViews? = null // Use default
 
@@ -90,7 +97,6 @@ class DishRemoteViewsService : RemoteViewsService() {
             val (restaurantId) = DishesWidgetConfigurationManager(ctx)
                     .retrieveConfiguration(appWidgetId)
                     ?: return@runBlocking
-            val downloader = Downloader(ctx) // TODO inject
 
             withTimeout(TIMEOUT_MS) {
                 val restaurant = downloader.downloadOrRetrieveRestaurantsAsync()
