@@ -16,6 +16,7 @@ import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.TAG
+import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.stackTraceString
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import com.squareup.picasso.Picasso
@@ -59,7 +60,7 @@ class DishRemoteViewsService : RemoteViewsService() {
             val thumbnailVisibility = if (dish.thumbnailImageUrl.isNullOrEmpty()) View.GONE else View.VISIBLE
 
             val dishIntent = Intent().apply {
-                MainActivity.fillIntent(this, restaurant, dish, selectDay = 0)
+                MainActivity.fillIntent(this, restaurant, dish, selectDay = Date().atMidnight())
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
             val remoteViews = RemoteViews(ctx.packageName, R.layout.row_dish_widget).apply {

@@ -24,13 +24,13 @@ import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
-import com.cbruegg.mensaupb.extensions.setAll
-import com.cbruegg.mensaupb.extensions.toggleDrawer
+import com.cbruegg.mensaupb.extensions.*
 import com.cbruegg.mensaupb.fragment.RestaurantFragment
 import com.cbruegg.mensaupb.provider.DishesAppWidgetProvider
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
 import java.io.IOException
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -54,7 +54,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
                 context: Context,
                 restaurant: DbRestaurant? = null,
                 dish: DbDish? = null,
-                selectDay: Int? = null
+                selectDay: Date? = null
         ): Intent
                 = Intent(context, MainActivity::class.java).apply {
             fillIntent(this, restaurant, dish, selectDay)
@@ -67,11 +67,11 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
                 intent: Intent,
                 restaurant: DbRestaurant? = null,
                 dish: DbDish? = null,
-                selectDay: Int? = null
+                selectDay: Date? = null
         ) {
             intent.putExtra(ARG_REQUESTED_RESTAURANT_ID, restaurant?.id)
             intent.putExtra(ARG_REQUESTED_DISH_GERMAN_NAME, dish?.germanName)
-            intent.putExtra(ARG_REQUESTED_SELECTED_DAY, selectDay)
+            intent.putDateExtra(ARG_REQUESTED_SELECTED_DAY, selectDay)
         }
     }
 
@@ -102,10 +102,10 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
     override val mvpViewType: Class<MainView>
         get() = MainView::class.java
 
-    override val currentlyDisplayedDay: Int?
+    override val currentlyDisplayedDay: Date?
         get() = (supportFragmentManager
                 .findFragmentById(R.id.fragment_container) as? RestaurantFragment)
-                ?.pagerPosition
+                ?.pagerSelectedDate
 
     override fun showAppWidgetAd() {
         AlertDialog.Builder(this)
@@ -127,7 +127,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
         }
     }
 
-    override fun showDishesForRestaurant(restaurant: DbRestaurant, day: Int?, showDishWithGermanName: String?) {
+    override fun showDishesForRestaurant(restaurant: DbRestaurant, day: Date?, showDishWithGermanName: String?) {
         restaurant.load(day, showDishWithGermanName)
     }
 
@@ -147,7 +147,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
             MainModel(
                     intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID),
                     intent.getStringExtra(ARG_REQUESTED_DISH_GERMAN_NAME),
-                    intent.getIntExtra(ARG_REQUESTED_SELECTED_DAY, -1),
+                    intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY),
                     StringSharedPreferencesPropertyDelegate<String?>(
                             sharedPreferences = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE),
                             key = PREFS_KEY_LAST_SELECTED_RESTAURANT,
@@ -222,11 +222,11 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
      * @param [day] The day to display inside the fragment.
      * @param [showDishWithGermanName] If non-null, the fragment tries to load the dish details for this dish.
      */
-    private fun DbRestaurant.load(day: Int?, showDishWithGermanName: String?) {
+    private fun DbRestaurant.load(day: Date?, showDishWithGermanName: String?) {
         supportActionBar?.title = name
         val restaurantFragment = RestaurantFragment.newInstance(
                 this,
-                day ?: 0,
+                day ?: Date().atMidnight(),
                 showDishWithGermanName
         )
         supportFragmentManager
@@ -241,7 +241,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
         if (intent != null) {
             presenter.model.requestedRestaurantId = intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID)
             presenter.model.requestedDishWithGermanName = intent.getStringExtra(ARG_REQUESTED_DISH_GERMAN_NAME)
-            presenter.model.requestedSelectedDay = intent.getIntExtra(ARG_REQUESTED_SELECTED_DAY, -1)
+            presenter.model.requestedSelectedDay = intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
         }
         presenter.onRestaurantsReloadRequested()
     }

@@ -13,8 +13,7 @@ import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.dishes.DishesFragment
-import com.cbruegg.mensaupb.mvp.MvpPresenter
-import com.cbruegg.mensaupb.mvp.MvpView
+import com.cbruegg.mensaupb.extensions.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -28,7 +27,7 @@ class RestaurantFragment : NoMvpBaseFragment() {
         private val ARG_RESTAURANT = "restaurant"
         private val ARG_PAGER_POSITION = "pager_position"
         private val ARG_GERMAN_DISH_NAME = "german_dish_name"
-        private val DAY_COUNT = 7
+        private val DAY_COUNT = 7L
 
         /**
          * Construct a new instance of the RestaurantFragment.
@@ -37,12 +36,17 @@ class RestaurantFragment : NoMvpBaseFragment() {
          * dish on the first page only and shows its image
          */
         fun newInstance(restaurant: DbRestaurant,
-                        pagerPosition: Int = 0,
+                        pagerPosition: Date = Date().atMidnight(), // TODO Replace project-wide with midnight / now
                         germanDishName: String? = null): RestaurantFragment {
             val fragment = RestaurantFragment()
+            val restrictedPagerPosition = pagerPosition.inRangeOrElse(
+                    Date().atMidnight(),
+                    Date().atMidnight() + TimeUnit.DAYS.toMillis(DAY_COUNT - 1),
+                    Date().atMidnight()
+            )
             fragment.arguments = Bundle().apply {
                 putParcelable(ARG_RESTAURANT, restaurant)
-                putInt(ARG_PAGER_POSITION, Math.min(pagerPosition, DAY_COUNT))
+                putDate(ARG_PAGER_POSITION, restrictedPagerPosition)
                 putString(ARG_GERMAN_DISH_NAME, germanDishName)
             }
             return fragment
@@ -53,6 +57,7 @@ class RestaurantFragment : NoMvpBaseFragment() {
 
     private val dayPager: ViewPager by bindView(R.id.day_pager)
     private val dayPagerTabs: TabLayout by bindView(R.id.day_pager_tabs)
+    private lateinit var adapter: DishesPagerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
             = inflater.inflate(R.layout.fragment_restaurant, container, false)
@@ -64,20 +69,21 @@ class RestaurantFragment : NoMvpBaseFragment() {
          * Set up the view pager
          */
         val restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT)
-        val pagerPosition = arguments.getInt(ARG_PAGER_POSITION)
+        val pagerPosition = arguments.getDate(ARG_PAGER_POSITION)
         val dates = computePagerDates()
-        val adapter = DishesPagerAdapter(activity, childFragmentManager, restaurant, dates,
+        adapter = DishesPagerAdapter(activity, childFragmentManager, restaurant, dates,
                 arguments.getString(ARG_GERMAN_DISH_NAME))
         dayPager.adapter = adapter
         dayPagerTabs.setupWithViewPager(dayPager)
-        dayPager.currentItem = pagerPosition
+        dayPager.currentItem = dates.indexOf(pagerPosition)
     }
 
     /**
-     * Get the current position of the pager
+     * Get the date of the fragment
+     * currently selected in the ViewPager.
      */
-    val pagerPosition: Int
-        get() = dayPager.currentItem
+    val pagerSelectedDate: Date
+        get() = adapter.dates[dayPager.currentItem]
 
     /**
      * Return a list of dates to be used for fetching dishes.
@@ -85,7 +91,7 @@ class RestaurantFragment : NoMvpBaseFragment() {
     private fun computePagerDates(): List<Date> {
         val today = System.currentTimeMillis()
         val dayInMs = TimeUnit.DAYS.toMillis(1)
-        return (0..DAY_COUNT - 1).map { Date(today + it * dayInMs) }
+        return (0..DAY_COUNT - 1).map { Date(today + it * dayInMs).atMidnight() }
     }
 
     /**
@@ -94,7 +100,7 @@ class RestaurantFragment : NoMvpBaseFragment() {
     private class DishesPagerAdapter(context: Context,
                                      fm: FragmentManager,
                                      private val restaurant: DbRestaurant,
-                                     private val dates: List<Date>,
+                                     val dates: List<Date>,
                                      /**
                                       * If set, look for a matching dish on the first page
                                       * and display its image
