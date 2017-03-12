@@ -14,8 +14,6 @@ class MainPresenter(
         model: MainModel
 ) : ModelMvpPresenter<MainView, MainModel>(model, MainModelSaver) {
 
-    // TODO Refresh widget on initView
-
     private val DEFAULT_RESTAURANT_NAME = "Mensa Academica"
 
     fun onRestaurantsReloadRequested() {
@@ -37,6 +35,7 @@ class MainPresenter(
 
         reload()
         runOneOffs()
+        view?.requestWidgetUpdate()
     }
 
     private fun runOneOffs() {

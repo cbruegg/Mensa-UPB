@@ -11,4 +11,5 @@ interface MainView : MvpView {
     fun showNetworkError(ioException: IOException)
     fun showAppWidgetAd()
     val currentlyDisplayedDay: Int?
+    fun requestWidgetUpdate()
 }

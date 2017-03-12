@@ -1,5 +1,7 @@
 package com.cbruegg.mensaupb.main
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -25,6 +27,7 @@ import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.extensions.toggleDrawer
 import com.cbruegg.mensaupb.fragment.RestaurantFragment
+import com.cbruegg.mensaupb.provider.DishesAppWidgetProvider
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
 import java.io.IOException
@@ -115,6 +118,16 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
 
     override fun showDishesForRestaurant(restaurant: DbRestaurant, day: Int?, showDishWithGermanName: String?) {
         restaurant.load(day, showDishWithGermanName)
+    }
+
+    override fun requestWidgetUpdate() {
+        val componentName = ComponentName(this, DishesAppWidgetProvider::class.java)
+        val appWidgetIds = AppWidgetManager.getInstance(this).getAppWidgetIds(componentName)
+        val intent = Intent(this, DishesAppWidgetProvider::class.java).apply {
+            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds)
+        }
+        sendBroadcast(intent)
     }
 
     override fun createPresenter() = MainPresenter(
