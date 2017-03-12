@@ -27,7 +27,14 @@ class MainPresenter(
 
     private fun showDishesForRestaurant(restaurant: DbRestaurant) {
         model.lastRestaurantId = restaurant.id
-        view?.showDishesForRestaurant(restaurant, view?.currentlyDisplayedDay, model.showDishWithGermanName)
+        view?.showDishesForRestaurant(
+                restaurant,
+                model.requestedSelectedDay ?: view?.currentlyDisplayedDay,
+                model.requestedDishWithGermanName
+        )
+        // Clear fulfilled requests
+        model.requestedSelectedDay = null
+        model.requestedDishWithGermanName = null
     }
 
     override fun initView() {
@@ -65,6 +72,8 @@ class MainPresenter(
                 ?: preparedList.firstOrNull { it.name.toLowerCase() == DEFAULT_RESTAURANT_NAME.toLowerCase() }
                 ?: preparedList.firstOrNull()
         restaurant?.let { showDishesForRestaurant(it) }
+        // Clear fulfilled request
+        model.requestedRestaurantId = null
     }
 
     fun onCameBackFromPreferences() {

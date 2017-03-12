@@ -59,7 +59,7 @@ class DishRemoteViewsService : RemoteViewsService() {
             val thumbnailVisibility = if (dish.thumbnailImageUrl.isNullOrEmpty()) View.GONE else View.VISIBLE
 
             val dishIntent = Intent().apply {
-                MainActivity.fillIntent(this, restaurant, dish)
+                MainActivity.fillIntent(this, restaurant, dish, selectDay = 0)
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
             val remoteViews = RemoteViews(ctx.packageName, R.layout.row_dish_widget).apply {

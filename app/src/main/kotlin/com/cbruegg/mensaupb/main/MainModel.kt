@@ -8,7 +8,8 @@ import com.cbruegg.mensaupb.util.delegates.PersistentPropertyDelegate
 
 data class MainModel(
         var requestedRestaurantId: String?,
-        var showDishWithGermanName: String?,
+        var requestedDishWithGermanName: String?,
+        var requestedSelectedDay: Int?,
         private val lastRestaurantIdDelegate: PersistentPropertyDelegate<String?>,
         var restaurants: List<DbRestaurant>? = null
 ) : MvpModel {
@@ -21,14 +22,16 @@ object MainModelSaver : MvpModelSaver<MainModel> {
     override fun save(model: MainModel, savedInstanceState: Bundle) {
         savedInstanceState.apply {
             putString("requestedRestaurantId", model.requestedRestaurantId)
-            putString("showDishWithGermanName", model.showDishWithGermanName)
+            putString("requestedDishWithGermanName", model.requestedDishWithGermanName)
+            putInt("requestedSelectedDay", model.requestedSelectedDay ?: -1)
         }
     }
 
     override fun restore(savedInstanceState: Bundle, intoModel: MainModel) {
         intoModel.apply {
             requestedRestaurantId = savedInstanceState.getString("requestedRestaurantId")
-            showDishWithGermanName = savedInstanceState.getString("showDishWithGermanName")
+            requestedDishWithGermanName = savedInstanceState.getString("requestedDishWithGermanName")
+            requestedSelectedDay = savedInstanceState.getInt("requestedSelectedDay", -1).let { if (it == -1) null else it }
         }
     }
 

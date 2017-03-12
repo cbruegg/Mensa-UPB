@@ -40,8 +40,9 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
 
     companion object {
 
-        private val ARG_RESTAURANT_ID = "restaurant_id"
-        private val ARG_DISH_GERMAN_NAME = "dish_german_name"
+        private val ARG_REQUESTED_RESTAURANT_ID = "restaurant_id"
+        private val ARG_REQUESTED_DISH_GERMAN_NAME = "dish_german_name"
+        private val ARG_REQUESTED_SELECTED_DAY = "select_day"
 
         /**
          * Create a start intent for this activity that displays
@@ -49,18 +50,28 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
          * the activity tries to locate it in today's list of dishes
          * of the given restaurant.
          */
-        fun createStartIntent(context: Context, restaurant: DbRestaurant? = null, dish: DbDish? = null): Intent
+        fun createStartIntent(
+                context: Context,
+                restaurant: DbRestaurant? = null,
+                dish: DbDish? = null,
+                selectDay: Int? = null
+        ): Intent
                 = Intent(context, MainActivity::class.java).apply {
-            fillIntent(this, restaurant, dish)
+            fillIntent(this, restaurant, dish, selectDay)
         }
 
         /**
          * Same as [createStartIntent], except this fills an existing intent.
          */
-        fun fillIntent(intent: Intent, restaurant: DbRestaurant? = null, dish: DbDish? = null) {
-            intent.putExtra(ARG_RESTAURANT_ID, restaurant?.id)
-            intent.putExtra(ARG_DISH_GERMAN_NAME, dish?.germanName)
-            // TODO Add param to request show first day for widget
+        fun fillIntent(
+                intent: Intent,
+                restaurant: DbRestaurant? = null,
+                dish: DbDish? = null,
+                selectDay: Int? = null
+        ) {
+            intent.putExtra(ARG_REQUESTED_RESTAURANT_ID, restaurant?.id)
+            intent.putExtra(ARG_REQUESTED_DISH_GERMAN_NAME, dish?.germanName)
+            intent.putExtra(ARG_REQUESTED_SELECTED_DAY, selectDay)
         }
     }
 
@@ -134,8 +145,9 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
             downloader,
             oneOff,
             MainModel(
-                    intent.getStringExtra(ARG_RESTAURANT_ID),
-                    intent.getStringExtra(ARG_DISH_GERMAN_NAME),
+                    intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID),
+                    intent.getStringExtra(ARG_REQUESTED_DISH_GERMAN_NAME),
+                    intent.getIntExtra(ARG_REQUESTED_SELECTED_DAY, -1),
                     StringSharedPreferencesPropertyDelegate<String?>(
                             sharedPreferences = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE),
                             key = PREFS_KEY_LAST_SELECTED_RESTAURANT,
@@ -227,8 +239,9 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
         super.onNewIntent(intent)
         this.intent = intent
         if (intent != null) {
-            presenter.model.requestedRestaurantId = intent.getStringExtra(ARG_RESTAURANT_ID)
-            presenter.model.showDishWithGermanName = intent.getStringExtra(ARG_DISH_GERMAN_NAME)
+            presenter.model.requestedRestaurantId = intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID)
+            presenter.model.requestedDishWithGermanName = intent.getStringExtra(ARG_REQUESTED_DISH_GERMAN_NAME)
+            presenter.model.requestedSelectedDay = intent.getIntExtra(ARG_REQUESTED_SELECTED_DAY, -1)
         }
         presenter.onRestaurantsReloadRequested()
     }
