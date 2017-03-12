@@ -11,6 +11,7 @@ import android.widget.RemoteViews
 import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.MainActivity
+import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
@@ -22,6 +23,7 @@ import kotlinx.coroutines.experimental.withTimeout
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 /**
  * A service that is responsible for updating
@@ -83,8 +85,11 @@ class DishesWidgetUpdateService : Service() {
     private val shownDate: Date
         get() = Date(System.currentTimeMillis() + DATE_OFFSET + INTERNAL_DATE_OFFSET)
 
+    @Inject lateinit var downloader: Downloader
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val downloader = Downloader(this@DishesWidgetUpdateService)
+        app.appComponent.inject(this)
+
         val appWidgetIds = intent.getIntArrayExtra(ARG_APPWIDGET_IDS)
         val configManager = DishesWidgetConfigurationManager(this@DishesWidgetUpdateService)
 
