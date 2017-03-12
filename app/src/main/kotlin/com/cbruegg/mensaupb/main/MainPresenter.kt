@@ -45,6 +45,15 @@ class MainPresenter(
         view?.requestWidgetUpdate()
     }
 
+    override fun onViewDetached() {
+        // Make sure the selected day is restored if no other day is requested
+        if (model.requestedSelectedDay == null) {
+            model.requestedSelectedDay = view?.currentlyDisplayedDay
+        }
+
+        super.onViewDetached()
+    }
+
     private fun runOneOffs() {
         oneOff.launch("appwidget_ad") {
             view?.showAppWidgetAd()
