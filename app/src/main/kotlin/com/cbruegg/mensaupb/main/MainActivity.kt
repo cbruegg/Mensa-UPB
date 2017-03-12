@@ -91,6 +91,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
 
     private val restaurantList: RecyclerView by bindView(R.id.restaurant_list)
     private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
+    val restaurantAdapter = RestaurantAdapter()
 
     /*
      * Other vars
@@ -116,7 +117,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
     }
 
     override fun setRestaurants(restaurants: List<DbRestaurant>) {
-        (restaurantList.adapter as RestaurantAdapter).list.setAll(restaurants)
+        restaurantAdapter.list.setAll(restaurants)
     }
 
     override fun setDrawerStatus(visible: Boolean) {
@@ -170,7 +171,6 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
         app.appComponent.inject(this)
 
         // Setup the restaurant list in the drawer
-        val restaurantAdapter = RestaurantAdapter()
         restaurantAdapter.onClickListener = { restaurant, _ ->
             presenter.onRestaurantClick(restaurant)
         }
