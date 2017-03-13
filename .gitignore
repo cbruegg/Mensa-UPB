@@ -6,3 +6,5 @@
 /build
 /captures
 api_id.properties
+.idea
+*.iml
