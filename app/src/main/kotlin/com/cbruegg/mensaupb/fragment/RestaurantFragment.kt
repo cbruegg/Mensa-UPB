@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit
 class RestaurantFragment : NoMvpBaseFragment() {
     companion object {
         private val ARG_RESTAURANT = "restaurant"
-        private val ARG_PAGER_POSITION = "pager_position"
+        private val ARG_REQUESTED_PAGER_POSITION = "pager_position"
         private val ARG_GERMAN_DISH_NAME = "german_dish_name"
         private val DAY_COUNT = 7L
 
@@ -39,14 +39,9 @@ class RestaurantFragment : NoMvpBaseFragment() {
                         pagerPosition: Date = midnight,
                         germanDishName: String? = null): RestaurantFragment {
             val fragment = RestaurantFragment()
-            val restrictedPagerPosition = pagerPosition.inRangeOrElse(
-                    midnight,
-                    midnight + TimeUnit.DAYS.toMillis(DAY_COUNT - 1),
-                    midnight
-            )
             fragment.arguments = Bundle().apply {
                 putParcelable(ARG_RESTAURANT, restaurant)
-                putDate(ARG_PAGER_POSITION, restrictedPagerPosition)
+                putDate(ARG_REQUESTED_PAGER_POSITION, pagerPosition)
                 putString(ARG_GERMAN_DISH_NAME, germanDishName)
             }
             return fragment
@@ -67,13 +62,18 @@ class RestaurantFragment : NoMvpBaseFragment() {
          * Set up the view pager
          */
         val restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT)
-        val pagerPosition = arguments.getDate(ARG_PAGER_POSITION)
+        val requestedPagerPosition = arguments.getDate(ARG_REQUESTED_PAGER_POSITION)
         val dates = computePagerDates()
+        val restrictedPagerPosition = requestedPagerPosition?.inRangeOrElse(
+                dates.first(),
+                dates.last(),
+                orElse = midnight
+        )
         adapter = DishesPagerAdapter(activity, childFragmentManager, restaurant, dates,
                 arguments.getString(ARG_GERMAN_DISH_NAME))
         dayPager.adapter = adapter
         dayPagerTabs.setupWithViewPager(dayPager)
-        dayPager.currentItem = dates.indexOf(pagerPosition)
+        dayPager.currentItem = dates.indexOf(restrictedPagerPosition)
     }
 
     /**
