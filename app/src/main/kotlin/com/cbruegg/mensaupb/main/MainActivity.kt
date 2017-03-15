@@ -199,6 +199,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
             true
         }
         R.id.stw_url -> {
+            // TODO Use Chrome custom tab
             startActivity(Intent(Intent.ACTION_VIEW, STUDENTENWERK_URI))
             true
         }

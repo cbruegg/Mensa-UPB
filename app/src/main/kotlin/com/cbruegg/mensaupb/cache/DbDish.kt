@@ -17,7 +17,7 @@ const val TABLE_DB_DISH = "dishes"
  * Model representing a dish object.
  */
 @Entity @Table(name = TABLE_DB_DISH)
-abstract class DbDish : Persistable, Parcelable {
+abstract class DbDish : Persistable, Parcelable { // TODO "name_en" field etc.
 
     @get:Column(name = "id")
     @get:Key @get:Generated abstract val id: Int
