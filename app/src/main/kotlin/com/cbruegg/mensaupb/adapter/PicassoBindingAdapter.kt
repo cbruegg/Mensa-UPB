@@ -10,11 +10,28 @@ import com.squareup.picasso.Picasso
  */
 object PicassoBindingAdapter {
 
-    @BindingAdapter("bind:imageUrl")
+    @BindingAdapter("bind:imageUrl", "bind:scaleType", requireAll = false)
     @JvmStatic
-    fun loadImage(view: ImageView, url: String?) {
+    fun loadImage(view: ImageView, url: String?, scaleType: ImageView.ScaleType?) {
         if (url != null && url.isNotEmpty()) {
-            Picasso.with(view.context).load(url).into(view)
+            Picasso.with(view.context)
+                    .load(url)
+                    .apply {
+                        when (scaleType) {
+                            ImageView.ScaleType.CENTER_CROP -> {
+                                fit()
+                                centerCrop()
+                            }
+                            ImageView.ScaleType.CENTER_INSIDE -> {
+                                fit()
+                                centerInside()
+                            }
+                            null -> {
+                            }
+                            else -> view.scaleType = scaleType
+                        }
+                    }
+                    .into(view)
         }
     }
 }

@@ -28,7 +28,11 @@ class MensaApplication : Application() {
     }
 
     private fun initPicasso() {
-        Picasso.setSingletonInstance(Picasso.Builder(this).downloader(OkHttp3Downloader(httpClient)).build())
+        val picasso = Picasso.Builder(this)
+                .downloader(OkHttp3Downloader(httpClient))
+                .indicatorsEnabled(BuildConfig.DEBUG)
+                .build()
+        Picasso.setSingletonInstance(picasso)
     }
 }
 
