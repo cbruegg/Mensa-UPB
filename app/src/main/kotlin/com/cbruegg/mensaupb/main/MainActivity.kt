@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.customtabs.CustomTabsIntent
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AlertDialog
@@ -199,15 +201,24 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
             true
         }
         R.id.stw_url -> {
-            // TODO Use Chrome custom tab
-            startActivity(Intent(Intent.ACTION_VIEW, STUDENTENWERK_URI))
+            STUDENTENWERK_URI.showInCustomTab()
             true
         }
         R.id.opening_hours -> {
-            startActivity(Intent(Intent.ACTION_VIEW, STUDENTENWERK_OPENING_HOURS_URI))
+            STUDENTENWERK_OPENING_HOURS_URI.showInCustomTab()
             true
         }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun Uri.showInCustomTab() {
+        CustomTabsIntent.Builder()
+                .enableUrlBarHiding()
+                .setInstantAppsEnabled(false)
+                .setShowTitle(true)
+                .setToolbarColor(ContextCompat.getColor(this@MainActivity, R.color.primary))
+                .build()
+                .launchUrl(this@MainActivity, this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
