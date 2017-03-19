@@ -50,7 +50,7 @@ abstract class ModelMvpPresenter<V : MvpView, out M : MvpModel>(
      *                  and calling the view to show it.
      */
     fun attachView(view: V, savedInstanceState: Bundle?, runInit: Boolean) {
-        Log.i(TAG, "Attaching view $view to $this")
+        Log.v(TAG, "Attaching view $view to $this")
 
         this.view = view
         savedInstanceState
@@ -67,7 +67,7 @@ abstract class ModelMvpPresenter<V : MvpView, out M : MvpModel>(
      * changes to the [view].
      */
     fun detachView() {
-        Log.i(TAG, "Detaching view $view to $this")
+        Log.v(TAG, "Detaching view $view to $this")
 
         this.view = null
         jobHandler.onPause()
