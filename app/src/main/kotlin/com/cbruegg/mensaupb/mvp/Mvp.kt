@@ -67,7 +67,7 @@ abstract class ModelMvpPresenter<V : MvpView, out M : MvpModel>(
      * changes to the [view].
      */
     fun detachView() {
-        Log.v(TAG, "Detaching view $view to $this")
+        Log.v(TAG, "Detaching view $view from $this")
 
         this.view = null
         jobHandler.onPause()

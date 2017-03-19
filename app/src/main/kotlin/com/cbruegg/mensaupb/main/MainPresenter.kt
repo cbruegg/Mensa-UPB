@@ -30,11 +30,11 @@ class MainPresenter(
         view?.showDishesForRestaurant(
                 restaurant,
                 model.requestedSelectedDay ?: view?.currentlyDisplayedDay,
-                model.requestedDishWithGermanName
+                model.requestedDishWithName
         )
         // Clear fulfilled requests
         model.requestedSelectedDay = null
-        model.requestedDishWithGermanName = null
+        model.requestedDishWithName = null
     }
 
     override fun initView() {

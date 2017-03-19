@@ -11,7 +11,7 @@ import java.util.*
 
 data class MainModel(
         var requestedRestaurantId: String?,
-        var requestedDishWithGermanName: String?,
+        var requestedDishWithName: String?,
         var requestedSelectedDay: Date?,
         private val lastRestaurantIdDelegate: PersistentPropertyDelegate<String?>,
         var restaurants: List<DbRestaurant>? = null
@@ -22,19 +22,23 @@ data class MainModel(
 
 object MainModelSaver : MvpModelSaver<MainModel> {
 
+    private const val requestedRestaurantIdKey = "requestedRestaurantId"
+    private const val requestedDishWithNameKey = "requestedDishWithName"
+    private const val requestedSelectedDayKey = "requestedSelectedDay"
+
     override fun save(model: MainModel, savedInstanceState: Bundle) {
         savedInstanceState.apply {
-            putString("requestedRestaurantId", model.requestedRestaurantId)
-            putString("requestedDishWithGermanName", model.requestedDishWithGermanName)
-            putDate("requestedSelectedDay", model.requestedSelectedDay)
+            putString(requestedRestaurantIdKey, model.requestedRestaurantId)
+            putString(requestedDishWithNameKey, model.requestedDishWithName)
+            putDate(requestedSelectedDayKey, model.requestedSelectedDay)
         }
     }
 
     override fun restore(savedInstanceState: Bundle, intoModel: MainModel) {
         intoModel.apply {
-            requestedRestaurantId = savedInstanceState.getString("requestedRestaurantId")
-            requestedDishWithGermanName = savedInstanceState.getString("requestedDishWithGermanName")
-            requestedSelectedDay = savedInstanceState.getDate("requestedSelectedDay")
+            requestedRestaurantId = savedInstanceState.getString(requestedRestaurantIdKey)
+            requestedDishWithName = savedInstanceState.getString(requestedDishWithNameKey)
+            requestedSelectedDay = savedInstanceState.getDate(requestedSelectedDayKey)
         }
     }
 

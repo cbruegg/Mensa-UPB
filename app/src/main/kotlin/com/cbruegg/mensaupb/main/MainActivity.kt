@@ -43,7 +43,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
     companion object {
 
         private val ARG_REQUESTED_RESTAURANT_ID = "restaurant_id"
-        private val ARG_REQUESTED_DISH_NAME = "dish_german_name"
+        private val ARG_REQUESTED_DISH_NAME = "dish_name"
         private val ARG_REQUESTED_SELECTED_DAY = "select_day"
 
         /**
@@ -252,7 +252,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
         this.intent = intent
         if (intent != null) {
             presenter.model.requestedRestaurantId = intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID)
-            presenter.model.requestedDishWithGermanName = intent.getStringExtra(ARG_REQUESTED_DISH_NAME)
+            presenter.model.requestedDishWithName = intent.getStringExtra(ARG_REQUESTED_DISH_NAME)
             presenter.model.requestedSelectedDay = intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
         }
         presenter.onRestaurantsReloadRequested()

@@ -31,20 +31,20 @@ class DishesFragment : BaseFragment<DishesView, DishesPresenter>(), DishesView {
     companion object {
         private val ARG_RESTAURANT = "restaurant"
         private val ARG_DATE = "date"
-        private val ARG_GERMAN_DISH_NAME = "german_dish_name"
+        private val ARG_DISH_NAME = "dish_name"
 
         /**
          * Construct a new instance of this fragment.
-         * @param germanDishName If non-null, look for a matching dish and
+         * @param dishName If non-null, look for a matching dish and
          * shows its image.
          * @see DishesFragment
          */
-        fun newInstance(restaurant: DbRestaurant, date: Date, germanDishName: String? = null): DishesFragment {
+        fun newInstance(restaurant: DbRestaurant, date: Date, dishName: String? = null): DishesFragment {
             val fragment = DishesFragment()
             fragment.arguments = Bundle().apply {
                 putParcelable(ARG_RESTAURANT, restaurant)
                 putLong(ARG_DATE, date.time)
-                putString(ARG_GERMAN_DISH_NAME, germanDishName)
+                putString(ARG_DISH_NAME, dishName)
             }
             return fragment
         }
@@ -65,7 +65,7 @@ class DishesFragment : BaseFragment<DishesView, DishesPresenter>(), DishesView {
             Date(arguments.getLong(ARG_DATE)),
             context.userType,
             { toDishViewModels(context, it) },
-            arguments.getString(ARG_GERMAN_DISH_NAME)
+            arguments.getString(ARG_DISH_NAME)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

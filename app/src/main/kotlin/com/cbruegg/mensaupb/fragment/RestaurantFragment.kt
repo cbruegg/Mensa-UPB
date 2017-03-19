@@ -26,23 +26,23 @@ class RestaurantFragment : NoMvpBaseFragment() {
     companion object {
         private val ARG_RESTAURANT = "restaurant"
         private val ARG_REQUESTED_PAGER_POSITION = "pager_position"
-        private val ARG_GERMAN_DISH_NAME = "german_dish_name"
+        private val ARG_DISH_NAME = "dish_name"
         private val DAY_COUNT = 7L
 
         /**
          * Construct a new instance of the RestaurantFragment.
          * @param pagerPosition The position the pager should be initially set to
-         * @param germanDishName If set, the fragment looks for a matching
+         * @param dishName If set, the fragment looks for a matching
          * dish on the first page only and shows its image
          */
         fun newInstance(restaurant: DbRestaurant,
                         pagerPosition: Date = midnight,
-                        germanDishName: String? = null): RestaurantFragment {
+                        dishName: String? = null): RestaurantFragment {
             val fragment = RestaurantFragment()
             fragment.arguments = Bundle().apply {
                 putParcelable(ARG_RESTAURANT, restaurant)
                 putDate(ARG_REQUESTED_PAGER_POSITION, pagerPosition)
-                putString(ARG_GERMAN_DISH_NAME, germanDishName)
+                putString(ARG_DISH_NAME, dishName)
             }
             return fragment
         }
@@ -70,7 +70,7 @@ class RestaurantFragment : NoMvpBaseFragment() {
                 orElse = midnight
         )
         adapter = DishesPagerAdapter(activity, childFragmentManager, restaurant, dates,
-                arguments.getString(ARG_GERMAN_DISH_NAME))
+                arguments.getString(ARG_DISH_NAME))
         dayPager.adapter = adapter
         dayPagerTabs.setupWithViewPager(dayPager)
         dayPager.currentItem = dates.indexOf(restrictedPagerPosition)
@@ -103,12 +103,12 @@ class RestaurantFragment : NoMvpBaseFragment() {
                                       * If set, look for a matching dish on the first page
                                       * and display its image
                                       */
-                                     private val germanDishName: String?) : FragmentStatePagerAdapter(fm) {
+                                     private val dishName: String?) : FragmentStatePagerAdapter(fm) {
 
         private val dateFormatter = SimpleDateFormat(context.getString(R.string.dateTabFormat))
 
         override fun getItem(position: Int) = DishesFragment.newInstance(restaurant, dates[position],
-                if (position == 0) germanDishName else null)
+                if (position == 0) dishName else null)
 
         override fun getCount() = dates.size
 

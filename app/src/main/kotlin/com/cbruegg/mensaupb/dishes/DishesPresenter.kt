@@ -26,7 +26,7 @@ class DishesPresenter(
     }
 
     /**
-     * If the germanDishName parameter is non-null,
+     * If the dishName parameter is non-null,
      * try to find a matching dish and display its image.
      */
     private fun tryShowArgDish(dishViewModels: List<DishViewModel>) {
