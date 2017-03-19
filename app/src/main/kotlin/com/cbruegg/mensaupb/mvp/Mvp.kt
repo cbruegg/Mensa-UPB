@@ -1,6 +1,8 @@
 package com.cbruegg.mensaupb.mvp
 
 import android.os.Bundle
+import android.util.Log
+import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.util.weakReference
 
 interface MvpView
@@ -48,6 +50,8 @@ abstract class ModelMvpPresenter<V : MvpView, out M : MvpModel>(
      *                  and calling the view to show it.
      */
     fun attachView(view: V, savedInstanceState: Bundle?, runInit: Boolean) {
+        Log.i(TAG, "Attaching view $view to $this")
+
         this.view = view
         savedInstanceState
                 ?.getBundle(javaClass.name)
@@ -63,6 +67,8 @@ abstract class ModelMvpPresenter<V : MvpView, out M : MvpModel>(
      * changes to the [view].
      */
     fun detachView() {
+        Log.i(TAG, "Detaching view $view to $this")
+
         this.view = null
         jobHandler.onPause()
         onViewDetached()
