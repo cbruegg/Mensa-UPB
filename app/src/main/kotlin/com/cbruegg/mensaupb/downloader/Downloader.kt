@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.app
-import com.cbruegg.mensaupb.cache.DataCache
+import com.cbruegg.mensaupb.cache.ModelCache
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.extensions.eitherTryIo
@@ -30,7 +30,7 @@ private val RESTAURANT_URL = BASE_URL + "&getrestaurants=1"
  */
 class Downloader @Deprecated("Inject this.") constructor(context: Context) {
 
-    @Inject lateinit var dataCache: DataCache
+    @Inject lateinit var modelCache: ModelCache
     @Inject lateinit var httpClient: OkHttpClient
 
     init {
@@ -47,8 +47,8 @@ class Downloader @Deprecated("Inject this.") constructor(context: Context) {
         eitherTryIo {
             val request = Request.Builder().url(RESTAURANT_URL).build()
 
-            val restaurants = dataCache.retrieveRestaurants().await() ?:
-                    dataCache.cache(
+            val restaurants = modelCache.retrieveRestaurants().await() ?:
+                    modelCache.cache(
                             parseRestaurantsFromApi(httpClient.newCall(request).execute().body().source())
                     ).await()
             restaurants.filter { !onlyActive || it.isActive }
@@ -62,9 +62,9 @@ class Downloader @Deprecated("Inject this.") constructor(context: Context) {
             Deferred<Either<IOException, List<DbDish>>> = async(CommonPool) {
         eitherTryIo {
             val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
-            val cachedDishes = dataCache.retrieve(restaurant, date).await()
+            val cachedDishes = modelCache.retrieve(restaurant, date).await()
             cachedDishes ?:
-                    dataCache.cache(
+                    modelCache.cache(
                             restaurant,
                             date,
                             parseDishes(httpClient.newCall(request).execute().body().source())

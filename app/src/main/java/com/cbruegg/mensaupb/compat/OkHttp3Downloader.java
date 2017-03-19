@@ -160,7 +160,7 @@ public final class OkHttp3Downloader implements Downloader {
         }
     }
 
-    static long calculateDiskCacheSize(File dir) {
+    public static long calculateDiskCacheSize(File dir) {
         long size = MIN_DISK_CACHE_SIZE;
 
         try {

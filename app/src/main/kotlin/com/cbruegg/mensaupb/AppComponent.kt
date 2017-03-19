@@ -1,6 +1,6 @@
 package com.cbruegg.mensaupb
 
-import com.cbruegg.mensaupb.cache.DataCache
+import com.cbruegg.mensaupb.cache.ModelCache
 import com.cbruegg.mensaupb.dishes.DishesFragment
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.main.MainActivity
@@ -16,7 +16,7 @@ interface AppComponent {
     fun inject(app: MensaApplication)
     fun inject(mainActivity: MainActivity)
     fun inject(dishesFragment: DishesFragment)
-    fun inject(dataCache: DataCache)
+    fun inject(modelCache: ModelCache)
     fun inject(dishesWidgetUpdateService: DishesWidgetUpdateService)
     fun inject(dishRemoteViewsFactory: DishRemoteViewsService.DishRemoteViewsFactory)
 }

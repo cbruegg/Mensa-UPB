@@ -15,6 +15,7 @@ import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.downloader.forceCached
 import com.cbruegg.mensaupb.extensions.*
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import com.squareup.picasso.Picasso
@@ -70,9 +71,8 @@ class DishRemoteViewsService : RemoteViewsService() {
             if (!dish.thumbnailImageUrl.isNullOrEmpty()) {
                 try {
                     val bitmap = Picasso.with(ctx)
-                            .load(dish.thumbnailImageUrl)
+                            .load(dish.thumbnailImageUrl!!.toUri().forceCached)
                             .resizeDimen(R.dimen.row_dish_widget_image_size, R.dimen.row_dish_widget_image_size)
-                            .onlyScaleDown()
                             .centerCrop()
                             .get()
                     remoteViews.setImageViewBitmap(R.id.dish_widget_image, bitmap)

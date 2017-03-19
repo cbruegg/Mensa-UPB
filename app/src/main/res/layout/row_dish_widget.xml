@@ -10,8 +10,7 @@
         android:id="@+id/dish_widget_image"
         android:layout_width="@dimen/row_dish_widget_image_size"
         android:layout_height="@dimen/row_dish_widget_image_size"
-        android:contentDescription="@string/dish_image"
-        android:scaleType="centerCrop" />
+        android:contentDescription="@string/dish_image" />
 
     <TextView
         android:id="@+id/dish_widget_name"

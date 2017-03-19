@@ -31,6 +31,11 @@ class MensaApplication : Application() {
         val picasso = Picasso.Builder(this)
                 .downloader(OkHttp3Downloader(httpClient))
                 .indicatorsEnabled(BuildConfig.DEBUG)
+                .listener { _, _, exception ->
+                    if (BuildConfig.DEBUG) {
+                        exception?.printStackTrace()
+                    }
+                }
                 .build()
         Picasso.setSingletonInstance(picasso)
     }

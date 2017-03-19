@@ -64,6 +64,7 @@
                 android:layout_marginRight="10dp"
                 android:contentDescription="@string/dish_image"
                 android:visibility="@{dishViewModel.hasThumbnail ? View.VISIBLE : View.GONE}"
+                app:forceCache="@{true}"
                 app:imageUrl="@{dishViewModel.dish.thumbnailImageUrl}"
                 app:scaleType="@{android.widget.ImageView.ScaleType.CENTER_CROP}" />
 

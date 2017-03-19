@@ -1,8 +1,6 @@
 package com.cbruegg.mensaupb
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import com.cbruegg.mensaupb.cache.Models
 import com.cbruegg.mensaupb.util.OneOff
 import dagger.Module
 import dagger.Provides
@@ -27,7 +25,7 @@ class AppModule(private val app: MensaApplication) {
 
     @Provides @Singleton
     fun provideData(): BlockingEntityStore<Persistable> {
-        val source = DatabaseSource(app, Models.DEFAULT, 11)
+        val source = DatabaseSource(app, Models.DEFAULT, 12)
         if (BuildConfig.DEBUG) {
             source.setTableCreationMode(TableCreationMode.DROP_CREATE)
         } else {

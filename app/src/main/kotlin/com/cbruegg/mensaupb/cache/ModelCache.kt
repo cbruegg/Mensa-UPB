@@ -23,7 +23,7 @@ import javax.inject.Inject
 /**
  * Class responsible for caching data used by the app.
  */
-class DataCache @Deprecated("Inject this.") constructor(context: Context) {
+class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
 
     @Inject lateinit var data: BlockingEntityStore<Persistable>
 
