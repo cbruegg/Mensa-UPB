@@ -41,7 +41,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
     companion object {
 
         private val ARG_REQUESTED_RESTAURANT_ID = "restaurant_id"
-        private val ARG_REQUESTED_DISH_GERMAN_NAME = "dish_german_name"
+        private val ARG_REQUESTED_DISH_NAME = "dish_german_name"
         private val ARG_REQUESTED_SELECTED_DAY = "select_day"
 
         /**
@@ -70,7 +70,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
                 selectDay: Date? = null
         ) {
             intent.putExtra(ARG_REQUESTED_RESTAURANT_ID, restaurant?.id)
-            intent.putExtra(ARG_REQUESTED_DISH_GERMAN_NAME, dish?.germanName)
+            intent.putExtra(ARG_REQUESTED_DISH_NAME, dish?.name)
             intent.putDateExtra(ARG_REQUESTED_SELECTED_DAY, selectDay)
         }
     }
@@ -147,7 +147,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
             oneOff,
             MainModel(
                     intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID),
-                    intent.getStringExtra(ARG_REQUESTED_DISH_GERMAN_NAME),
+                    intent.getStringExtra(ARG_REQUESTED_DISH_NAME),
                     intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY),
                     StringSharedPreferencesPropertyDelegate<String?>(
                             sharedPreferences = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE),
@@ -241,7 +241,7 @@ class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
         this.intent = intent
         if (intent != null) {
             presenter.model.requestedRestaurantId = intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID)
-            presenter.model.requestedDishWithGermanName = intent.getStringExtra(ARG_REQUESTED_DISH_GERMAN_NAME)
+            presenter.model.requestedDishWithGermanName = intent.getStringExtra(ARG_REQUESTED_DISH_NAME)
             presenter.model.requestedSelectedDay = intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
         }
         presenter.onRestaurantsReloadRequested()

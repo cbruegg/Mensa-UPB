@@ -63,7 +63,7 @@ class DishRemoteViewsService : RemoteViewsService() {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
             val remoteViews = RemoteViews(ctx.packageName, R.layout.row_dish_widget).apply {
-                setTextViewText(R.id.dish_widget_name, dish.germanName)
+                setTextViewText(R.id.dish_widget_name, dish.displayName())
                 setViewVisibility(R.id.dish_widget_image, thumbnailVisibility)
                 setOnClickFillInIntent(R.id.dish_widget_row, dishIntent)
             }
@@ -77,7 +77,7 @@ class DishRemoteViewsService : RemoteViewsService() {
                             .get()
                     remoteViews.setImageViewBitmap(R.id.dish_widget_image, bitmap)
                 } catch (e: IOException) {
-                    Log.e(TAG, "Downloading '${dish.thumbnailImageUrl}' failed! Not setting an image for '${dish.germanName}'.")
+                    Log.e(TAG, "Downloading '${dish.thumbnailImageUrl}' failed! Not setting an image for '${dish.name}'.")
                     Log.e(TAG, e.stackTraceString)
                 }
             }

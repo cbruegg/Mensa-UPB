@@ -25,7 +25,7 @@ class AppModule(private val app: MensaApplication) {
 
     @Provides @Singleton
     fun provideData(): BlockingEntityStore<Persistable> {
-        val source = DatabaseSource(app, Models.DEFAULT, 12)
+        val source = DatabaseSource(app, Models.DEFAULT, 13)
         if (BuildConfig.DEBUG) {
             source.setTableCreationMode(TableCreationMode.DROP_CREATE)
         } else {

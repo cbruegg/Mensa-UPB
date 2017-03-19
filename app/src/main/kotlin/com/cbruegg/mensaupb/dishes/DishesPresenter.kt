@@ -16,7 +16,7 @@ class DishesPresenter(
         private val date: Date,
         private val userType: UserType,
         private val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishViewModel>,
-        private val germanDishNameToShowOnLoad: String?
+        private val dishNameToShowOnLoad: String?
 ) : MvpPresenter<DishesView>() {
 
     fun onDishClicked(dishViewModel: DishViewModel) {
@@ -30,13 +30,12 @@ class DishesPresenter(
      * try to find a matching dish and display its image.
      */
     private fun tryShowArgDish(dishViewModels: List<DishViewModel>) {
-        if (germanDishNameToShowOnLoad == null) {
+        if (dishNameToShowOnLoad == null) {
             return
         }
 
         dishViewModels.firstOrNull {
-            it.dish.germanName == germanDishNameToShowOnLoad &&
-                    it.hasThumbnail
+            it.dish.name == dishNameToShowOnLoad && it.hasThumbnail
         }?.let {
             view?.showDishDetailsDialog(it)
         }

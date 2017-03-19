@@ -1,6 +1,5 @@
 package com.cbruegg.mensaupb.cache
 
-import android.databinding.adapters.CalendarViewBindingAdapter.setDate
 import android.os.Parcelable
 import com.cbruegg.mensaupb.deserializeFromSql
 import com.cbruegg.mensaupb.extensions.atMidnight
@@ -8,6 +7,7 @@ import com.cbruegg.mensaupb.model.Badge
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.PriceType
 import com.cbruegg.mensaupb.serializeForSql
+import com.cbruegg.mensaupb.util.LanguageStringSelector
 import io.requery.*
 import java.util.*
 
@@ -17,7 +17,7 @@ const val TABLE_DB_DISH = "dishes"
  * Model representing a dish object.
  */
 @Entity @Table(name = TABLE_DB_DISH)
-abstract class DbDish : Persistable, Parcelable { // TODO "name_en" field etc.
+abstract class DbDish : Persistable, Parcelable {
 
     @get:Column(name = "id")
     @get:Key @get:Generated abstract val id: Int
@@ -25,20 +25,32 @@ abstract class DbDish : Persistable, Parcelable { // TODO "name_en" field etc.
     @get:Column(name = "date")
     abstract val date: Date
 
-    @get:Column(name = "germanName")
-    abstract val germanName: String
+    @get:Column(name = "nameDE")
+    protected abstract val nameDE: String
 
-    @get:Column(name = "germanDescription")
-    abstract val germanDescription: String?
+    @get:Column(name = "nameEN")
+    protected abstract val nameEN: String
+
+    @get:Column(name = "descriptionDE")
+    protected abstract val descriptionDE: String?
+
+    @get:Column(name = "descriptionEN")
+    protected abstract val descriptionEN: String?
 
     @get:Column(name = "category")
     abstract val category: String
 
-    @get:Column(name = "germanCategory")
-    abstract val germanCategory: String
+    @get:Column(name = "categoryDE")
+    protected abstract val categoryDE: String
 
-    @get:Column(name = "germanSubcategory")
-    abstract val germanSubcategory: String
+    @get:Column(name = "categoryEN")
+    protected abstract val categoryEN: String
+
+    @get:Column(name = "subcategoryDE")
+    protected abstract val subcategoryDE: String
+
+    @get:Column(name = "subcategoryEN")
+    protected abstract val subcategoryEN: String
 
     @get:Column(name = "studentPrice")
     abstract val studentPrice: Double
@@ -73,6 +85,21 @@ abstract class DbDish : Persistable, Parcelable { // TODO "name_en" field etc.
     @get:Transient val badges: List<Badge> by lazy { badgesStr.deserializeFromSql { Badge.valueOf(it) } }
     @get:Transient val allergens: List<String> by lazy { allergensStr.deserializeFromSql { it } }
 
+    @get:Transient val name get() = nameDE
+
+    @get:Transient val displayName: LanguageStringSelector<String> by lazy {
+        LanguageStringSelector("en" to nameEN, "de" to nameDE)
+    }
+    @get:Transient val displayDescription: LanguageStringSelector<String?> by lazy {
+        LanguageStringSelector("en" to descriptionEN, "de" to descriptionDE)
+    }
+    @get:Transient val displayCategory: LanguageStringSelector<String> by lazy {
+        LanguageStringSelector("en" to categoryEN, "de" to categoryDE)
+    }
+    @get:Transient val displaySubcategory: LanguageStringSelector<String> by lazy {
+        LanguageStringSelector("en" to subcategoryEN, "de" to subcategoryDE)
+    }
+
 }
 
 fun Iterable<Dish>.toDbDishes(restaurant: DbRestaurant) = map { dish ->
@@ -80,11 +107,15 @@ fun Iterable<Dish>.toDbDishes(restaurant: DbRestaurant) = map { dish ->
         require(restaurant.id == dish.restaurantId) { "dish.restaurantId must equal restaurant parameter." }
 
         setDate(dish.date.atMidnight)
-        setGermanName(dish.germanName)
-        setGermanDescription(dish.germanDescription)
+        setNameDE(dish.nameDE)
+        setNameEN(dish.nameEN)
+        setDescriptionDE(dish.descriptionDE)
+        setDescriptionEN(dish.descriptionEN)
         setCategory(dish.category)
-        setGermanCategory(dish.germanCategory)
-        setGermanSubcategory(dish.germanSubcategory)
+        setCategoryDE(dish.categoryDE)
+        setCategoryEN(dish.categoryEN)
+        setSubcategoryDE(dish.subcategoryDE)
+        setSubcategoryEN(dish.subcategoryEN)
         setStudentPrice(dish.studentPrice)
         setWorkerPrice(dish.workerPrice)
         setGuestPrice(dish.guestPrice)

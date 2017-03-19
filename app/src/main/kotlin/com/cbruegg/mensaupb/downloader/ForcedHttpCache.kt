@@ -57,14 +57,14 @@ fun forceCacheInterceptChain(data: BlockingEntityStore<Persistable>, context: Co
             .build()
 
     val cacheFile = File(dir, url.toString().md5())
-    if (cacheFile.exists()) {
-        val entry = async(DbThread) {
-            data.findByKey(DbForcedCacheEntryEntity::class, cacheFile)!!.also {
-                it.setLastUsed(now)
-                data.update(it)
-            }
-        }.await()
+    val existingEntry = async(DbThread) {
+        (data.findByKey(DbForcedCacheEntryEntity::class, cacheFile))?.also {
+            it.setLastUsed(now)
+            data.update(it)
+        }
+    }.await()
 
+    if (cacheFile.exists() && existingEntry != null) {
         Log.d(TAG, "Found $cacheFile for $url.")
 
         val cacheSource = Okio.buffer(Okio.source(cacheFile))
@@ -79,7 +79,7 @@ fun forceCacheInterceptChain(data: BlockingEntityStore<Persistable>, context: Co
                 )
                 .networkResponse(null)
                 .body(
-                        ResponseBody.create(entry.contentType, cacheFile.length(), cacheSource)
+                        ResponseBody.create(existingEntry.contentType, cacheFile.length(), cacheSource)
                 )
                 .code(HttpURLConnection.HTTP_OK)
                 .protocol(Protocol.HTTP_1_1)
@@ -91,6 +91,7 @@ fun forceCacheInterceptChain(data: BlockingEntityStore<Persistable>, context: Co
         val contentType = response.body().contentType()
         val contentLength = response.body().contentLength()
 
+        if (cacheFile.exists() && !cacheFile.delete()) throw IOException("Could not delete existing file $cacheFile.")
         if (!cacheFile.createNewFile()) throw IOException("Could not create cache file $cacheFile")
 
         Okio.buffer(Okio.sink(cacheFile)).use { cacheSink ->
@@ -100,12 +101,7 @@ fun forceCacheInterceptChain(data: BlockingEntityStore<Persistable>, context: Co
 
                 launch(DbThread) {
                     // Upsert since cache file could've been deleted by system
-                    DbForcedCacheEntryEntity().apply {
-                        setFile(cacheFile)
-                        setContentType(contentType)
-                        setLastUsed(now)
-                        setBytes(contentLength)
-                    }.also { data.upsert(it) }
+                    newDbEntry(cacheFile, contentLength, contentType).also { data.upsert(it) }
                     cleanUpAsync(data, cacheSize)
                 }
             }
@@ -118,6 +114,17 @@ fun forceCacheInterceptChain(data: BlockingEntityStore<Persistable>, context: Co
     }
 
 }
+
+/**
+ * Create, but don't insert a new [DbForcedCacheEntry]
+ */
+private fun newDbEntry(cacheFile: File, contentLength: Long, contentType: MediaType) =
+        DbForcedCacheEntryEntity().apply {
+            setFile(cacheFile)
+            setContentType(contentType)
+            setLastUsed(now)
+            setBytes(contentLength)
+        }
 
 /**
  * Limit size
