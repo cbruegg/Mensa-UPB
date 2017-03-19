@@ -88,6 +88,12 @@ fun forceCacheInterceptChain(data: BlockingEntityStore<Persistable>, context: Co
         Log.d(TAG, "Found no cache file for $url.")
 
         val response = chain.proceed(chain.request())
+
+        if (response.code() != HttpURLConnection.HTTP_OK) {
+            Log.d(TAG, "Caching for $url aborted due to a non-OK response.")
+            return@runBlocking response
+        }
+
         val contentType = response.body().contentType()
         val contentLength = response.body().contentLength()
 
