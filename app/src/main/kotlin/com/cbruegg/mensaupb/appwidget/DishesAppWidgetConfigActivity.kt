@@ -1,10 +1,7 @@
 package com.cbruegg.mensaupb.appwidget
 
-import android.app.Activity.RESULT_CANCELED
-import android.app.Activity.RESULT_OK
 import android.appwidget.AppWidgetManager
 import android.content.Intent
-import android.databinding.DataBindingUtil.setContentView
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -12,19 +9,12 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
 import butterknife.bindView
-import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.BaseActivity
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
-import com.cbruegg.mensaupb.appwidget.DishesWidgetConfiguration
-import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
-import com.cbruegg.mensaupb.mvp.MvpPresenter
-import com.cbruegg.mensaupb.mvp.MvpView
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
-import com.cbruegg.mensaupb.viewmodel.uiSorted
-import kotlinx.coroutines.experimental.launch
 import java.io.IOException
 
 /**
@@ -46,6 +36,7 @@ class DishesAppWidgetConfigActivity : BaseActivity<DishesAppWidgetConfigView, Di
     override val mvpViewType: Class<DishesAppWidgetConfigView>
         get() = DishesAppWidgetConfigView::class.java
 
+    // TODO Inject
     override fun createPresenter() = DishesAppWidgetConfigPresenter(Downloader(this), DishesWidgetConfigurationManager(this), appWidgetId)
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,11 +1,11 @@
 package com.cbruegg.mensaupb.main
 
-import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.mvp.ModelMvpPresenter
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
+import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 
 class MainPresenter(
@@ -97,7 +97,7 @@ class MainPresenter(
      * This is useful for reloading after receiving a new intent.
      */
     private fun reload() {
-        launch(MainThread) {
+        launch(UI) {
             downloader.downloadOrRetrieveRestaurantsAsync()
                     .await()
                     .fold({

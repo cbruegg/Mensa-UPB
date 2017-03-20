@@ -1,12 +1,10 @@
 package com.cbruegg.mensaupb.appwidget
 
-import com.cbruegg.mensaupb.MainThread
-import com.cbruegg.mensaupb.appwidget.DishesWidgetConfiguration
-import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.mvp.MvpPresenter
 import com.cbruegg.mensaupb.viewmodel.uiSorted
+import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 
 class DishesAppWidgetConfigPresenter(
@@ -30,7 +28,7 @@ class DishesAppWidgetConfigPresenter(
         view?.setConfirmButtonStatus(false)
         view?.setProgressBarVisible(true)
 
-        launch(MainThread) {
+        launch(UI) {
             view?.setProgressBarVisible(true)
             downloader
                     .downloadOrRetrieveRestaurantsAsync()

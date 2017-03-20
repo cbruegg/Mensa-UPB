@@ -1,12 +1,12 @@
 package com.cbruegg.mensaupb.dishes
 
-import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.model.UserType
 import com.cbruegg.mensaupb.mvp.MvpPresenter
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
+import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import java.util.*
 
@@ -44,7 +44,7 @@ class DishesPresenter(
     override fun initView() {
         super.initView()
 
-        launch(MainThread) {
+        launch(UI) {
             downloader.downloadOrRetrieveDishesAsync(restaurant, date)
                     .await()
                     .fold({

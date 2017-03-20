@@ -8,16 +8,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
 import android.widget.RemoteViews
-import com.cbruegg.mensaupb.MainThread
 import com.cbruegg.mensaupb.R
-import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Failure
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Success
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withTimeout
 import java.text.SimpleDateFormat
@@ -93,7 +93,7 @@ class DishesWidgetUpdateService : Service() {
         val appWidgetIds = intent.getIntArrayExtra(ARG_APPWIDGET_IDS)
         val configManager = DishesWidgetConfigurationManager(this@DishesWidgetUpdateService)
 
-        job = launch(MainThread) {
+        job = launch(UI) {
             withTimeout(TIMEOUT_MS) {
                 val restaurantsById = downloader.downloadOrRetrieveRestaurantsAsync()
                         .await()

@@ -32,6 +32,6 @@ class AppModule(private val app: MensaApplication) {
             source.setTableCreationMode(TableCreationMode.CREATE)
         }
 
-        return KotlinEntityDataStore<Persistable>(source.configuration)
+        return KotlinEntityDataStore(source.configuration)
     }
 }

@@ -2,6 +2,7 @@ package com.cbruegg.mensaupb.mvp
 
 import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.disposeOnCompletion
 import java.util.*
 
 interface JobHandler {
