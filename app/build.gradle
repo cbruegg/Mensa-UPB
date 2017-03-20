@@ -76,7 +76,7 @@ dependencies {
 }
 
 buildscript {
-    ext.kotlinVersion = '1.1.0'
+    ext.kotlinVersion = '1.1.1'
     ext.androidToolsVersion = '2.3.0'
     repositories {
         jcenter()
