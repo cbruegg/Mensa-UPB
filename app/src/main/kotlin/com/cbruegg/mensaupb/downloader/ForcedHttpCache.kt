@@ -91,6 +91,7 @@ fun forceCacheInterceptChain(data: BlockingEntityStore<Persistable>, context: Co
 
         if (response.code() != HttpURLConnection.HTTP_OK) {
             Log.d(TAG, "Caching for $url aborted due to a non-OK response.")
+            response.body()?.close()
             return@runBlocking response
         }
 
