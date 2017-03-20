@@ -58,7 +58,7 @@ fun forceCacheInterceptChain(data: BlockingEntityStore<Persistable>, context: Co
 
     val cacheFile = File(dir, url.toString().md5())
     val existingEntry = async(DbThread) {
-        (data.findByKey(DbForcedCacheEntryEntity::class, cacheFile))?.also {
+        data.findByKey(DbForcedCacheEntryEntity::class, cacheFile)?.also {
             it.setLastUsed(now)
             data.update(it)
         }
