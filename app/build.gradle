@@ -68,11 +68,11 @@ dependencies {
 
     compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.12'
 
-    def requeryVersion = "f58329854a017dbcaad3afa965982b468b83b6f0"
-    compile "com.github.requery.requery:requery:$requeryVersion"
-    compile "com.github.requery.requery:requery-android:$requeryVersion"
-    compile "com.github.requery.requery:requery-kotlin:$requeryVersion"
-    kapt "com.github.requery.requery:requery-processor:$requeryVersion"
+    def requeryVersion = "1.2.1"
+    compile "io.requery:requery:$requeryVersion"
+    compile "io.requery:requery-android:$requeryVersion"
+    compile "io.requery:requery-kotlin:$requeryVersion"
+    kapt "io.requery:requery-processor:$requeryVersion"
 }
 
 buildscript {
