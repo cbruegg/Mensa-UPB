@@ -12,10 +12,12 @@ import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.BaseActivity
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
+import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import java.io.IOException
+import javax.inject.Inject
 
 /**
  * Activity used for configuring an app widget. It must
@@ -33,14 +35,16 @@ class DishesAppWidgetConfigActivity : BaseActivity<DishesAppWidgetConfigView, Di
                 AppWidgetManager.INVALID_APPWIDGET_ID)
     }
 
+    @Inject lateinit var downloader: Downloader
+
     override val mvpViewType: Class<DishesAppWidgetConfigView>
         get() = DishesAppWidgetConfigView::class.java
 
-    // TODO Inject
-    override fun createPresenter() = DishesAppWidgetConfigPresenter(Downloader(this), DishesWidgetConfigurationManager(this), appWidgetId)
+    override fun createPresenter() = DishesAppWidgetConfigPresenter(downloader, DishesWidgetConfigurationManager(this), appWidgetId)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        app.appComponent.inject(this)
         setContentView(R.layout.activity_app_widget_config)
         setResult(RESULT_CANCELED)
 

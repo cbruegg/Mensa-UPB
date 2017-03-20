@@ -38,6 +38,10 @@ abstract class BaseFragment<V : MvpView, P : MvpPresenter<V>> @JvmOverloads cons
         presenter.saveState(outState)
     }
 
+    /**
+     * Create the presenter. Guaranteed to be called after
+     * [onCreateView].
+     */
     protected abstract fun createPresenter(): P
 }
 

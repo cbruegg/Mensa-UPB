@@ -34,6 +34,10 @@ abstract class BaseActivity<V : MvpView, P : ModelMvpPresenter<V, *>> @JvmOverlo
         presenter.saveState(outState)
     }
 
+    /**
+     * Create the presenter. Guaranteed to be called after
+     * [onCreate].
+     */
     protected abstract fun createPresenter(): P
 }
 
