@@ -6,6 +6,7 @@ import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.downloader.forceCacheInterceptChain
 import dagger.Module
 import dagger.Provides
+import installStetho
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
 import okhttp3.OkHttpClient
@@ -22,6 +23,7 @@ class NetModule {
     fun provideOkHttp(context: Context, data: BlockingEntityStore<Persistable>): OkHttpClient =
             OkHttpClient.Builder()
                     .addInterceptor { forceCacheInterceptChain(data, context, it) }
+                    .installStetho()
                     .build()
 
     @Provides @Singleton @Suppress("DEPRECATION")

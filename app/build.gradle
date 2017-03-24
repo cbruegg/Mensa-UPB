@@ -74,6 +74,10 @@ dependencies {
     compile "io.requery:requery-android:$requeryVersion"
     compile "io.requery:requery-kotlin:$requeryVersion"
     kapt "io.requery:requery-processor:$requeryVersion"
+
+    def stethoVersion = "1.4.2"
+    debugCompile "com.facebook.stetho:stetho:$stethoVersion"
+    debugCompile "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
 }
 
 buildscript {
