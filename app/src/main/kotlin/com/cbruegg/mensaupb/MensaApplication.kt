@@ -3,7 +3,9 @@ package com.cbruegg.mensaupb
 import android.app.Application
 import android.content.Context
 import android.support.v4.app.Fragment
+import android.util.Log
 import com.cbruegg.mensaupb.compat.OkHttp3Downloader
+import com.cbruegg.mensaupb.extensions.stackTraceString
 import com.squareup.picasso.Picasso
 import installStetho
 import okhttp3.OkHttpClient
@@ -34,8 +36,8 @@ class MensaApplication : Application() {
                 .downloader(OkHttp3Downloader(httpClient))
                 .indicatorsEnabled(BuildConfig.DEBUG)
                 .listener { _, _, exception ->
-                    if (BuildConfig.DEBUG) {
-                        exception?.printStackTrace()
+                    if (BuildConfig.DEBUG && exception != null) {
+                        Log.e("Picasso", exception.stackTraceString)
                     }
                 }
                 .build()
