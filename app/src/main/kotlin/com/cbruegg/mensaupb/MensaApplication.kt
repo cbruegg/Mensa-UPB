@@ -25,8 +25,8 @@ class MensaApplication : Application() {
         }
 
         appComponent.inject(this)
-        initPicasso()
         installStetho()
+        initPicasso()
     }
 
     private fun initPicasso() {
