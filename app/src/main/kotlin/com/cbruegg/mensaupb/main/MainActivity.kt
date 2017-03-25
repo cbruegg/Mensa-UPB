@@ -4,9 +4,11 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.databinding.DataBindingUtil.setContentView
 import android.net.Uri
 import android.os.Bundle
 import android.support.customtabs.CustomTabsIntent
+import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
@@ -19,7 +21,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
-import com.cbruegg.mensaupb.activity.BaseActivity
 import com.cbruegg.mensaupb.activity.PreferenceActivity
 import com.cbruegg.mensaupb.adapter.RestaurantAdapter
 import com.cbruegg.mensaupb.app
@@ -31,6 +32,7 @@ import com.cbruegg.mensaupb.fragment.RestaurantFragment
 import com.cbruegg.mensaupb.provider.DishesAppWidgetProvider
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
+import com.cbruegg.sikoanmvp.helper.MvpBaseActivity
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
@@ -38,7 +40,7 @@ import javax.inject.Inject
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
  */
-class MainActivity : BaseActivity<MainView, MainPresenter>(), MainView {
+class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
 
     companion object {
 

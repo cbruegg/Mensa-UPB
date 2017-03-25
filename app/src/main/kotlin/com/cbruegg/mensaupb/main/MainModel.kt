@@ -4,9 +4,9 @@ import android.os.Bundle
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.extensions.getDate
 import com.cbruegg.mensaupb.extensions.putDate
-import com.cbruegg.mensaupb.mvp.MvpModel
-import com.cbruegg.mensaupb.mvp.MvpModelSaver
 import com.cbruegg.mensaupb.util.delegates.PersistentPropertyDelegate
+import com.cbruegg.sikoanmvp.MvpModel
+import com.cbruegg.sikoanmvp.MvpModelSaver
 import java.util.*
 
 data class MainModel(

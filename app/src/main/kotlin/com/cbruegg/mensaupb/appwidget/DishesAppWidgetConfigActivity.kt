@@ -10,12 +10,12 @@ import android.widget.Spinner
 import android.widget.Toast
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
-import com.cbruegg.mensaupb.activity.BaseActivity
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
+import com.cbruegg.sikoanmvp.helper.MvpBaseActivity
 import java.io.IOException
 import javax.inject.Inject
 
@@ -23,7 +23,7 @@ import javax.inject.Inject
  * Activity used for configuring an app widget. It must
  * be supplied an an AppWidgetId using [AppWidgetManager.EXTRA_APPWIDGET_ID].
  */
-class DishesAppWidgetConfigActivity : BaseActivity<DishesAppWidgetConfigView, DishesAppWidgetConfigPresenter>(), DishesAppWidgetConfigView {
+class DishesAppWidgetConfigActivity : MvpBaseActivity<DishesAppWidgetConfigView, DishesAppWidgetConfigPresenter>(), DishesAppWidgetConfigView {
 
     private val spinner by bindView<Spinner>(R.id.widget_config_spinner)
     private val cancelButton by bindView<Button>(R.id.widget_config_cancel)

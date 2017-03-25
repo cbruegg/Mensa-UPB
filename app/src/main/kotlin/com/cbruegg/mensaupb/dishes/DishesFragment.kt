@@ -15,9 +15,9 @@ import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
-import com.cbruegg.mensaupb.fragment.BaseFragment
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
+import com.cbruegg.sikoanmvp.helper.MvpBaseFragment
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
@@ -26,7 +26,7 @@ import javax.inject.Inject
  * Fragment responsible for displaying the dishes of a restaurant at a specified date.
  * The factory method newInstance needs to be used.
  */
-class DishesFragment : BaseFragment<DishesView, DishesPresenter>(), DishesView {
+class DishesFragment : MvpBaseFragment<DishesView, DishesPresenter>(), DishesView {
 
     companion object {
         private val ARG_RESTAURANT = "restaurant"

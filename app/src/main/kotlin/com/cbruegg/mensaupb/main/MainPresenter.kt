@@ -2,9 +2,9 @@ package com.cbruegg.mensaupb.main
 
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
-import com.cbruegg.mensaupb.mvp.ModelMvpPresenter
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
+import com.cbruegg.sikoanmvp.ModelMvpPresenter
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 

@@ -1,7 +1,7 @@
 package com.cbruegg.mensaupb.main
 
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.mvp.MvpView
+import com.cbruegg.sikoanmvp.MvpView
 import java.io.IOException
 import java.util.*
 

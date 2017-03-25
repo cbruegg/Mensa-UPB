@@ -6,6 +6,7 @@ import android.support.v7.preference.PreferenceFragmentCompat
 import android.support.v7.preference.PreferenceManager
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.model.UserType
+import com.cbruegg.sikoanmvp.helper.NoMvpBaseActivity
 
 /**
  * Activity managing the user preferences.

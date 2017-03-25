@@ -14,6 +14,7 @@ import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.dishes.DishesFragment
 import com.cbruegg.mensaupb.extensions.*
+import com.cbruegg.sikoanmvp.helper.NoMvpBaseFragment
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit

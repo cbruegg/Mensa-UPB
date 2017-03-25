@@ -1,7 +1,7 @@
 package com.cbruegg.mensaupb.dishes
 
-import com.cbruegg.mensaupb.mvp.MvpView
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
+import com.cbruegg.sikoanmvp.MvpView
 import java.io.IOException
 
 interface DishesView : MvpView {
