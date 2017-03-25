@@ -4,11 +4,9 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil.setContentView
 import android.net.Uri
 import android.os.Bundle
 import android.support.customtabs.CustomTabsIntent
-import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
@@ -59,8 +57,7 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
                 restaurant: DbRestaurant? = null,
                 dish: DbDish? = null,
                 selectDay: Date? = null
-        ): Intent
-                = Intent(context, MainActivity::class.java).apply {
+        ): Intent = Intent(context, MainActivity::class.java).apply {
             fillIntent(this, restaurant, dish, selectDay)
         }
 
