@@ -51,10 +51,12 @@ class DishesPresenter(
                         view?.showDishes(emptyList())
                         view?.showNetworkError(it)
                     }) {
-                        view?.setShowNoDishesMessage(it.isEmpty())
-                        val dishViewModels = it.dishViewModelCreator(userType)
-                        tryShowArgDish(dishViewModels)
-                        view?.showDishes(dishViewModels)
+                        view?.run {
+                            setShowNoDishesMessage(it.isEmpty())
+                            val dishViewModels = it.dishViewModelCreator(userType)
+                            tryShowArgDish(dishViewModels)
+                            showDishes(dishViewModels)
+                        }
                     }
         }.register()
     }

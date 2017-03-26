@@ -104,11 +104,13 @@ class MainPresenter(
                         view?.setRestaurants(emptyList())
                         view?.showNetworkError(it)
                     }) {
-                        val preparedList = it.uiSorted()
-                        model.restaurants = preparedList
-                        view?.setRestaurants(preparedList)
-                        checkShowFirstTimeDrawer()
-                        loadDefaultRestaurant(preparedList)
+                        view?.run {
+                            val preparedList = it.uiSorted()
+                            model.restaurants = preparedList
+                            setRestaurants(preparedList)
+                            checkShowFirstTimeDrawer()
+                            loadDefaultRestaurant(preparedList)
+                        }
                     }
         }.register()
     }
