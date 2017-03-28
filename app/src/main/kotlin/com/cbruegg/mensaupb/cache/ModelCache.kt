@@ -4,10 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.cbruegg.mensaupb.DbThread
 import com.cbruegg.mensaupb.app
-import com.cbruegg.mensaupb.extensions.TAG
-import com.cbruegg.mensaupb.extensions.atMidnight
-import com.cbruegg.mensaupb.extensions.minus
-import com.cbruegg.mensaupb.extensions.now
+import com.cbruegg.mensaupb.extensions.*
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import io.requery.Persistable
@@ -27,13 +24,11 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
 
     @Inject lateinit var data: BlockingEntityStore<Persistable>
 
-    private val cacheValidityMs = TimeUnit.DAYS.toMillis(1)
-
     /**
      * If any cache entry is older than this, discard it.
      */
     private val oldestAllowedCacheDate: Date
-        get() = now - cacheValidityMs
+        get() = midnight
 
     init {
         context.app.appComponent.inject(this)
