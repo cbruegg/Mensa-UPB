@@ -34,7 +34,7 @@ interface DbRestaurantCacheEntry : Persistable, Parcelable {
  */
 @Entity @Table(name = "restaurant_list_cache_meta")
 interface DbRestaurantListCacheMeta : Persistable, Parcelable {
-    @get:Column(name = "id") @get:Key @get:Generated
+    @get:Column(name = "id") @get:Key
     @Deprecated(message = "Only used for sqlite internally.", replaceWith = ReplaceWith(""))
     val id: Int
         get() = 0
