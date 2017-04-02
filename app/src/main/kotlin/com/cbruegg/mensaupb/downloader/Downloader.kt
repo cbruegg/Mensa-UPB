@@ -10,6 +10,7 @@ import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.extensions.eitherTryIo
 import com.cbruegg.mensaupb.parser.parseDishes
 import com.cbruegg.mensaupb.parser.parseRestaurantsFromApi
+import com.cbruegg.mensaupb.util.AllOpen
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
@@ -28,7 +29,7 @@ private val RESTAURANT_URL = BASE_URL + "&getrestaurants=1"
 /**
  * Class responsible for downloading data from the API
  */
-class Downloader @Deprecated("Inject this.") constructor(context: Context) {
+@AllOpen class Downloader @Deprecated("Inject this.") constructor(context: Context) {
 
     @Inject lateinit var modelCache: ModelCache
     @Inject lateinit var httpClient: OkHttpClient

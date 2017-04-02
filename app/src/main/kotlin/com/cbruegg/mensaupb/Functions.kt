@@ -29,3 +29,8 @@ inline fun <T> String.deserializeFromSql(toT: (String) -> T): List<T> =
         if (isEmpty()) emptyList()
         else split(',')
                 .map { toT(Base64.decode(it, Base64.DEFAULT).toString(Charsets.UTF_8)) }
+
+/**
+ * Throws an [UnsupportedOperationException].
+ */
+fun nothing(): Nothing = throw UnsupportedOperationException()
