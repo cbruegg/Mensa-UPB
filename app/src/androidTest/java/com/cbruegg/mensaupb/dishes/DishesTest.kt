@@ -121,7 +121,7 @@ class DishesTest {
         val date = now
         val downloader = mock(Downloader::class.java)
         given(downloader.downloadOrRetrieveDishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
-            Either.Right<IOException, List<DbDish>>(listOf(sampleDish)) // TODO Also test exception
+            Either.Right<IOException, List<DbDish>>(listOf(sampleDish))
         })
         val userType = UserType.STUDENT
         val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishViewModel> = {
