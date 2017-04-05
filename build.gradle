@@ -16,7 +16,7 @@ buildscript {
     }
 
     rootProject.ext {
-        androidToolsVersion = "2.3.0"
+        androidToolsVersion = "2.3.1"
     }
 
     dependencies {
