@@ -253,8 +253,13 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
             presenter.model.requestedRestaurantId = intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID)
             presenter.model.requestedDishWithName = intent.getStringExtra(ARG_REQUESTED_DISH_NAME)
             presenter.model.requestedSelectedDay = intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
+
+            with(presenter.model) {
+                if (requestedRestaurantId != null || requestedDishWithName != null || requestedSelectedDay != null) {
+                    presenter.onRestaurantsReloadRequested()
+                }
+            }
         }
-        presenter.onRestaurantsReloadRequested()
     }
 
 }
