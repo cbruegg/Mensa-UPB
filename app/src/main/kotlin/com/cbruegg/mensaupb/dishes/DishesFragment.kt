@@ -10,11 +10,12 @@ import android.widget.TextView
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.userType
-import com.cbruegg.mensaupb.adapter.DishViewModelAdapter
+import com.cbruegg.mensaupb.adapter.DishListViewModelAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.extensions.setAll
+import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import com.cbruegg.sikoanmvp.helper.MvpBaseFragment
@@ -54,7 +55,7 @@ class DishesFragment : MvpBaseFragment<DishesView, DishesPresenter>(), DishesVie
     private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)
     @Inject lateinit var downloader: Downloader
 
-    private val adapter = DishViewModelAdapter()
+    private val adapter = DishListViewModelAdapter()
 
     override val mvpViewType: Class<DishesView>
         get() = DishesView::class.java
@@ -93,7 +94,7 @@ class DishesFragment : MvpBaseFragment<DishesView, DishesPresenter>(), DishesVie
         e.printStackTrace()
     }
 
-    override fun showDishes(dishes: List<DishViewModel>) {
+    override fun showDishes(dishes: List<DishListViewModel>) {
         adapter.list.setAll(dishes)
     }
 

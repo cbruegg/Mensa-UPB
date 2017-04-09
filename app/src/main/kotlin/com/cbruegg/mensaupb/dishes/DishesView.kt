@@ -1,5 +1,6 @@
 package com.cbruegg.mensaupb.dishes
 
+import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.sikoanmvp.MvpView
 import java.io.IOException
@@ -15,5 +16,5 @@ interface DishesView : MvpView {
 
     fun showNetworkError(e: IOException)
 
-    fun showDishes(dishes: List<DishViewModel>)
+    fun showDishes(dishes: List<DishListViewModel>)
 }

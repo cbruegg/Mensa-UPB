@@ -11,12 +11,13 @@ import com.cbruegg.mensaupb.model.UserType
 import java.text.DecimalFormat
 import java.util.*
 
+sealed class DishListViewModel
+
 /**
  * Wrapper for [DbDish] objects providing easy access to various attributes for data binding.
  */
 data class DishViewModel(
         val dish: DbDish,
-        val headerText: String?,
         val userPrice: Double,
         val priceText: String,
         val allergensText: String,
@@ -24,18 +25,18 @@ data class DishViewModel(
         val position: Int,
         val name: String,
         val description: CharSequence
-) {
+): DishListViewModel() {
     val hasBadges = dish.badges.filterNotNull().isNotEmpty()
     val containsAllergens = dish.allergens.isNotEmpty()
     val hasThumbnail = !dish.thumbnailImageUrl.isNullOrEmpty()
     val hasBigImage = !dish.imageUrl.isNullOrEmpty()
-    val hasHeader = headerText != null
-    val showDivider = hasHeader && position > 0
 }
+
+data class HeaderViewModel(val text: CharSequence): DishListViewModel()
 
 private val NUMBER_FORMAT = DecimalFormat("0.00")
 
-private fun DbDish.toDishViewModel(headerText: String?, userType: UserType, context: Context, position: Int): DishViewModel {
+private fun DbDish.toDishViewModel(userType: UserType, context: Context, position: Int): DishViewModel {
     val userPrice = when (userType) {
         UserType.STUDENT -> studentPrice
         UserType.WORKER -> workerPrice
@@ -49,7 +50,7 @@ private fun DbDish.toDishViewModel(headerText: String?, userType: UserType, cont
             .toString()
             .capitalizeFirstChar()
     val description = Html.fromHtml(context.getString(R.string.row_dish_description, name, priceText, badgesText)).trim()
-    return DishViewModel(this, headerText, userPrice, priceText, allergensText, badgesText, position, this.displayName(), description)
+    return DishViewModel(this, userPrice, priceText, allergensText, badgesText, position, this.displayName(), description)
 }
 
 
@@ -68,11 +69,18 @@ val UserType.dishComparator: Comparator<DbDish>
 /**
  * Compute the DishViewModels for a list of Dishes.
  */
-fun List<DbDish>.toDishViewModels(context: Context, userType: UserType): List<DishViewModel> {
+fun List<DbDish>.toDishViewModels(context: Context, userType: UserType): List<DishListViewModel> {
+    val result = mutableListOf<DishListViewModel>()
     val sortedList = sortedWith(userType.dishComparator)
-    return sortedList.mapIndexed { position, dish ->
-        dish.toDishViewModel(headerTextForIndex(position, sortedList), userType, context, position)
+    for ((position, dish) in sortedList.withIndex()) {
+        val headerText = headerTextForIndex(position, sortedList)
+        if (headerText != null) {
+            result += HeaderViewModel(headerText)
+        }
+        result += dish.toDishViewModel(userType, context, position)
     }
+
+    return result
 }
 
 /**

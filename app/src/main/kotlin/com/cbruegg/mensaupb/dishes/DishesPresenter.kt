@@ -4,6 +4,7 @@ import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Downloader
 import com.cbruegg.mensaupb.model.UserType
+import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.sikoanmvp.MvpPresenter
 import kotlinx.coroutines.experimental.android.UI
@@ -15,13 +16,13 @@ class DishesPresenter(
         private val restaurant: DbRestaurant,
         private val date: Date,
         private val userType: UserType,
-        private val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishViewModel>,
+        private val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishListViewModel>,
         private val dishNameToShowOnLoad: String?
 ) : MvpPresenter<DishesView>() {
 
-    fun onDishClicked(dishViewModel: DishViewModel) {
-        if (dishViewModel.hasBigImage) {
-            view?.showDishDetailsDialog(dishViewModel)
+    fun onDishClicked(distListViewModel: DishListViewModel) {
+        if (distListViewModel is DishViewModel && distListViewModel.hasBigImage) {
+            view?.showDishDetailsDialog(distListViewModel)
         }
     }
 
@@ -29,14 +30,16 @@ class DishesPresenter(
      * If the dishName parameter is non-null,
      * try to find a matching dish and display its image.
      */
-    private fun tryShowArgDish(dishViewModels: List<DishViewModel>) {
+    private fun tryShowArgDish(dishListViewModels: List<DishListViewModel>) {
         if (dishNameToShowOnLoad == null) {
             return
         }
 
-        dishViewModels.firstOrNull {
-            it.dish.name == dishNameToShowOnLoad && it.hasThumbnail
-        }?.let {
+        dishListViewModels.asSequence()
+                .filterIsInstance<DishViewModel>()
+                .firstOrNull {
+                    it.dish.name == dishNameToShowOnLoad && it.hasThumbnail
+                }?.let {
             view?.showDishDetailsDialog(it)
         }
     }
