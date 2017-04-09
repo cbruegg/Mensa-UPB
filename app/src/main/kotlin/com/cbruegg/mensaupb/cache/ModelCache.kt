@@ -2,6 +2,7 @@ package com.cbruegg.mensaupb.cache
 
 import android.content.Context
 import android.util.Log
+import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.DbThread
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.extensions.TAG
@@ -26,7 +27,8 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
 
     @Inject lateinit var data: BlockingEntityStore<Persistable>
 
-    private val debugIgnoreCache = true
+    @Suppress("SimplifyBooleanWithConstants")
+    private val debugIgnoreCache = false && BuildConfig.DEBUG
 
     /**
      * If any cache entry is older than this, discard it.
