@@ -87,6 +87,8 @@ dependencies {
     compile "io.requery:requery-kotlin:$requeryVersion"
     kapt "io.requery:requery-processor:$requeryVersion"
 
+    compile "org.ccil.cowan.tagsoup:tagsoup:1.2.1"
+
     def stethoVersion = "1.4.2"
     debugCompile "com.facebook.stetho:stetho:$stethoVersion"
     debugCompile "com.facebook.stetho:stetho-okhttp3:$stethoVersion"

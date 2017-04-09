@@ -22,16 +22,16 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="10dp"
+            android:layout_height="0.3dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             android:background="@color/header_gray"
             android:visibility="@{dishViewModel.showDivider ? View.VISIBLE : View.GONE}" />
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:gravity="center_vertical"
             android:paddingEnd="@dimen/activity_horizontal_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -52,10 +52,10 @@
             android:gravity="center_vertical"
             android:onClick="@{onClickListener::onClick}"
             android:orientation="horizontal"
-            android:paddingBottom="5dp"
+            android:paddingBottom="4dp"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="5dp">
+            android:paddingTop="4dp">
 
             <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="120dp"
@@ -68,33 +68,11 @@
                 app:imageUrl="@{dishViewModel.dish.thumbnailImageUrl}"
                 app:scaleType="@{android.widget.ImageView.ScaleType.CENTER_CROP}" />
 
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp">
+                android:text="@{dishViewModel.description}" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{dishViewModel.name}"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    tools:text="Schupfnudelpfanne" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{dishViewModel.priceText}" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{dishViewModel.badgesText}"
-                    android:visibility="@{dishViewModel.hasBadges ? View.VISIBLE : View.GONE}" />
-
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </layout>

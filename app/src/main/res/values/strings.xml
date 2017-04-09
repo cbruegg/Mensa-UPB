@@ -31,4 +31,9 @@
     <string name="did_you_know">Did you know?</string>
     <string name="appwidget_ad">This app now includes a widget for your homescreen! Simply press-and-hold on your homescreen to add it.</string>
     <string name="ok">OK</string>
+    <string name="row_dish_description">
+        &lt;font color="black" sizesp="16"&gt;%1$s&lt;/font&gt; &lt;br/&gt;
+        &lt;font sizesp="15"&gt; %2$s&lt;/font&gt; &lt;br/&gt;
+        &lt;font sizesp="15"&gt; %3$s&lt;/font&gt;
+    </string>
 </resources>
