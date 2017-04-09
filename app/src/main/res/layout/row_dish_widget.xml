@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:id="@+id/dish_widget_row"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/row_dish_widget_image_size"
     android:orientation="horizontal"
-    android:paddingTop="0.5dp">
+    android:paddingTop="0.5dp"
+    tools:ignore="UseCompoundDrawables">
+
+    <!-- Cant use compound drawables as RemoteViews can only set the using resource IDs -->
 
     <ImageView
         android:id="@+id/dish_widget_image"
