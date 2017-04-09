@@ -32,7 +32,7 @@ data class DishViewModel(
     val hasBigImage = !dish.imageUrl.isNullOrEmpty()
 }
 
-data class HeaderViewModel(val text: CharSequence): DishListViewModel()
+data class HeaderViewModel(val text: CharSequence, val showDivider: Boolean): DishListViewModel()
 
 private val NUMBER_FORMAT = DecimalFormat("0.00")
 
@@ -75,7 +75,7 @@ fun List<DbDish>.toDishViewModels(context: Context, userType: UserType): List<Di
     for ((position, dish) in sortedList.withIndex()) {
         val headerText = headerTextForIndex(position, sortedList)
         if (headerText != null) {
-            result += HeaderViewModel(headerText)
+            result += HeaderViewModel(headerText, showDivider = position != 0)
         }
         result += dish.toDishViewModel(userType, context, position)
     }

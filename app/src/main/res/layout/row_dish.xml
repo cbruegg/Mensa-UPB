@@ -21,10 +21,9 @@
         android:gravity="center_vertical"
         android:onClick="@{onClickListener::onClick}"
         android:orientation="horizontal"
-        android:paddingBottom="4dp"
+        android:paddingBottom="8dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="4dp">
+        android:paddingRight="@dimen/activity_horizontal_margin">
 
         <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="120dp"
