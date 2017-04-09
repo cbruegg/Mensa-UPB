@@ -42,7 +42,7 @@ private fun DbDish.toDishViewModel(headerText: String?, userType: UserType, cont
         UserType.GUEST -> guestPrice
     }
     val priceText = "${NUMBER_FORMAT.format(userPrice)} € ${if (priceType == PriceType.WEIGHTED) context.getString(R.string.per_100_gramm) else ""}"
-    val allergensText = "${context.getString(R.string.allergens)} ${allergens.replace("A1", "A1 (Gluten)").joinToString()}"
+    val allergensText = "${context.getString(R.string.allergens)} ${allergens.replace("A1", context.getString(R.string.allergen_gluten_description)).joinToString()}"
     val badgesText = badges
             .filterNotNull()
             .joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionId) })
