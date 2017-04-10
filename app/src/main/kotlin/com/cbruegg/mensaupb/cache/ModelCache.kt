@@ -20,21 +20,21 @@ import kotlinx.coroutines.experimental.runBlocking
 import java.util.*
 import javax.inject.Inject
 
+@Suppress("SimplifyBooleanWithConstants")
+private val debugIgnoreCache = false && BuildConfig.DEBUG
+
+/**
+ * If any cache entry is older than this, discard it.
+ */
+val oldestAllowedCacheDate: Date
+    get() = if (debugIgnoreCache) now else midnight
+
 /**
  * Class responsible for caching data used by the app.
  */
 class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
 
     @Inject lateinit var data: BlockingEntityStore<Persistable>
-
-    @Suppress("SimplifyBooleanWithConstants")
-    private val debugIgnoreCache = false && BuildConfig.DEBUG
-
-    /**
-     * If any cache entry is older than this, discard it.
-     */
-    private val oldestAllowedCacheDate: Date
-        get() = if (debugIgnoreCache) now else midnight
 
     init {
         context.app.appComponent.inject(this)

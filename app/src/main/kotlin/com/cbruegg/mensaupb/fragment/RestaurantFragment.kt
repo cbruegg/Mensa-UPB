@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.cache.DbRestaurant
+import com.cbruegg.mensaupb.cache.oldestAllowedCacheDate
 import com.cbruegg.mensaupb.dishes.DishesFragment
 import com.cbruegg.mensaupb.extensions.*
 import com.cbruegg.sikoanmvp.helper.NoMvpBaseFragment
@@ -49,27 +50,50 @@ class RestaurantFragment : NoMvpBaseFragment() {
         }
     }
 
+    // Normally, we should implement onSaveInstanceState and onViewStateRestored
+    // properly here, but since this is not a negligible amount of work (restoring the [adapter] property
+    // in particular) and everything is cached anyway, we simply recreate
+    // everything during orientation changes.
+
     private val dayPager: ViewPager by bindView(R.id.day_pager)
     private val dayPagerTabs: TabLayout by bindView(R.id.day_pager_tabs)
     private lateinit var adapter: DishesPagerAdapter
+
+    data class LastLoadMeta(val pagerDates: List<Date>, val whenLoaded: Date)
+    private var lastLoadMeta: LastLoadMeta? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
             = inflater.inflate(R.layout.fragment_restaurant, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        reload()
+    }
 
-        /**
-         * Set up the view pager
-         */
+    override fun onResume() {
+        super.onResume()
+
+        val shouldReload = lastLoadMeta?.let {
+            it.whenLoaded < oldestAllowedCacheDate || it.pagerDates != computePagerDates()
+        } ?: true
+
+        if (shouldReload) {
+            reload()
+        }
+    }
+
+    private fun reload() {
+        // Set up the ViewPager
         val restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT)
         val requestedPagerPosition = arguments.getDate(ARG_REQUESTED_PAGER_POSITION)
+        arguments.remove(ARG_REQUESTED_PAGER_POSITION) // Since we're about to fulfill the request
         val dates = computePagerDates()
-        val restrictedPagerPosition = requestedPagerPosition?.inRangeOrElse(
+        lastLoadMeta = LastLoadMeta(dates, whenLoaded = now)
+
+        val restrictedPagerPosition = requestedPagerPosition?.inRangeOrNull(
                 dates.first(),
-                dates.last(),
-                orElse = midnight
-        )
+                dates.last()
+        ) ?: dates.first()
         adapter = DishesPagerAdapter(activity, childFragmentManager, restaurant, dates,
                 arguments.getString(ARG_DISH_NAME))
         dayPager.adapter = adapter

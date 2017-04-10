@@ -27,6 +27,8 @@ operator fun Date.minus(timeMs: Long) = Date(time - timeMs)
 fun Date.inRangeOrElse(min: Date, max: Date, orElse: Date) =
         if (min <= this && this < max) this else orElse
 
+fun Date.inRangeOrNull(min: Date, max: Date) = if (min <= this && this < max) this else null
+
 /**
  * Current date.
  */
