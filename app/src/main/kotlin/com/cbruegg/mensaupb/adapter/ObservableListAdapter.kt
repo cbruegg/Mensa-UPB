@@ -1,11 +1,11 @@
 package com.cbruegg.mensaupb.adapter
 
 import android.databinding.ObservableArrayList
+import android.databinding.ObservableList
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.cbruegg.mensaupb.extensions.addOnListChangedCallback
 
 /**
  * An abstract RecyclerView-Adapter that listens for changes in the provided observable list.
@@ -17,7 +17,27 @@ abstract class ObservableListAdapter<DATA, VH : RecyclerView.ViewHolder>(
 ) : RecyclerView.Adapter<VH>() {
 
     init {
-        list.addOnListChangedCallback({ notifyDataSetChanged() })
+        list.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableList<DATA>>() {
+            override fun onChanged(sender: ObservableList<DATA>) {
+                notifyDataSetChanged()
+            }
+
+            override fun onItemRangeRemoved(sender: ObservableList<DATA>, positionStart: Int, itemCount: Int) {
+                notifyItemRangeRemoved(positionStart, itemCount)
+            }
+
+            override fun onItemRangeInserted(sender: ObservableList<DATA>, positionStart: Int, itemCount: Int) {
+                notifyItemRangeInserted(positionStart, itemCount)
+            }
+
+            override fun onItemRangeMoved(sender: ObservableList<DATA>, fromPosition: Int, toPosition: Int, itemCount: Int) {
+                notifyItemMoved(fromPosition, toPosition)
+            }
+
+            override fun onItemRangeChanged(sender: ObservableList<DATA>, positionStart: Int, itemCount: Int) {
+                notifyItemRangeChanged(positionStart, itemCount)
+            }
+        })
     }
 
     override final fun getItemCount(): Int = list.size
