@@ -16,7 +16,6 @@ import io.requery.kotlin.BlockingEntityStore
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.runBlocking
 import java.util.*
 import javax.inject.Inject
 
@@ -46,25 +45,23 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
      */
     private fun cleanUp() {
         val threshold = oldestAllowedCacheDate
-        runBlocking {
-            launch(DbThread) {
-                data.withTransaction {
-                    // Restaurants don't need to be cleaned here since they are cleaned on every update in cache(restaurants)
-                    delete(DbRestaurantCacheEntry::class)
-                            .where(DbRestaurantCacheEntryEntity.LAST_UPDATE lt threshold)
-                            .get()
-                            .call()
-                    delete(DbDish::class)
-                            .where()
-                            .notExists(
-                                    select(DbRestaurantCacheEntry::class)
-                                            .where(DbRestaurantCacheEntryEntity.LAST_UPDATE gte threshold)
-                                            .and(DbRestaurantCacheEntryEntity.RESTAURANT eq DbDishEntity.RESTAURANT)
-                                            .and(DbRestaurantCacheEntryEntity.DISHES_FOR_DATE eq DbDishEntity.DATE)
-                            )
-                            .get()
-                            .call()
-                }
+        launch(DbThread) {
+            data.withTransaction {
+                // Restaurants don't need to be cleaned here since they are cleaned on every update in cache(restaurants)
+                delete(DbRestaurantCacheEntry::class)
+                        .where(DbRestaurantCacheEntryEntity.LAST_UPDATE lt threshold)
+                        .get()
+                        .call()
+                delete(DbDish::class)
+                        .where()
+                        .notExists(
+                                select(DbRestaurantCacheEntry::class)
+                                        .where(DbRestaurantCacheEntryEntity.LAST_UPDATE gte threshold)
+                                        .and(DbRestaurantCacheEntryEntity.RESTAURANT eq DbDishEntity.RESTAURANT)
+                                        .and(DbRestaurantCacheEntryEntity.DISHES_FOR_DATE eq DbDishEntity.DATE)
+                        )
+                        .get()
+                        .call()
             }
         }
     }
