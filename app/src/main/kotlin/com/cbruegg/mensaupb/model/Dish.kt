@@ -1,13 +1,12 @@
 package com.cbruegg.mensaupb.model
 
-import com.cbruegg.mensaupb.parser.JsonConstructor
 import com.squareup.moshi.Json
 import java.util.*
 
 /**
  * Model representing a dish object returned by the API.
  */
-data class Dish @JsonConstructor constructor(
+data class Dish(
         @Json(name = "date") val date: Date,
         @Json(name = "name_de") val nameDE: String,
         @Json(name = "name_en") val nameEN: String,
