@@ -17,4 +17,6 @@ interface DishesView : MvpView {
     fun showNetworkError(e: IOException)
 
     fun showDishes(dishes: List<DishListViewModel>)
+
+    var isLoading: Boolean
 }

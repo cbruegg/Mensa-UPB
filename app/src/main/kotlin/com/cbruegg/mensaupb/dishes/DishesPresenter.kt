@@ -48,6 +48,7 @@ class DishesPresenter(
         super.initView()
 
         launch(UI) {
+            view?.isLoading = true
             downloader.downloadOrRetrieveDishesAsync(restaurant, date)
                     .await()
                     .fold({
@@ -61,6 +62,7 @@ class DishesPresenter(
                             showDishes(dishViewModels)
                         }
                     }
+            view?.isLoading = false
         }.register()
     }
 }

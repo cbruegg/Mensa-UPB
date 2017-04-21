@@ -13,4 +13,5 @@ interface MainView : MvpView {
     fun showAppWidgetAd()
     val currentlyDisplayedDay: Date?
     fun requestWidgetUpdate()
+    var isLoading: Boolean
 }

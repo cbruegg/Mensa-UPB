@@ -98,6 +98,7 @@ class MainPresenter(
      */
     private fun reload() {
         launch(UI) {
+            view?.isLoading = true
             downloader.downloadOrRetrieveRestaurantsAsync()
                     .await()
                     .fold({
@@ -112,6 +113,7 @@ class MainPresenter(
                             loadDefaultRestaurant(preparedList)
                         }
                     }
+            view?.isLoading = false
         }.register()
     }
 }

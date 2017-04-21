@@ -16,6 +16,8 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
@@ -92,6 +94,7 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
 
     private val restaurantList: RecyclerView by bindView(R.id.restaurant_list)
     private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
+    private val progressBar: ProgressBar by bindView(R.id.main_progress_bar)
     val restaurantAdapter = RestaurantAdapter()
 
     /*
@@ -103,6 +106,12 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
 
     override val mvpViewType: Class<MainView>
         get() = MainView::class.java
+
+    override var isLoading: Boolean
+        get() = progressBar.visibility == View.VISIBLE
+        set(value) {
+            progressBar.visibility = if (value) View.VISIBLE else View.GONE
+        }
 
     override val currentlyDisplayedDay: Date?
         get() = (supportFragmentManager

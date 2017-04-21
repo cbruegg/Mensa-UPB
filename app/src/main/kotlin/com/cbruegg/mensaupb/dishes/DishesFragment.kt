@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
@@ -53,12 +54,19 @@ class DishesFragment : MvpBaseFragment<DishesView, DishesPresenter>(), DishesVie
 
     private val dishList: RecyclerView by bindView(R.id.dish_list)
     private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)
+    private val progressBar: ProgressBar by bindView(R.id.dish_progress_bar)
     @Inject lateinit var downloader: Downloader
 
     private val adapter = DishListViewModelAdapter()
 
     override val mvpViewType: Class<DishesView>
         get() = DishesView::class.java
+
+    override var isLoading: Boolean
+        get() = progressBar.visibility == View.GONE
+        set(value) {
+            progressBar.visibility = if (value) View.VISIBLE else View.GONE
+        }
 
     override fun createPresenter() = DishesPresenter(
             downloader,
