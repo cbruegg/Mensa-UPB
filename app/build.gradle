@@ -63,10 +63,10 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
-    def moshiVersion = "39ff998a49b1ff99a0cd2ecc620c28c4f2a0e77c"
-    compile "com.github.cbruegg.moshi:moshi-parent:$moshiVersion"
-    compile "com.github.cbruegg.moshi:moshi-adapters:$moshiVersion"
-    compile "com.github.cbruegg.moshi:moshi-kotlin:$moshiVersion"
+    def moshiVersion = "bcec358554624bd8ae7af624999ae01b835387a0"
+    compile "com.github.square.moshi:moshi-parent:$moshiVersion"
+    compile "com.github.square.moshi:moshi-adapters:$moshiVersion"
+    compile "com.github.square.moshi:moshi-kotlin:$moshiVersion"
     compile 'com.cbruegg.sikoan-mvp:sikoan-mvp:1.0.3'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
