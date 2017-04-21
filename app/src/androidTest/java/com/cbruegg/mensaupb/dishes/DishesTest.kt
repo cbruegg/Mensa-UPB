@@ -12,6 +12,7 @@ import com.cbruegg.mensaupb.model.PriceType
 import com.cbruegg.mensaupb.model.UserType
 import com.cbruegg.mensaupb.nothing
 import com.cbruegg.mensaupb.serializeForSql
+import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import kotlinx.coroutines.experimental.CommonPool
@@ -100,7 +101,7 @@ class DishesTest {
             Either.Right<IOException, List<DbDish>>(listOf(sampleDish)) // TODO Also test exception
         })
         val userType = UserType.STUDENT
-        val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishViewModel> = {
+        val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishListViewModel> = {
             toDishViewModels(InstrumentationRegistry.getTargetContext(), it)
         }
         val dishNameToShowOnLoad = null
@@ -115,6 +116,8 @@ class DishesTest {
         verify(mockView).setShowNoDishesMessage(false)
         verify(mockView, never()).showNetworkError(IOException())
         verify(mockView).showDishes(listOf(sampleDish).dishViewModelCreator(userType))
+        verify(mockView).isLoading = true
+        verify(mockView).isLoading = false
     }
 
     @Test fun testPresenterShowArgDish() = runBlocking {
@@ -124,7 +127,7 @@ class DishesTest {
             Either.Right<IOException, List<DbDish>>(listOf(sampleDish))
         })
         val userType = UserType.STUDENT
-        val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishViewModel> = {
+        val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishListViewModel> = {
             toDishViewModels(InstrumentationRegistry.getTargetContext(), it)
         }
         val dishNameToShowOnLoad = sampleDish.name
@@ -140,7 +143,7 @@ class DishesTest {
         verify(mockView).setShowNoDishesMessage(false)
         verify(mockView, never()).showNetworkError(IOException())
         verify(mockView).showDishes(dishViewModels)
-        verify(mockView).showDishDetailsDialog(dishViewModels[0])
+        verify(mockView).showDishDetailsDialog(dishViewModels.filterIsInstance<DishViewModel>().first())
     }
 
     @Test fun testPresenterError() = runBlocking {
@@ -151,7 +154,7 @@ class DishesTest {
             Either.Left<IOException, List<DbDish>>(ex)
         })
         val userType = UserType.STUDENT
-        val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishViewModel> = {
+        val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishListViewModel> = {
             toDishViewModels(InstrumentationRegistry.getTargetContext(), it)
         }
         val dishNameToShowOnLoad = null
@@ -166,5 +169,7 @@ class DishesTest {
         verify(mockView, never()).setShowNoDishesMessage(false)
         verify(mockView).showNetworkError(ex)
         verify(mockView).showDishes(emptyList())
+        verify(mockView).isLoading = true
+        verify(mockView).isLoading = false
     }
 }

@@ -18,11 +18,9 @@ sealed class DishListViewModel
  */
 data class DishViewModel(
         val dish: DbDish,
-        val userPrice: Double,
         val priceText: String,
         val allergensText: String,
         val badgesText: String?,
-        val position: Int,
         val name: String,
         val description: CharSequence
 ): DishListViewModel() {
@@ -30,6 +28,46 @@ data class DishViewModel(
     val containsAllergens = dish.allergens.isNotEmpty()
     val hasThumbnail = !dish.thumbnailImageUrl.isNullOrEmpty()
     val hasBigImage = !dish.imageUrl.isNullOrEmpty()
+
+    // Overridden equals and hashCode as description may be a
+    // SpannableStringBuilder that doesn't implement equals correctly
+    // (as it checks referential equality of spans)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as DishViewModel
+
+        if (dish != other.dish) return false
+        if (priceText != other.priceText) return false
+        if (allergensText != other.allergensText) return false
+        if (badgesText != other.badgesText) return false
+        if (name != other.name) return false
+        if (description.toString() != other.description.toString()) return false
+        if (hasBadges != other.hasBadges) return false
+        if (containsAllergens != other.containsAllergens) return false
+        if (hasThumbnail != other.hasThumbnail) return false
+        if (hasBigImage != other.hasBigImage) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = dish.hashCode()
+        result = 31 * result + priceText.hashCode()
+        result = 31 * result + allergensText.hashCode()
+        result = 31 * result + (badgesText?.hashCode() ?: 0)
+        result = 31 * result + name.hashCode()
+        result = 31 * result + description.toString().hashCode()
+        result = 31 * result + hasBadges.hashCode()
+        result = 31 * result + containsAllergens.hashCode()
+        result = 31 * result + hasThumbnail.hashCode()
+        result = 31 * result + hasBigImage.hashCode()
+        return result
+    }
+
+
 }
 
 data class HeaderViewModel(val text: CharSequence, val showDivider: Boolean): DishListViewModel()
@@ -50,7 +88,7 @@ private fun DbDish.toDishViewModel(userType: UserType, context: Context, positio
             .toString()
             .capitalizeFirstChar()
     val description = Html.fromHtml(context.getString(R.string.row_dish_description, name, priceText, badgesText)).trim()
-    return DishViewModel(this, userPrice, priceText, allergensText, badgesText, position, this.displayName(), description)
+    return DishViewModel(this, priceText, allergensText, badgesText, this.displayName(), description)
 }
 
 
