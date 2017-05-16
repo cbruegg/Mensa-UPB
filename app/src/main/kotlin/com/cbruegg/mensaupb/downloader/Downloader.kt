@@ -3,7 +3,7 @@ package com.cbruegg.mensaupb.downloader
 import android.annotation.SuppressLint
 import android.content.Context
 import com.cbruegg.mensaupb.BuildConfig
-import com.cbruegg.mensaupb.R.string.restaurants
+import com.cbruegg.mensaupb.IOPool
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.*
 import com.cbruegg.mensaupb.extensions.eitherTryIo
@@ -90,7 +90,7 @@ private const val TIMEOUT_MS = 10_000L
     /**
      * Perform the action with the [dispatcher] and wrap it in [eitherTryIo].
      */
-    private fun <T : Any> networkAsync(dispatcher: CoroutineDispatcher = CommonPool, f: suspend () -> T): Deferred<IOEither<T>> = // TODO create proper coroutine w/ okhttp callbacks
+    private fun <T : Any> networkAsync(dispatcher: CoroutineDispatcher = IOPool, f: suspend () -> T): Deferred<IOEither<T>> =
             async(dispatcher) {
                 eitherTryIo {
                     f()
