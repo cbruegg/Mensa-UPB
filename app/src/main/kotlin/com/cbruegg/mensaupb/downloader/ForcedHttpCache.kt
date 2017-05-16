@@ -70,9 +70,11 @@ fun forceCacheInterceptChain(data: BlockingEntityStore<Persistable>, context: Co
         val cacheSource = Okio.buffer(Okio.source(cacheFile))
         Response.Builder()
                 .request(chain.request())
+                .message("")
                 .cacheResponse(
                         Response.Builder()
                                 .request(chain.request())
+                                .message("")
                                 .code(HttpURLConnection.HTTP_OK)
                                 .protocol(Protocol.HTTP_1_1)
                                 .build()
@@ -95,14 +97,15 @@ fun forceCacheInterceptChain(data: BlockingEntityStore<Persistable>, context: Co
             return@runBlocking response
         }
 
-        val contentType = response.body().contentType()
-        val contentLength = response.body().contentLength()
+        val responseBody = response.body()!!
+        val contentType = responseBody.contentType() ?: MediaType.parse("image/*")!!
+        val contentLength = responseBody.contentLength()
 
         if (cacheFile.exists() && !cacheFile.delete()) throw IOException("Could not delete existing file $cacheFile.")
         if (!cacheFile.createNewFile()) throw IOException("Could not create cache file $cacheFile")
 
         Okio.buffer(Okio.sink(cacheFile)).use { cacheSink ->
-            response.body().source().use { httpSource ->
+            responseBody.source().use { httpSource ->
                 httpSource.readAll(cacheSink)
                 Log.d(TAG, "Created $cacheFile for $url.")
 

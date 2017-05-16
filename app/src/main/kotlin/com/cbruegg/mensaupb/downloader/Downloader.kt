@@ -3,6 +3,7 @@ package com.cbruegg.mensaupb.downloader
 import android.annotation.SuppressLint
 import android.content.Context
 import com.cbruegg.mensaupb.BuildConfig
+import com.cbruegg.mensaupb.R.string.restaurants
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.*
 import com.cbruegg.mensaupb.extensions.eitherTryIo
@@ -45,10 +46,10 @@ private const val TIMEOUT_MS = 10_000L
     fun downloadOrRetrieveRestaurantsAsync(onlyActive: Boolean = true, acceptStale: Boolean = false):
             Deferred<IOEither<Stale<List<DbRestaurant>>>> = networkAsync {
         val restaurants = tryStale(acceptStale, { modelCache.retrieveRestaurants(acceptStale).await() }) {
-            val restaurants = withTimeout(TIMEOUT_MS) {
+            val restaurants = withTimeoutOrNull(TIMEOUT_MS) {
                 val request = Request.Builder().url(RESTAURANT_URL).build()
-                parseRestaurantsFromApi(httpClient.newCall(request).execute().body().source())
-            }
+                parseRestaurantsFromApi(httpClient.newCall(request).execute().body()!!.source())
+            } ?: throw IOException("Network timeout!")
             modelCache.cache(restaurants).await()
         }
         restaurants.copy(value = restaurants.value.filter { !onlyActive || it.isActive })
@@ -61,9 +62,9 @@ private const val TIMEOUT_MS = 10_000L
             Deferred<IOEither<Stale<List<DbDish>>>> = networkAsync {
         tryStale(acceptStale, { modelCache.retrieve(restaurant, date, acceptStale).await() }) {
             val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
-            val dishes = withTimeout(TIMEOUT_MS) {
-                parseDishes(httpClient.newCall(request).execute().body().source())
-            }
+            val dishes = withTimeoutOrNull(TIMEOUT_MS) {
+                parseDishes(httpClient.newCall(request).execute().body()!!.source())
+            } ?: throw IOException("Network timeout!")
             modelCache.cache(restaurant, date, dishes).await()
         }
     }
@@ -79,8 +80,8 @@ private const val TIMEOUT_MS = 10_000L
                 withTimeout(TIMEOUT_MS) {
                     downloadAndCache()
                 }.toNonStale()
-            } catch (e: Exception) {
-                if (!acceptStale || cached == null || e !is CancellationException && e !is IOException) throw e
+            } catch (e: IOException) {
+                if (!acceptStale || cached == null) throw e
                 else cached
             }
         } else cached

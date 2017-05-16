@@ -10,7 +10,7 @@ object MoshiProvider {
      */
     val moshi: Moshi = Moshi.Builder()
             .add(Date::class.java, Rfc3339DateJsonAdapter())
-            .add(KotlinJsonAdapterFactory)
+            .add(KotlinJsonAdapterFactory())
             .build()
 
     /**

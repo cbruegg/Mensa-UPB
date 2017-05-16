@@ -13,6 +13,8 @@ import javax.inject.Inject
 
 class MensaApplication : Application() {
 
+    // TODO Fix empty screen when launched behind lockscreen
+
     val appComponent: AppComponent = DaggerAppComponent.builder()
             .appModule(AppModule(this))
             .netModule(NetModule())

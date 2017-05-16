@@ -6,12 +6,14 @@ import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import okio.BufferedSource
 
+// Assume API does not return null objects
+
 /**
  * Parse restaurants from the API response.
  */
 fun parseRestaurantsFromApi(restaurantListSource: BufferedSource): List<Restaurant> =
         MoshiProvider.provideJsonAdapter<Map<String, Map<String, *>>>()
-                .fromJson(restaurantListSource)
+                .fromJson(restaurantListSource)!!
                 .map {
                     Restaurant(it.key, it.value["name"] as String, it.value["location"] as String, it.value["active"] as Boolean)
                 }
@@ -24,7 +26,7 @@ fun parseDishes(dishSource: BufferedSource): List<Dish> {
         return dishSource.use {
             val dishesStr = dishSource.readUtf8()
             Log.d("parseDishes", dishesStr)
-            MoshiProvider.provideListJsonAdapter<Dish>().fromJson(dishesStr)
+            MoshiProvider.provideListJsonAdapter<Dish>().fromJson(dishesStr)!!
         }
-    } else return MoshiProvider.provideListJsonAdapter<Dish>().fromJson(dishSource)
+    } else return MoshiProvider.provideListJsonAdapter<Dish>().fromJson(dishSource)!!
 }
