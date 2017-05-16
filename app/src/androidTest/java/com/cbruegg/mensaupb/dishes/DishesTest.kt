@@ -94,6 +94,8 @@ class DishesTest {
 
     }
 
+    // TODO Test stale
+
     @Test fun testPresenterSucc() = runBlocking {
         val date = now
         val downloader = mock(Downloader::class.java)

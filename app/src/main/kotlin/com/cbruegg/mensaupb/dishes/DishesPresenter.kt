@@ -49,15 +49,16 @@ class DishesPresenter(
 
         launch(UI) {
             view?.isLoading = true
-            downloader.downloadOrRetrieveDishesAsync(restaurant, date)
+            downloader.downloadOrRetrieveDishesAsync(restaurant, date, acceptStale = true)
                     .await()
                     .fold({
                         view?.showDishes(emptyList())
                         view?.showNetworkError(it)
-                    }) {
+                    }) { (dishes, isStale) ->
                         view?.run {
-                            setShowNoDishesMessage(it.isEmpty())
-                            val dishViewModels = it.dishViewModelCreator(userType)
+                            val dishViewModels = dishes.dishViewModelCreator(userType)
+                            showStale(isStale)
+                            setShowNoDishesMessage(dishes.isEmpty())
                             tryShowArgDish(dishViewModels)
                             showDishes(dishViewModels)
                         }

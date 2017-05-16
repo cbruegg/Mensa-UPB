@@ -18,5 +18,7 @@ interface DishesView : MvpView {
 
     fun showDishes(dishes: List<DishListViewModel>)
 
+    fun showStale(stale: Boolean)
+
     var isLoading: Boolean
 }

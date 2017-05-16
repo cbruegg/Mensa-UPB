@@ -37,4 +37,5 @@
         &lt;font sizesp="15"&gt; %3$s&lt;/font&gt;
     </string>
     <string name="allergen_gluten_description">A1 (Gluten)</string>
+    <string name="showing_stale_data">Refresh failed. Showing old data.</string>
 </resources>

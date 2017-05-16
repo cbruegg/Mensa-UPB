@@ -101,12 +101,14 @@ class DishRemoteViewsService : RemoteViewsService() {
                 val restaurant = downloader.downloadOrRetrieveRestaurantsAsync()
                         .await()
                         .component2()
+                        ?.value
                         ?.firstOrNull { it -> it.id == restaurantId }
                         ?: return@withTimeout
                 this@DishRemoteViewsFactory.restaurant = restaurant
                 dishes = downloader.downloadOrRetrieveDishesAsync(restaurant, shownDate)
                         .await()
                         .component2()
+                        ?.value
                         ?.sortedWith(ctx.userType.dishComparator)
                         ?: return@withTimeout
             }

@@ -24,8 +24,9 @@
     <string name="dish_app_widget_error_restaurant_not_found">Einrichtung nicht gefunden</string>
     <string name="show_restaurants">Zeige Restaurants</string>
     <string name="hide_restaurants">Verstecke Restaurants</string>
-    <string name="did_you_know">Wusstest du schon, dass ...</string>
+    <string name="did_you_know">Wusstest du schon, dass …</string>
     <string name="appwidget_ad">Diese App besitzt nun ein Widget! Tippe und halte deinen Finger auf deinem Homescreen, um es hinzuzufügen.</string>
     <string name="ok">OK</string>
     <string name="allergen_gluten_description">A1 (Gluten)</string>
+    <string name="showing_stale_data">Aktualisierung fehlgeschlagen. Zeige alte Daten.</string>
 </resources>

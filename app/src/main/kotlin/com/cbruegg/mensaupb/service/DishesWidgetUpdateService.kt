@@ -98,6 +98,7 @@ class DishesWidgetUpdateService : Service() {
                 val restaurantsById = downloader.downloadOrRetrieveRestaurantsAsync()
                         .await()
                         .component2()
+                        ?.value
                         ?.associateBy { it.id }
                         ?: return@withTimeout
 

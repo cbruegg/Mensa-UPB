@@ -1,6 +1,7 @@
 package com.cbruegg.mensaupb.dishes
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -108,5 +109,34 @@ class DishesFragment : MvpBaseFragment<DishesView, DishesPresenter>(), DishesVie
 
     override fun showDishDetailsDialog(dishViewModel: DishViewModel) {
         showDishDetailsDialog(context, dishViewModel)
+    }
+
+    override fun showStale(stale: Boolean) {
+        if (stale) {
+            delayUntilVisible {
+                Snackbar.make(view!!, R.string.showing_stale_data, Snackbar.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private val delayedActions = mutableListOf<() -> Unit>()
+
+    private fun delayUntilVisible(f: () -> Unit) {
+        if (userVisibleHint) {
+            f()
+        } else {
+            delayedActions += f
+        }
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        delayedActions.forEach { it() }
+        delayedActions.clear()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        delayedActions.clear()
     }
 }

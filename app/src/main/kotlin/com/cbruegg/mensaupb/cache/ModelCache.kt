@@ -5,10 +5,7 @@ import android.util.Log
 import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.DbThread
 import com.cbruegg.mensaupb.app
-import com.cbruegg.mensaupb.extensions.TAG
-import com.cbruegg.mensaupb.extensions.atMidnight
-import com.cbruegg.mensaupb.extensions.midnight
-import com.cbruegg.mensaupb.extensions.now
+import com.cbruegg.mensaupb.extensions.*
 import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import io.requery.Persistable
@@ -23,10 +20,16 @@ import javax.inject.Inject
 private val debugIgnoreCache = false && BuildConfig.DEBUG
 
 /**
- * If any cache entry is older than this, discard it.
+ * If any cache entry is older than this, don't return it by default.
  */
 val oldestAllowedCacheDate: Date
-    get() = if (debugIgnoreCache) now else midnight
+    get() = if (debugIgnoreCache) now else now - 4 * 60 * 60 * 1000
+
+/**
+ * If any cache entry is older than this, discard it.
+ */
+val oldestAllowedStaleCacheDate: Date
+    get() = now - 2L * 24 * 60 * 60 * 1000
 
 /**
  * Class responsible for caching data used by the app.
@@ -44,7 +47,7 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
      * Delete entries in all caches older than the current date.
      */
     private fun cleanUp() {
-        val threshold = oldestAllowedCacheDate
+        val threshold = oldestAllowedStaleCacheDate
         launch(DbThread) {
             data.withTransaction {
                 // Restaurants don't need to be cleaned here since they are cleaned on every update in cache(restaurants)
@@ -95,17 +98,20 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
     /**
      * Retrieve the list of cached restaurants.
      */
-    fun retrieveRestaurants(): Deferred<List<DbRestaurant>?> = async(DbThread) {
+    fun retrieveRestaurants(acceptStale: Boolean = false): Deferred<Stale<List<DbRestaurant>>?> = async(DbThread) {
         data {
-            val cacheValid = select(DbRestaurantListCacheMetaEntity::class)
-                    .where(DbRestaurantListCacheMetaEntity.LAST_UPDATE gte oldestAllowedCacheDate)
+            val threshold = if (acceptStale) oldestAllowedStaleCacheDate else oldestAllowedCacheDate
+            val lastUpdate = select(DbRestaurantListCacheMetaEntity::class)
+                    .where(DbRestaurantListCacheMetaEntity.LAST_UPDATE gte threshold)
                     .get()
-                    .any()
-            val result = if (cacheValid) {
-                select(DbRestaurantEntity::class).get().toList()
+                    .firstOrNull()
+                    ?.lastUpdate ?: Date(0)
+            val stale = lastUpdate < oldestAllowedCacheDate
+            val result = if (!stale || acceptStale && lastUpdate >= oldestAllowedStaleCacheDate) {
+                Stale(select(DbRestaurantEntity::class).get().toList(), stale)
             } else null
 
-            Log.d(TAG, "${if (result != null) "HIT" else "MISS"}: retrieveRestaurants()")
+            Log.d(TAG, "retrieveRestaurants(): ${if (result != null) "HIT, isStale: $stale" else "MISS"}")
 
             result
         }
@@ -147,28 +153,34 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
      * Only the day, month and year of the date are used.
      * If no data is found in the cache, this returns null.
      */
-    fun retrieve(restaurant: DbRestaurant, date: Date): Deferred<List<DbDish>?> = async(DbThread) {
+    fun retrieve(restaurant: DbRestaurant, date: Date, acceptStale: Boolean = false): Deferred<Stale<List<DbDish>>?> = async(DbThread) {
         val dateAtMidnight = date.atMidnight
         data {
-            val cacheValid = select(DbRestaurantCacheEntry::class)
+            val threshold = if (acceptStale) oldestAllowedStaleCacheDate else oldestAllowedCacheDate
+            val lastUpdate = select(DbRestaurantCacheEntry::class)
                     .where(DbRestaurantCacheEntryEntity.RESTAURANT eq restaurant)
                     .and(DbRestaurantCacheEntryEntity.DISHES_FOR_DATE eq dateAtMidnight)
-                    .and(DbRestaurantCacheEntryEntity.LAST_UPDATE gte oldestAllowedCacheDate)
+                    .and(DbRestaurantCacheEntryEntity.LAST_UPDATE gte threshold)
                     .get()
-                    .any()
-            val result = if (cacheValid) {
-                select(DbDish::class)
-                        .where(DbDishEntity.DATE eq dateAtMidnight)
-                        .and(DbDishEntity.RESTAURANT eq restaurant)
-                        .get()
-                        .toList()
+                    .firstOrNull()
+                    ?.lastUpdate ?: Date(0)
+            val stale = lastUpdate < oldestAllowedCacheDate
+            val result = if (!stale || acceptStale && lastUpdate >= oldestAllowedStaleCacheDate) {
+                Stale(
+                        select(DbDish::class)
+                                .where(DbDishEntity.DATE eq dateAtMidnight)
+                                .and(DbDishEntity.RESTAURANT eq restaurant)
+                                .get()
+                                .toList(),
+                        stale
+                )
 
             } else null
 
             if (result != null) {
-                Log.d(TAG, "HIT: ${restaurant.name} at $dateAtMidnight")
+                Log.d(TAG, "retrieve(${restaurant.name}, $dateAtMidnight): HIT, $stale")
             } else {
-                Log.d(TAG, "MISS: ${restaurant.name} at $dateAtMidnight")
+                Log.d(TAG, "retrieve(${restaurant.name}, $dateAtMidnight): MISS")
             }
 
             result
@@ -177,3 +189,7 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
 
 }
 
+data class Stale<out T>(val value: T, val isStale: Boolean)
+
+fun <T : Any> T.toStale() = Stale(this, isStale = true)
+fun <T : Any> T.toNonStale() = Stale(this, isStale = false)

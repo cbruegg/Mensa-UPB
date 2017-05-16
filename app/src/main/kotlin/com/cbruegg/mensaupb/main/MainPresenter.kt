@@ -99,14 +99,14 @@ class MainPresenter(
     private fun reload() {
         launch(UI) {
             view?.isLoading = true
-            downloader.downloadOrRetrieveRestaurantsAsync()
+            downloader.downloadOrRetrieveRestaurantsAsync(acceptStale = true)
                     .await()
                     .fold({
                         view?.setRestaurants(emptyList())
                         view?.showNetworkError(it)
-                    }) {
+                    }) { (restaurants, _) -> // Since restaurants change rarely, don't show isStale
                         view?.run {
-                            val preparedList = it.uiSorted()
+                            val preparedList = restaurants.uiSorted()
                             model.restaurants = preparedList
                             setRestaurants(preparedList)
                             checkShowFirstTimeDrawer()

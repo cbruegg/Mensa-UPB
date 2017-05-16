@@ -33,8 +33,8 @@ class DishesAppWidgetConfigPresenter(
             downloader
                     .downloadOrRetrieveRestaurantsAsync()
                     .await()
-                    .fold({ view?.showNetworkError(it) }) {
-                        restaurantList = it.uiSorted()
+                    .fold({ view?.showNetworkError(it) }) { (restaurants, _) ->
+                        restaurantList = restaurants.uiSorted()
                         view?.setRestaurantSpinnerList(restaurantList)
                         view?.setConfirmButtonStatus(true)
                     }
