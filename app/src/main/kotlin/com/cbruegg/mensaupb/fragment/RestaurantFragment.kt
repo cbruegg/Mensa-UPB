@@ -106,7 +106,7 @@ class RestaurantFragment : LifecycleFragment() {
                 dates.last()
         ) ?: dates.first()
 
-        viewModel = viewModel<ViewModel> {
+        viewModel = viewModel {
             ViewModel(
                     pagerInfo = MutableLiveData<PagerInfo>().apply {
                         value = PagerInfo(restrictedPagerPosition, dates)
