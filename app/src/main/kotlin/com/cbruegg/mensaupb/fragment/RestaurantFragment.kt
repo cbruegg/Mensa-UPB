@@ -1,5 +1,8 @@
 package com.cbruegg.mensaupb.fragment
 
+import android.arch.lifecycle.LifecycleFragment
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.TabLayout
@@ -15,7 +18,7 @@ import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.cache.oldestAllowedCacheDate
 import com.cbruegg.mensaupb.dishes.DishesFragment
 import com.cbruegg.mensaupb.extensions.*
-import com.cbruegg.sikoanmvp.helper.NoMvpBaseFragment
+import com.cbruegg.mensaupb.util.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -24,7 +27,7 @@ import java.util.concurrent.TimeUnit
  * Fragment hosting a Pager of DishesFragments.
  * The factory method newInstance needs to be used.
  */
-class RestaurantFragment : NoMvpBaseFragment() {
+class RestaurantFragment : LifecycleFragment() {
     companion object {
         private val ARG_RESTAURANT = "restaurant"
         private val ARG_REQUESTED_PAGER_POSITION = "pager_position"
@@ -50,55 +53,83 @@ class RestaurantFragment : NoMvpBaseFragment() {
         }
     }
 
-    // Normally, we should implement onSaveInstanceState and onViewStateRestored
-    // properly here, but since this is not a negligible amount of work (restoring the [adapter] property
-    // in particular) and everything is cached anyway, we simply recreate
-    // everything during orientation changes.
+    data class LastLoadMeta(val pagerDates: List<Date>, val whenLoaded: Date)
+    data class PagerInfo(var position: Date, val dates: List<Date>)
+    data class ViewModel(
+            val pagerInfo: MutableLiveData<PagerInfo>,
+            val restaurant: DbRestaurant,
+            var lastLoadMeta: LastLoadMeta? = null
+    ) : android.arch.lifecycle.ViewModel()
+
+    private lateinit var viewModel: ViewModel
 
     private val dayPager: ViewPager by bindView(R.id.day_pager)
     private val dayPagerTabs: TabLayout by bindView(R.id.day_pager_tabs)
     private lateinit var adapter: DishesPagerAdapter
 
-    data class LastLoadMeta(val pagerDates: List<Date>, val whenLoaded: Date)
-    private var lastLoadMeta: LastLoadMeta? = null
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
             = inflater.inflate(R.layout.fragment_restaurant, container, false)
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        reload()
-    }
 
     override fun onResume() {
         super.onResume()
 
-        val shouldReload = lastLoadMeta?.let {
+        val shouldReload = viewModel.lastLoadMeta?.let {
             it.whenLoaded < oldestAllowedCacheDate || it.pagerDates != computePagerDates()
         } ?: true
 
         if (shouldReload) {
-            reload()
+            updateViewModel()
         }
     }
 
-    private fun reload() {
-        // Set up the ViewPager
-        val restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT)
-        val requestedPagerPosition = arguments.getDate(ARG_REQUESTED_PAGER_POSITION)
-        arguments.remove(ARG_REQUESTED_PAGER_POSITION) // Since we're about to fulfill the request
+    private fun updateViewModel() {
         val dates = computePagerDates()
-        lastLoadMeta = LastLoadMeta(dates, whenLoaded = now)
+        val requestedPagerPosition = viewModel.pagerInfo.value!!.position
+        val restrictedPagerPosition = requestedPagerPosition.inRangeOrNull(
+                dates.first(),
+                dates.last()
+        ) ?: dates.first()
 
+        viewModel.apply {
+            pagerInfo.value = PagerInfo(restrictedPagerPosition, dates)
+        }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        val dates = computePagerDates()
+        val requestedPagerPosition = arguments.getDate(ARG_REQUESTED_PAGER_POSITION)
         val restrictedPagerPosition = requestedPagerPosition?.inRangeOrNull(
                 dates.first(),
                 dates.last()
         ) ?: dates.first()
-        adapter = DishesPagerAdapter(activity, childFragmentManager, restaurant, dates,
+
+        viewModel = viewModel<ViewModel> {
+            ViewModel(
+                    pagerInfo = MutableLiveData<PagerInfo>().apply {
+                        value = PagerInfo(restrictedPagerPosition, dates)
+                    },
+                    restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT)
+            )
+        }
+
+        viewModel.pagerInfo.observe(this, Observer<PagerInfo> { display(it!!) })
+    }
+
+    private fun display(pagerInfo: PagerInfo) {
+        adapter = DishesPagerAdapter(activity, childFragmentManager, viewModel.restaurant, pagerInfo.dates,
                 arguments.getString(ARG_DISH_NAME))
         dayPager.adapter = adapter
+        dayPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+            override fun onPageSelected(position: Int) {
+                viewModel.pagerInfo.value!!.position = pagerInfo.dates[position]
+            }
+        })
         dayPagerTabs.setupWithViewPager(dayPager)
-        dayPager.currentItem = dates.indexOf(restrictedPagerPosition)
+        dayPager.currentItem = pagerInfo.dates.indexOf(pagerInfo.position)
+
+        viewModel.lastLoadMeta = LastLoadMeta(pagerInfo.dates, whenLoaded = now)
     }
 
     /**
