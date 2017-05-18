@@ -14,7 +14,7 @@ import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.downloader.forceCached
 import com.cbruegg.mensaupb.extensions.*
 import com.cbruegg.mensaupb.viewmodel.dishComparator
@@ -46,7 +46,7 @@ class DishRemoteViewsService : RemoteViewsService() {
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
         private var dishes = emptyList<DbDish>()
         private var restaurant: DbRestaurant? = null
-        @Inject lateinit var downloader: Downloader
+        @Inject lateinit var repository: Repository
 
         init {
             ctx.app.appComponent.inject(this)
@@ -98,14 +98,14 @@ class DishRemoteViewsService : RemoteViewsService() {
                     ?: return@runBlocking
 
             withTimeout(TIMEOUT_MS) {
-                val restaurant = downloader.downloadOrRetrieveRestaurantsAsync()
+                val restaurant = repository.downloadOrRetrieveRestaurantsAsync()
                         .await()
                         .component2()
                         ?.value
                         ?.firstOrNull { it -> it.id == restaurantId }
                         ?: return@withTimeout
                 this@DishRemoteViewsFactory.restaurant = restaurant
-                dishes = downloader.downloadOrRetrieveDishesAsync(restaurant, shownDate)
+                dishes = repository.downloadOrRetrieveDishesAsync(restaurant, shownDate)
                         .await()
                         .component2()
                         ?.value

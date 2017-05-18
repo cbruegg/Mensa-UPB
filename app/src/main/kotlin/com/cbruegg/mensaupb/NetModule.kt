@@ -2,7 +2,7 @@ package com.cbruegg.mensaupb
 
 import android.content.Context
 import com.cbruegg.mensaupb.cache.ModelCache
-import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.downloader.forceCacheInterceptChain
 import dagger.Module
 import dagger.Provides
@@ -17,7 +17,7 @@ class NetModule {
 
     @Suppress("DEPRECATION")
     @Provides @Singleton
-    fun provideDownloader(context: Context): Downloader = Downloader(context)
+    fun provideDownloader(context: Context): Repository = Repository(context)
 
     @Provides @Singleton
     fun provideOkHttp(context: Context, data: BlockingEntityStore<Persistable>): OkHttpClient =

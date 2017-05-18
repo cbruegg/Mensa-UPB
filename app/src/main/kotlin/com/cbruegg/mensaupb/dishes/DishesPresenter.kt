@@ -2,7 +2,7 @@ package com.cbruegg.mensaupb.dishes
 
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.model.UserType
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
@@ -12,7 +12,7 @@ import kotlinx.coroutines.experimental.launch
 import java.util.*
 
 class DishesPresenter(
-        private val downloader: Downloader,
+        private val repository: Repository,
         private val restaurant: DbRestaurant,
         private val date: Date,
         private val userType: UserType,
@@ -49,7 +49,7 @@ class DishesPresenter(
 
         launch(UI) {
             view?.isLoading = true
-            downloader.downloadOrRetrieveDishesAsync(restaurant, date, acceptStale = true)
+            repository.downloadOrRetrieveDishesAsync(restaurant, date, acceptStale = true)
                     .await()
                     .fold({
                         view?.showDishes(emptyList())

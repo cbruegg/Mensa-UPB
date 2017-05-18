@@ -13,7 +13,7 @@ import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import com.cbruegg.sikoanmvp.helper.MvpBaseActivity
 import java.io.IOException
@@ -35,12 +35,12 @@ class DishesAppWidgetConfigActivity : MvpBaseActivity<DishesAppWidgetConfigView,
                 AppWidgetManager.INVALID_APPWIDGET_ID)
     }
 
-    @Inject lateinit var downloader: Downloader
+    @Inject lateinit var repository: Repository
 
     override val mvpViewType: Class<DishesAppWidgetConfigView>
         get() = DishesAppWidgetConfigView::class.java
 
-    override fun createPresenter() = DishesAppWidgetConfigPresenter(downloader, DishesWidgetConfigurationManager(this), appWidgetId)
+    override fun createPresenter() = DishesAppWidgetConfigPresenter(repository, DishesWidgetConfigurationManager(this), appWidgetId)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -26,7 +26,7 @@ import com.cbruegg.mensaupb.adapter.RestaurantAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.*
 import com.cbruegg.mensaupb.fragment.RestaurantFragment
 import com.cbruegg.mensaupb.provider.DishesAppWidgetProvider
@@ -101,7 +101,7 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
      * Other vars
      */
 
-    @Inject lateinit var downloader: Downloader
+    @Inject lateinit var repository: Repository
     @Inject lateinit var oneOff: OneOff
 
     override val mvpViewType: Class<MainView>
@@ -153,7 +153,7 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
     }
 
     override fun createPresenter() = MainPresenter(
-            downloader,
+            repository,
             oneOff,
             MainModel(
                     intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID),

@@ -12,7 +12,7 @@ import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Failure
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Success
@@ -85,7 +85,7 @@ class DishesWidgetUpdateService : Service() {
     private val shownDate: Date
         get() = Date(System.currentTimeMillis() + DATE_OFFSET + INTERNAL_DATE_OFFSET)
 
-    @Inject lateinit var downloader: Downloader
+    @Inject lateinit var repository: Repository
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         app.appComponent.inject(this)
@@ -95,7 +95,7 @@ class DishesWidgetUpdateService : Service() {
 
         job = launch(UI) {
             withTimeout(TIMEOUT_MS) {
-                val restaurantsById = downloader.downloadOrRetrieveRestaurantsAsync()
+                val restaurantsById = repository.downloadOrRetrieveRestaurantsAsync()
                         .await()
                         .component2()
                         ?.value

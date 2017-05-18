@@ -5,7 +5,7 @@ import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.model.Badge
 import com.cbruegg.mensaupb.model.PriceType
@@ -98,7 +98,7 @@ class DishesTest {
 
     @Test fun testPresenterSucc() = runBlocking {
         val date = now
-        val downloader = mock(Downloader::class.java)
+        val downloader = mock(Repository::class.java)
         given(downloader.downloadOrRetrieveDishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
             Either.Right<IOException, List<DbDish>>(listOf(sampleDish)) // TODO Also test exception
         })
@@ -124,7 +124,7 @@ class DishesTest {
 
     @Test fun testPresenterShowArgDish() = runBlocking {
         val date = now
-        val downloader = mock(Downloader::class.java)
+        val downloader = mock(Repository::class.java)
         given(downloader.downloadOrRetrieveDishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
             Either.Right<IOException, List<DbDish>>(listOf(sampleDish))
         })
@@ -150,7 +150,7 @@ class DishesTest {
 
     @Test fun testPresenterError() = runBlocking {
         val date = now
-        val downloader = mock(Downloader::class.java)
+        val downloader = mock(Repository::class.java)
         val ex = IOException("ex")
         given(downloader.downloadOrRetrieveDishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
             Either.Left<IOException, List<DbDish>>(ex)

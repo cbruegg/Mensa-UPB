@@ -1,14 +1,14 @@
 package com.cbruegg.mensaupb.appwidget
 
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.viewmodel.uiSorted
 import com.cbruegg.sikoanmvp.MvpPresenter
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 
 class DishesAppWidgetConfigPresenter(
-        private val downloader: Downloader,
+        private val repository: Repository,
         private val dishesWidgetConfigurationManager: DishesWidgetConfigurationManager,
         private val appWidgetId: Int
 ) : MvpPresenter<DishesAppWidgetConfigView>() {
@@ -30,7 +30,7 @@ class DishesAppWidgetConfigPresenter(
 
         launch(UI) {
             view?.setProgressBarVisible(true)
-            downloader
+            repository
                     .downloadOrRetrieveRestaurantsAsync()
                     .await()
                     .fold({ view?.showNetworkError(it) }) { (restaurants, _) ->

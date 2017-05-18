@@ -15,7 +15,7 @@ import com.cbruegg.mensaupb.activity.userType
 import com.cbruegg.mensaupb.adapter.DishListViewModelAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
@@ -56,7 +56,7 @@ class DishesFragment : MvpBaseFragment<DishesView, DishesPresenter>(), DishesVie
     private val dishList: RecyclerView by bindView(R.id.dish_list)
     private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)
     private val progressBar: ProgressBar by bindView(R.id.dish_progress_bar)
-    @Inject lateinit var downloader: Downloader
+    @Inject lateinit var repository: Repository
 
     private val adapter = DishListViewModelAdapter()
 
@@ -70,7 +70,7 @@ class DishesFragment : MvpBaseFragment<DishesView, DishesPresenter>(), DishesVie
         }
 
     override fun createPresenter() = DishesPresenter(
-            downloader,
+            repository,
             arguments.getParcelable(ARG_RESTAURANT),
             Date(arguments.getLong(ARG_DATE)),
             context.userType,

@@ -1,7 +1,7 @@
 package com.cbruegg.mensaupb.main
 
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.downloader.Downloader
+import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
 import com.cbruegg.sikoanmvp.ModelMvpPresenter
@@ -9,7 +9,7 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 
 class MainPresenter(
-        private val downloader: Downloader,
+        private val repository: Repository,
         private val oneOff: OneOff,
         model: MainModel
 ) : ModelMvpPresenter<MainView, MainModel>(model, MainModelSaver) {
@@ -99,7 +99,7 @@ class MainPresenter(
     private fun reload() {
         launch(UI) {
             view?.isLoading = true
-            downloader.downloadOrRetrieveRestaurantsAsync(acceptStale = true)
+            repository.downloadOrRetrieveRestaurantsAsync(acceptStale = true)
                     .await()
                     .fold({
                         view?.setRestaurants(emptyList())
