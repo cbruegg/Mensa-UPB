@@ -58,6 +58,7 @@ class RestaurantFragment : LifecycleFragment() {
     data class ViewModel(
             val pagerInfo: MutableLiveData<PagerInfo>,
             val restaurant: DbRestaurant,
+            var requestedDishName: String?,
             var lastLoadMeta: LastLoadMeta? = null
     ) : android.arch.lifecycle.ViewModel()
 
@@ -110,16 +111,20 @@ class RestaurantFragment : LifecycleFragment() {
                     pagerInfo = MutableLiveData<PagerInfo>().apply {
                         value = PagerInfo(restrictedPagerPosition, dates)
                     },
-                    restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT)
+                    restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT),
+                    requestedDishName = arguments.getString(ARG_DISH_NAME)
             )
         }
 
-        viewModel.pagerInfo.observe(this, Observer<PagerInfo> { display(it!!) })
+        viewModel.pagerInfo.observe(this, Observer<PagerInfo> {
+            display(it!!, viewModel.requestedDishName)
+            viewModel.requestedDishName = null // Request was fulfilled
+        })
     }
 
-    private fun display(pagerInfo: PagerInfo) {
-        adapter = DishesPagerAdapter(activity, childFragmentManager, viewModel.restaurant, pagerInfo.dates,
-                arguments.getString(ARG_DISH_NAME))
+    private fun display(pagerInfo: PagerInfo, requestedDishName: String?) {
+        adapter = DishesPagerAdapter(activity, childFragmentManager, viewModel.restaurant,
+                pagerInfo.dates, requestedDishName)
         dayPager.adapter = adapter
         dayPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
