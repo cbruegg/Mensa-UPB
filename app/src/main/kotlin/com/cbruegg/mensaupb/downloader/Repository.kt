@@ -39,7 +39,7 @@ import javax.inject.Inject
         restaurants.right().map { it.copy(value = it.value.filter { !onlyActive || it.isActive }) }
     }
 
-    // TODO Can this be made reactive?
+    // TODO Can this be made reactive by extending LiveData? Should it?
     /**
      * Get a list of all dishes in a restaurant at the specified date. The list might be empty.
      */

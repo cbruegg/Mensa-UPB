@@ -1,6 +1,8 @@
 package com.cbruegg.mensaupb.main
 
 import android.appwidget.AppWidgetManager
+import android.arch.lifecycle.LifecycleRegistry
+import android.arch.lifecycle.LifecycleRegistryOwner
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -11,6 +13,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -28,19 +31,19 @@ import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.*
-import com.cbruegg.mensaupb.restaurant.RestaurantFragment
 import com.cbruegg.mensaupb.provider.DishesAppWidgetProvider
+import com.cbruegg.mensaupb.restaurant.RestaurantFragment
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
-import com.cbruegg.sikoanmvp.helper.MvpBaseActivity
-import java.io.IOException
+import com.cbruegg.mensaupb.util.observer
+import com.cbruegg.mensaupb.util.viewModel
 import java.util.*
 import javax.inject.Inject
 
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
  */
-class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
+class MainActivity : AppCompatActivity(), LifecycleRegistryOwner {
 
     companion object {
 
@@ -103,34 +106,35 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
 
     @Inject lateinit var repository: Repository
     @Inject lateinit var oneOff: OneOff
+    private val lifecycleRegistry = LifecycleRegistry(this)
 
-    override val mvpViewType: Class<MainView>
-        get() = MainView::class.java
+    override fun getLifecycle() = lifecycleRegistry
 
-    override var isLoading: Boolean
+    private var isLoading: Boolean
         get() = progressBar.visibility == View.VISIBLE
         set(value) {
             progressBar.visibility = if (value) View.VISIBLE else View.GONE
         }
 
-    override val currentlyDisplayedDay: Date?
+    private val currentlyDisplayedDay: Date?
         get() = (supportFragmentManager
                 .findFragmentById(R.id.fragment_container) as? RestaurantFragment)
                 ?.pagerSelectedDate
 
-    override fun showAppWidgetAd() {
+    private inline fun showAppWidgetAd(crossinline onDismiss: () -> Unit) {
         AlertDialog.Builder(this)
                 .setTitle(R.string.did_you_know)
                 .setMessage(R.string.appwidget_ad)
                 .setPositiveButton(R.string.ok, null)
+                .setOnDismissListener { onDismiss() }
                 .show()
     }
 
-    override fun setRestaurants(restaurants: List<DbRestaurant>) {
+    private fun setRestaurants(restaurants: List<DbRestaurant>) {
         restaurantAdapter.list.setAll(restaurants)
     }
 
-    override fun setDrawerStatus(visible: Boolean) {
+    private fun setDrawerStatus(visible: Boolean) {
         if (visible) {
             drawerLayout.openDrawer(GravityCompat.START)
         } else {
@@ -138,11 +142,11 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
         }
     }
 
-    override fun showDishesForRestaurant(restaurant: DbRestaurant, day: Date?, showDishWithGermanName: String?) {
+    private fun showDishesForRestaurant(restaurant: DbRestaurant, day: Date?, showDishWithGermanName: String?) {
         restaurant.load(day, showDishWithGermanName)
     }
 
-    override fun requestWidgetUpdate() {
+    private fun requestWidgetUpdate() {
         val componentName = ComponentName(this, DishesAppWidgetProvider::class.java)
         val appWidgetIds = AppWidgetManager.getInstance(this).getAppWidgetIds(componentName)
         val intent = Intent(this, DishesAppWidgetProvider::class.java).apply {
@@ -152,19 +156,22 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
         sendBroadcast(intent)
     }
 
-    override fun createPresenter() = MainPresenter(
+    private fun createViewModelController(mainViewModel: MainViewModel) = MainViewModelController(
             repository,
             oneOff,
-            MainModel(
-                    intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID),
-                    intent.getStringExtra(ARG_REQUESTED_DISH_NAME),
-                    intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY),
-                    StringSharedPreferencesPropertyDelegate<String?>(
-                            sharedPreferences = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE),
-                            key = PREFS_KEY_LAST_SELECTED_RESTAURANT,
-                            defaultValue = null
-                    )
-            )
+            mainViewModel,
+            intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID) ?: lastRestaurantId,
+            intent.getStringExtra(ARG_REQUESTED_DISH_NAME),
+            intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
+    )
+
+
+    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModelController: MainViewModelController
+    private var lastRestaurantId by StringSharedPreferencesPropertyDelegate<String?>(
+            sharedPreferences = { getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE) },
+            key = PREFS_KEY_LAST_SELECTED_RESTAURANT,
+            defaultValue = null
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -180,17 +187,51 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
 
         app.appComponent.inject(this)
 
+        viewModel = viewModel { initialMainViewModel() }
+        viewModelController = createViewModelController(viewModel)
+
         // Setup the restaurant list in the drawer
         restaurantAdapter.onClickListener = { restaurant, _ ->
-            presenter.onRestaurantClick(restaurant)
+            viewModelController.onRestaurantClick(restaurant)
         }
         restaurantList.adapter = restaurantAdapter
         restaurantList.layoutManager = LinearLayoutManager(this)
+
+        // TODO Make extension function for this
+        viewModel.restaurants.observe(this, observer {
+            setRestaurants(it)
+        })
+        viewModel.networkError.observe(this, observer {
+            if (it) {
+                showNetworkError()
+            }
+        })
+        viewModel.drawerShown.observe(this, observer {
+            setDrawerStatus(it)
+        })
+        viewModel.showAppWidgetAd.observe(this, observer {
+            if (it) {
+                showAppWidgetAd { viewModel.showAppWidgetAd.data = false }
+            }
+        })
+        viewModel.isLoading.observe(this, observer {
+            isLoading = it
+        })
+        viewModel.restaurantLoadSpec.observe(this, observer {
+            it ?: return@observer
+
+            lastRestaurantId = it.restaurant.id
+            showDishesForRestaurant(it.restaurant, it.requestedDay, it.requestedDishName)
+            it.requestedDay = null
+            it.requestedDishName = null
+        })
+
+        viewModelController.start()
+        requestWidgetUpdate()
     }
 
-    override fun showNetworkError(ioException: IOException) {
+    private fun showNetworkError() {
         Toast.makeText(this, R.string.network_error, Toast.LENGTH_LONG).show()
-        ioException.printStackTrace()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -233,7 +274,7 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == REQUEST_CODE_PREFERENCES) {
-            presenter.onCameBackFromPreferences()
+            viewModelController.onCameBackFromPreferences()
         }
     }
 
@@ -259,14 +300,11 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
         super.onNewIntent(intent)
         this.intent = intent
         if (intent != null) {
-            presenter.model.requestedRestaurantId = intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID)
-            presenter.model.requestedDishWithName = intent.getStringExtra(ARG_REQUESTED_DISH_NAME)
-            presenter.model.requestedSelectedDay = intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
-
-            with(presenter.model) {
-                if (requestedRestaurantId != null || requestedDishWithName != null || requestedSelectedDay != null) {
-                    presenter.onRestaurantsReloadRequested()
-                }
+            val requestedRestaurantId = intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID)
+            val requestedDishName = intent.getStringExtra(ARG_REQUESTED_DISH_NAME)
+            val requestedSelectedDay = intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
+            if (requestedRestaurantId != null && (requestedDishName != null || requestedSelectedDay != null)) {
+                viewModelController.newRequest(requestedRestaurantId, requestedDishName, requestedSelectedDay)
             }
         }
     }

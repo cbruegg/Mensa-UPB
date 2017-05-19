@@ -19,6 +19,8 @@ import com.cbruegg.sikoanmvp.helper.MvpBaseActivity
 import java.io.IOException
 import javax.inject.Inject
 
+// TODO Remove sikoan here as well
+
 /**
  * Activity used for configuring an app widget. It must
  * be supplied an an AppWidgetId using [AppWidgetManager.EXTRA_APPWIDGET_ID].

@@ -2,16 +2,16 @@ package com.cbruegg.mensaupb.activity
 
 import android.content.Context
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.support.v7.preference.PreferenceManager
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.model.UserType
-import com.cbruegg.sikoanmvp.helper.NoMvpBaseActivity
 
 /**
  * Activity managing the user preferences.
  */
-class PreferenceActivity : NoMvpBaseActivity() {
+class PreferenceActivity : AppCompatActivity() {
 
     companion object {
         val KEY_PREF_USER_TYPE = "user_type_preference"
