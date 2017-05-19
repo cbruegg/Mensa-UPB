@@ -1,7 +1,6 @@
 package com.cbruegg.mensaupb.restaurant
 
 import android.arch.lifecycle.LifecycleFragment
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.TabLayout
@@ -19,6 +18,7 @@ import com.cbruegg.mensaupb.extensions.getDate
 import com.cbruegg.mensaupb.extensions.midnight
 import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.extensions.putDate
+import com.cbruegg.mensaupb.util.observer
 import com.cbruegg.mensaupb.util.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -77,9 +77,9 @@ class RestaurantFragment
 
         // TODO Howto inject the VM?
         viewModel = viewModel { initialRestaurantViewModel(requestedPagerPosition, restaurant, requestedDishName) }
-        viewModelController = RestaurantViewModelController(viewModel)
-        viewModel.pagerInfo.observe(this, Observer<PagerInfo> {
-            display(it!!, viewModel.requestedDishName)
+        viewModelController = RestaurantViewModelController(viewModel) // TODO Should this also be reused?
+        viewModel.pagerInfo.observe(this, observer<PagerInfo> {
+            display(it, viewModel.requestedDishName)
             viewModel.requestedDishName = null // Request was fulfilled
         })
     }
@@ -121,7 +121,7 @@ class RestaurantFragment
 
         private val dateFormatter = SimpleDateFormat(context.getString(R.string.dateTabFormat))
 
-        override fun getItem(position: Int) = DishesFragment.newInstance(restaurant, dates[position],
+        override fun getItem(position: Int) = DishesFragment(restaurant, dates[position],
                 if (position == 0) dishName else null)
 
         override fun getCount() = dates.size

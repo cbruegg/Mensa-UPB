@@ -30,7 +30,7 @@ import javax.inject.Inject
      *
      * @param onlyActive If true, only return restaurants marked as active.
      */
-    suspend fun downloadOrRetrieveRestaurantsAsync(onlyActive: Boolean = true, acceptStale: Boolean = false):
+    suspend fun restaurantsAsync(onlyActive: Boolean = true, acceptStale: Boolean = false):
             Deferred<IOEither<Stale<List<DbRestaurant>>>> = async(Unconfined) {
         val restaurants = tryStale(acceptStale, { modelCache.retrieveRestaurants(acceptStale).await() }) {
             val restaurants = downloader.downloadRestaurantsAsync().await()
@@ -39,10 +39,11 @@ import javax.inject.Inject
         restaurants.right().map { it.copy(value = it.value.filter { !onlyActive || it.isActive }) }
     }
 
+    // TODO Can this be made reactive?
     /**
      * Get a list of all dishes in a restaurant at the specified date. The list might be empty.
      */
-    suspend fun downloadOrRetrieveDishesAsync(restaurant: DbRestaurant, date: Date, acceptStale: Boolean = false):
+    suspend fun dishesAsync(restaurant: DbRestaurant, date: Date, acceptStale: Boolean = false):
             Deferred<IOEither<Stale<List<DbDish>>>> = async(Unconfined) {
         tryStale(acceptStale, { modelCache.retrieve(restaurant, date, acceptStale).await() }) {
             val dishes = downloader.downloadDishesAsync(restaurant, date).await()

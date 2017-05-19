@@ -19,6 +19,16 @@
             android:text="@string/no_dishes_found"
             android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/network_error_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableTop="@drawable/ic_error_outline_black_24dp"
+            android:gravity="center"
+            android:text="@string/network_error"
+            android:visibility="gone" />
+
         <ProgressBar
             android:id="@+id/dish_progress_bar"
             android:layout_width="wrap_content"

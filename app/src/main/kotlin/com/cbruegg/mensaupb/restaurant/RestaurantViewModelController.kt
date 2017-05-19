@@ -1,10 +1,10 @@
 package com.cbruegg.mensaupb.restaurant
 
-import android.arch.lifecycle.MutableLiveData
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.cache.oldestAllowedCacheDate
 import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.inRangeOrNull
+import com.cbruegg.mensaupb.util.MutableLiveData
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -15,9 +15,7 @@ fun initialRestaurantViewModel(requestedPagerPosition: Date?, restaurant: DbRest
             dates.last()
     ) ?: dates.first()
     val viewModel = RestaurantViewModel(
-            pagerInfo = MutableLiveData<PagerInfo>().apply {
-                value = PagerInfo(restrictedPagerPosition, dates)
-            },
+            pagerInfo = MutableLiveData(PagerInfo(restrictedPagerPosition, dates)),
             restaurant = restaurant,
             requestedDishName = requestedDishName
     )
@@ -56,7 +54,7 @@ class RestaurantViewModelController(private val restaurantViewModel: RestaurantV
         ) ?: dates.first()
 
         restaurantViewModel.apply {
-            pagerInfo.value = PagerInfo(restrictedPagerPosition, dates)
+            pagerInfo.data = PagerInfo(restrictedPagerPosition, dates)
         }
     }
 

@@ -99,7 +99,7 @@ class MainPresenter(
     private fun reload() {
         launch(UI) {
             view?.isLoading = true
-            repository.downloadOrRetrieveRestaurantsAsync(acceptStale = true)
+            repository.restaurantsAsync(acceptStale = true)
                     .await()
                     .fold({
                         view?.setRestaurants(emptyList())

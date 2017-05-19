@@ -1,8 +1,8 @@
 package com.cbruegg.mensaupb.restaurant
 
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.cbruegg.mensaupb.cache.DbRestaurant
+import com.cbruegg.mensaupb.util.MutableLiveData
 import java.util.*
 
 data class RestaurantViewModel(

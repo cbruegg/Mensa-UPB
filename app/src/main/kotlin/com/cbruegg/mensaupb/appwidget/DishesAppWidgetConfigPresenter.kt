@@ -31,7 +31,7 @@ class DishesAppWidgetConfigPresenter(
         launch(UI) {
             view?.setProgressBarVisible(true)
             repository
-                    .downloadOrRetrieveRestaurantsAsync()
+                    .restaurantsAsync()
                     .await()
                     .fold({ view?.showNetworkError(it) }) { (restaurants, _) ->
                         restaurantList = restaurants.uiSorted()

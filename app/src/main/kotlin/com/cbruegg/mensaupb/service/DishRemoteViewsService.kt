@@ -98,14 +98,14 @@ class DishRemoteViewsService : RemoteViewsService() {
                     ?: return@runBlocking
 
             withTimeout(TIMEOUT_MS) {
-                val restaurant = repository.downloadOrRetrieveRestaurantsAsync()
+                val restaurant = repository.restaurantsAsync()
                         .await()
                         .component2()
                         ?.value
                         ?.firstOrNull { it -> it.id == restaurantId }
                         ?: return@withTimeout
                 this@DishRemoteViewsFactory.restaurant = restaurant
-                dishes = repository.downloadOrRetrieveDishesAsync(restaurant, shownDate)
+                dishes = repository.dishesAsync(restaurant, shownDate)
                         .await()
                         .component2()
                         ?.value

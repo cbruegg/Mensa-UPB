@@ -30,7 +30,7 @@ private fun getDisplaySize(context: Context): Pair<Int, Int> {
  * Show a dialog that displays the full size image of the dish.
  * @param dishViewModel DishViewModel with an imageUrl
  */
-fun showDishDetailsDialog(context: Context, dishViewModel: DishViewModel) {
+fun showDishDetailsDialog(context: Context, dishViewModel: DishViewModel, onDismiss: () -> Unit = {}) {
     val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_dish_details, null, false)
     val imageView = dialogView.findViewById(R.id.dish_image) as ImageView
     val descriptionView = dialogView.findViewById(R.id.dish_description) as TextView
@@ -39,6 +39,7 @@ fun showDishDetailsDialog(context: Context, dishViewModel: DishViewModel) {
     val alertDialog = AlertDialog.Builder(context)
             .setView(dialogView)
             .setCancelable(true)
+            .setOnDismissListener { onDismiss() }
             .create()
     alertDialog.show()
 

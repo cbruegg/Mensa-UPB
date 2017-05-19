@@ -99,7 +99,7 @@ class DishesTest {
     @Test fun testPresenterSucc() = runBlocking {
         val date = now
         val downloader = mock(Repository::class.java)
-        given(downloader.downloadOrRetrieveDishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
+        given(downloader.dishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
             Either.Right<IOException, List<DbDish>>(listOf(sampleDish)) // TODO Also test exception
         })
         val userType = UserType.STUDENT
@@ -107,14 +107,14 @@ class DishesTest {
             toDishViewModels(InstrumentationRegistry.getTargetContext(), it)
         }
         val dishNameToShowOnLoad = null
-        val presenter = DishesPresenter(downloader, sampleRestaurant, date, userType, dishViewModelCreator, dishNameToShowOnLoad)
+        val presenter = DishesViewModelController(downloader, sampleRestaurant, date, userType, dishViewModelCreator, dishNameToShowOnLoad)
 
         val mockView = mock(DishesView::class.java)
         presenter.attachView(mockView, savedInstanceState = null, runInit = true)
 
         delay(200)
 
-        verify(downloader).downloadOrRetrieveDishesAsync(sampleRestaurant, date)
+        verify(downloader).dishesAsync(sampleRestaurant, date)
         verify(mockView).setShowNoDishesMessage(false)
         verify(mockView, never()).showNetworkError(IOException())
         verify(mockView).showDishes(listOf(sampleDish).dishViewModelCreator(userType))
@@ -125,7 +125,7 @@ class DishesTest {
     @Test fun testPresenterShowArgDish() = runBlocking {
         val date = now
         val downloader = mock(Repository::class.java)
-        given(downloader.downloadOrRetrieveDishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
+        given(downloader.dishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
             Either.Right<IOException, List<DbDish>>(listOf(sampleDish))
         })
         val userType = UserType.STUDENT
@@ -133,7 +133,7 @@ class DishesTest {
             toDishViewModels(InstrumentationRegistry.getTargetContext(), it)
         }
         val dishNameToShowOnLoad = sampleDish.name
-        val presenter = DishesPresenter(downloader, sampleRestaurant, date, userType, dishViewModelCreator, dishNameToShowOnLoad)
+        val presenter = DishesViewModelController(downloader, sampleRestaurant, date, userType, dishViewModelCreator, dishNameToShowOnLoad)
 
         val mockView = mock(DishesView::class.java)
         presenter.attachView(mockView, savedInstanceState = null, runInit = true)
@@ -141,7 +141,7 @@ class DishesTest {
         delay(200)
 
         val dishViewModels = listOf(sampleDish).dishViewModelCreator(userType)
-        verify(downloader).downloadOrRetrieveDishesAsync(sampleRestaurant, date)
+        verify(downloader).dishesAsync(sampleRestaurant, date)
         verify(mockView).setShowNoDishesMessage(false)
         verify(mockView, never()).showNetworkError(IOException())
         verify(mockView).showDishes(dishViewModels)
@@ -152,7 +152,7 @@ class DishesTest {
         val date = now
         val downloader = mock(Repository::class.java)
         val ex = IOException("ex")
-        given(downloader.downloadOrRetrieveDishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
+        given(downloader.dishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
             Either.Left<IOException, List<DbDish>>(ex)
         })
         val userType = UserType.STUDENT
@@ -160,14 +160,14 @@ class DishesTest {
             toDishViewModels(InstrumentationRegistry.getTargetContext(), it)
         }
         val dishNameToShowOnLoad = null
-        val presenter = DishesPresenter(downloader, sampleRestaurant, date, userType, dishViewModelCreator, dishNameToShowOnLoad)
+        val presenter = DishesViewModelController(downloader, sampleRestaurant, date, userType, dishViewModelCreator, dishNameToShowOnLoad)
 
         val mockView = mock(DishesView::class.java)
         presenter.attachView(mockView, savedInstanceState = null, runInit = true)
 
         delay(200)
 
-        verify(downloader).downloadOrRetrieveDishesAsync(sampleRestaurant, date)
+        verify(downloader).dishesAsync(sampleRestaurant, date)
         verify(mockView, never()).setShowNoDishesMessage(false)
         verify(mockView).showNetworkError(ex)
         verify(mockView).showDishes(emptyList())

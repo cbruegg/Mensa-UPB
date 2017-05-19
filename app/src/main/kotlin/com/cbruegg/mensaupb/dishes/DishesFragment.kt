@@ -1,5 +1,6 @@
 package com.cbruegg.mensaupb.dishes
 
+import android.arch.lifecycle.LifecycleFragment
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
@@ -16,107 +17,121 @@ import com.cbruegg.mensaupb.adapter.DishListViewModelAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
+import com.cbruegg.mensaupb.extensions.getDate
+import com.cbruegg.mensaupb.extensions.putDate
 import com.cbruegg.mensaupb.extensions.setAll
+import com.cbruegg.mensaupb.util.observer
+import com.cbruegg.mensaupb.util.viewModel
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
-import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
-import com.cbruegg.sikoanmvp.helper.MvpBaseFragment
-import java.io.IOException
 import java.util.*
 import javax.inject.Inject
+
+private const val ARG_RESTAURANT = "restaurant"
+private const val ARG_DATE = "date"
+private const val ARG_DISH_NAME = "dish_name"
+
+/**
+ * Construct a new instance of this fragment.
+ * @param dishName If non-null, look for a matching dish and
+ * shows its image.
+ * @see DishesFragment
+ */
+fun DishesFragment(restaurant: DbRestaurant, date: Date, dishName: String? = null): DishesFragment {
+    @Suppress("DEPRECATION") val fragment = DishesFragment()
+    fragment.arguments = Bundle().apply {
+        putParcelable(ARG_RESTAURANT, restaurant)
+        putDate(ARG_DATE, date)
+        putString(ARG_DISH_NAME, dishName)
+    }
+    return fragment
+}
 
 /**
  * Fragment responsible for displaying the dishes of a restaurant at a specified date.
  * The factory method newInstance needs to be used.
  */
-class DishesFragment : MvpBaseFragment<DishesView, DishesPresenter>(), DishesView {
-
-    companion object {
-        private val ARG_RESTAURANT = "restaurant"
-        private val ARG_DATE = "date"
-        private val ARG_DISH_NAME = "dish_name"
-
-        /**
-         * Construct a new instance of this fragment.
-         * @param dishName If non-null, look for a matching dish and
-         * shows its image.
-         * @see DishesFragment
-         */
-        fun newInstance(restaurant: DbRestaurant, date: Date, dishName: String? = null): DishesFragment {
-            val fragment = DishesFragment()
-            fragment.arguments = Bundle().apply {
-                putParcelable(ARG_RESTAURANT, restaurant)
-                putLong(ARG_DATE, date.time)
-                putString(ARG_DISH_NAME, dishName)
-            }
-            return fragment
-        }
-    }
+class DishesFragment
+@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor()
+    : LifecycleFragment() {
 
     private val dishList: RecyclerView by bindView(R.id.dish_list)
     private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)
+    private val networkErrorMessage: TextView by bindView(R.id.network_error_message)
     private val progressBar: ProgressBar by bindView(R.id.dish_progress_bar)
     @Inject lateinit var repository: Repository
 
     private val adapter = DishListViewModelAdapter()
-
-    override val mvpViewType: Class<DishesView>
-        get() = DishesView::class.java
-
-    override var isLoading: Boolean
-        get() = progressBar.visibility == View.GONE
-        set(value) {
-            progressBar.visibility = if (value) View.VISIBLE else View.GONE
-        }
-
-    override fun createPresenter() = DishesPresenter(
-            repository,
-            arguments.getParcelable(ARG_RESTAURANT),
-            Date(arguments.getLong(ARG_DATE)),
-            context.userType,
-            { toDishViewModels(context, it) },
-            arguments.getString(ARG_DISH_NAME)
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         app.appComponent.inject(this)
     }
 
+    private lateinit var viewModel: DishesViewModel
+    private lateinit var viewModelController: DishesViewModelController
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        viewModel = viewModel {
+            initialDishesViewModel()
+        }
+        val appContext = app
+        viewModelController = DishesViewModelController(
+                repository,
+                arguments.getParcelable(ARG_RESTAURANT),
+                arguments.getDate(ARG_DATE)!!,
+                context.userType,
+                { toDishViewModels(appContext, it) },
+                arguments.getString(ARG_DISH_NAME),
+                viewModel
+        )
+
+        viewModel.showDialogFor.observe(this, observer { dishViewModel ->
+            if (dishViewModel != null) {
+                showDishDetailsDialog(context, dishViewModel) {
+                    viewModelController.onDetailsDialogDismissed()
+                }
+            }
+        })
+        viewModel.dishViewModels.observe(this, observer { dishListViewModels ->
+            showDishes(dishListViewModels)
+            noDishesMessage.visibility = if (!viewModel.isLoading.value && dishListViewModels.isEmpty()) View.VISIBLE else View.GONE
+        })
+        viewModel.isLoading.observe(this, observer {
+            progressBar.visibility = if (it) View.VISIBLE else View.GONE
+        })
+        viewModel.isStale.observe(this, observer { isStale ->
+            if (isStale) {
+                delayUntilVisible {
+                    Snackbar.make(view!!, R.string.showing_stale_data, Snackbar.LENGTH_SHORT).show()
+                }
+            }
+        })
+        viewModel.networkError.observe(this, observer {
+            networkErrorMessage.visibility = if (it) View.VISIBLE else View.GONE
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModelController.reloadIfNeeded()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
             inflater.inflate(R.layout.fragment_dishes, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        adapter.onClickListener = { dishViewModel, _ -> presenter.onDishClicked(dishViewModel) }
+        adapter.onClickListener = { dishViewModel, _ -> viewModelController.onDishClicked(dishViewModel) }
         dishList.adapter = adapter
         dishList.layoutManager = LinearLayoutManager(activity)
 
         super.onViewCreated(view, savedInstanceState)
     }
 
-    override fun setShowNoDishesMessage(showMessage: Boolean) {
-        noDishesMessage.visibility = if (showMessage) View.VISIBLE else View.GONE
-    }
-
-    override fun showNetworkError(e: IOException) {
-        noDishesMessage.visibility = View.GONE
-        e.printStackTrace()
-    }
-
-    override fun showDishes(dishes: List<DishListViewModel>) {
+    fun showDishes(dishes: List<DishListViewModel>) {
         adapter.list.setAll(dishes)
-    }
-
-    override fun showDishDetailsDialog(dishViewModel: DishViewModel) {
-        showDishDetailsDialog(context, dishViewModel)
-    }
-
-    override fun showStale(stale: Boolean) {
-        if (stale) {
-            delayUntilVisible {
-                Snackbar.make(view!!, R.string.showing_stale_data, Snackbar.LENGTH_SHORT).show()
-            }
-        }
     }
 
     private val delayedActions = mutableListOf<() -> Unit>()

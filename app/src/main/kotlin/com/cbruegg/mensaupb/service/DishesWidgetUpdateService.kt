@@ -95,7 +95,7 @@ class DishesWidgetUpdateService : Service() {
 
         job = launch(UI) {
             withTimeout(TIMEOUT_MS) {
-                val restaurantsById = repository.downloadOrRetrieveRestaurantsAsync()
+                val restaurantsById = repository.restaurantsAsync()
                         .await()
                         .component2()
                         ?.value
