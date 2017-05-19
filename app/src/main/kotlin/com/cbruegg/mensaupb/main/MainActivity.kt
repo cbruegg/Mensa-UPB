@@ -35,7 +35,7 @@ import com.cbruegg.mensaupb.provider.DishesAppWidgetProvider
 import com.cbruegg.mensaupb.restaurant.RestaurantFragment
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
-import com.cbruegg.mensaupb.util.observer
+import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
 import java.util.*
 import javax.inject.Inject
@@ -197,34 +197,33 @@ class MainActivity : AppCompatActivity(), LifecycleRegistryOwner {
         restaurantList.adapter = restaurantAdapter
         restaurantList.layoutManager = LinearLayoutManager(this)
 
-        // TODO Make extension function for this
-        viewModel.restaurants.observe(this, observer {
+        viewModel.restaurants.observe(this) {
             setRestaurants(it)
-        })
-        viewModel.networkError.observe(this, observer {
+        }
+        viewModel.networkError.observe(this) {
             if (it) {
                 showNetworkError()
             }
-        })
-        viewModel.drawerShown.observe(this, observer {
+        }
+        viewModel.drawerShown.observe(this) {
             setDrawerStatus(it)
-        })
-        viewModel.showAppWidgetAd.observe(this, observer {
+        }
+        viewModel.showAppWidgetAd.observe(this) {
             if (it) {
                 showAppWidgetAd { viewModel.showAppWidgetAd.data = false }
             }
-        })
-        viewModel.isLoading.observe(this, observer {
+        }
+        viewModel.isLoading.observe(this) {
             isLoading = it
-        })
-        viewModel.restaurantLoadSpec.observe(this, observer {
-            it ?: return@observer
+        }
+        viewModel.restaurantLoadSpec.observe(this) {
+            it ?: return@observe
 
             lastRestaurantId = it.restaurant.id
             showDishesForRestaurant(it.restaurant, it.requestedDay, it.requestedDishName)
             it.requestedDay = null
             it.requestedDishName = null
-        })
+        }
 
         viewModelController.start()
         requestWidgetUpdate()

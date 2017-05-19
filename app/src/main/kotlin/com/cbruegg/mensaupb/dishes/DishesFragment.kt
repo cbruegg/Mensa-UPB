@@ -20,7 +20,7 @@ import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.getDate
 import com.cbruegg.mensaupb.extensions.putDate
 import com.cbruegg.mensaupb.extensions.setAll
-import com.cbruegg.mensaupb.util.observer
+import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
@@ -88,30 +88,30 @@ class DishesFragment
                 viewModel
         )
 
-        viewModel.showDialogFor.observe(this, observer { dishViewModel ->
+        viewModel.showDialogFor.observe(this) { dishViewModel ->
             if (dishViewModel != null) {
                 showDishDetailsDialog(context, dishViewModel) {
                     viewModelController.onDetailsDialogDismissed()
                 }
             }
-        })
-        viewModel.dishViewModels.observe(this, observer { dishListViewModels ->
+        }
+        viewModel.dishViewModels.observe(this) { dishListViewModels ->
             showDishes(dishListViewModels)
             noDishesMessage.visibility = if (!viewModel.isLoading.value && dishListViewModels.isEmpty()) View.VISIBLE else View.GONE
-        })
-        viewModel.isLoading.observe(this, observer {
+        }
+        viewModel.isLoading.observe(this) {
             progressBar.visibility = if (it) View.VISIBLE else View.GONE
-        })
-        viewModel.isStale.observe(this, observer { isStale ->
+        }
+        viewModel.isStale.observe(this) { isStale ->
             if (isStale) {
                 delayUntilVisible {
                     Snackbar.make(view!!, R.string.showing_stale_data, Snackbar.LENGTH_SHORT).show()
                 }
             }
-        })
-        viewModel.networkError.observe(this, observer {
+        }
+        viewModel.networkError.observe(this) {
             networkErrorMessage.visibility = if (it) View.VISIBLE else View.GONE
-        })
+        }
     }
 
     override fun onResume() {

@@ -35,3 +35,7 @@ open class MutableLiveData<T>(initialValue: T) : com.cbruegg.mensaupb.util.LiveD
 inline fun <reified T> observer(crossinline f: ((T) -> Unit)): Observer<T> = Observer<T> {
     f(it as T)
 }
+
+inline fun <reified T> LiveData<T>.observe(lifecycleOwner: LifecycleOwner, crossinline f: (T) -> Unit) = observe(lifecycleOwner, observer {
+    f(it)
+})

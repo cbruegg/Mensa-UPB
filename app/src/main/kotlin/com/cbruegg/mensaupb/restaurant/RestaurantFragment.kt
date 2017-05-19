@@ -18,7 +18,7 @@ import com.cbruegg.mensaupb.extensions.getDate
 import com.cbruegg.mensaupb.extensions.midnight
 import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.extensions.putDate
-import com.cbruegg.mensaupb.util.observer
+import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -78,10 +78,10 @@ class RestaurantFragment
         // TODO Howto inject the VM?
         viewModel = viewModel { initialRestaurantViewModel(requestedPagerPosition, restaurant, requestedDishName) }
         viewModelController = RestaurantViewModelController(viewModel)
-        viewModel.pagerInfo.observe(this, observer<PagerInfo> {
+        viewModel.pagerInfo.observe(this) {
             display(it, viewModel.requestedDishName)
             viewModel.requestedDishName = null // Request was fulfilled
-        })
+        }
     }
 
     private fun display(pagerInfo: PagerInfo, requestedDishName: String?) {
