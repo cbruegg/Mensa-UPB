@@ -1,7 +1,6 @@
-package com.cbruegg.mensaupb.fragment
+package com.cbruegg.mensaupb.restaurant
 
 import android.arch.lifecycle.LifecycleFragment
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
@@ -15,54 +14,47 @@ import android.view.ViewGroup
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.cache.oldestAllowedCacheDate
 import com.cbruegg.mensaupb.dishes.DishesFragment
-import com.cbruegg.mensaupb.extensions.*
+import com.cbruegg.mensaupb.extensions.getDate
+import com.cbruegg.mensaupb.extensions.midnight
+import com.cbruegg.mensaupb.extensions.now
+import com.cbruegg.mensaupb.extensions.putDate
 import com.cbruegg.mensaupb.util.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
+
+private const val ARG_RESTAURANT = "restaurant"
+private const val ARG_REQUESTED_PAGER_POSITION = "pager_position"
+private const val ARG_DISH_NAME = "dish_name"
+
+/**
+ * Construct a new instance of the RestaurantFragment.
+ * @param pagerPosition The position the pager should be initially set to
+ * @param dishName If set, the fragment looks for a matching
+ * dish on the first page only and shows its image
+ */
+fun RestaurantFragment(restaurant: DbRestaurant,
+                       pagerPosition: Date = midnight,
+                       dishName: String? = null): RestaurantFragment {
+    @Suppress("DEPRECATION") val fragment = RestaurantFragment()
+    fragment.arguments = Bundle().apply {
+        putParcelable(ARG_RESTAURANT, restaurant)
+        putDate(ARG_REQUESTED_PAGER_POSITION, pagerPosition)
+        putString(ARG_DISH_NAME, dishName)
+    }
+    return fragment
+}
 
 /**
  * Fragment hosting a Pager of DishesFragments.
- * The factory method newInstance needs to be used.
+ * The factory method needs to be used.
  */
-class RestaurantFragment : LifecycleFragment() {
-    companion object {
-        private val ARG_RESTAURANT = "restaurant"
-        private val ARG_REQUESTED_PAGER_POSITION = "pager_position"
-        private val ARG_DISH_NAME = "dish_name"
-        private val DAY_COUNT = 7L
+class RestaurantFragment
+@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor()
+    : LifecycleFragment() {
 
-        /**
-         * Construct a new instance of the RestaurantFragment.
-         * @param pagerPosition The position the pager should be initially set to
-         * @param dishName If set, the fragment looks for a matching
-         * dish on the first page only and shows its image
-         */
-        fun newInstance(restaurant: DbRestaurant,
-                        pagerPosition: Date = midnight,
-                        dishName: String? = null): RestaurantFragment {
-            val fragment = RestaurantFragment()
-            fragment.arguments = Bundle().apply {
-                putParcelable(ARG_RESTAURANT, restaurant)
-                putDate(ARG_REQUESTED_PAGER_POSITION, pagerPosition)
-                putString(ARG_DISH_NAME, dishName)
-            }
-            return fragment
-        }
-    }
-
-    data class LastLoadMeta(val pagerDates: List<Date>, val whenLoaded: Date)
-    data class PagerInfo(var position: Date, val dates: List<Date>)
-    data class ViewModel(
-            val pagerInfo: MutableLiveData<PagerInfo>,
-            val restaurant: DbRestaurant,
-            var requestedDishName: String?,
-            var lastLoadMeta: LastLoadMeta? = null
-    ) : android.arch.lifecycle.ViewModel()
-
-    private lateinit var viewModel: ViewModel
+    private lateinit var viewModel: RestaurantViewModel
+    private lateinit var viewModelController: RestaurantViewModelController
 
     private val dayPager: ViewPager by bindView(R.id.day_pager)
     private val dayPagerTabs: TabLayout by bindView(R.id.day_pager_tabs)
@@ -73,49 +65,19 @@ class RestaurantFragment : LifecycleFragment() {
 
     override fun onResume() {
         super.onResume()
-
-        val shouldReload = viewModel.lastLoadMeta?.let {
-            it.whenLoaded < oldestAllowedCacheDate || it.pagerDates != computePagerDates()
-        } ?: true
-
-        if (shouldReload) {
-            updateViewModel()
-        }
-    }
-
-    private fun updateViewModel() {
-        val dates = computePagerDates()
-        val requestedPagerPosition = viewModel.pagerInfo.value!!.position
-        val restrictedPagerPosition = requestedPagerPosition.inRangeOrNull(
-                dates.first(),
-                dates.last()
-        ) ?: dates.first()
-
-        viewModel.apply {
-            pagerInfo.value = PagerInfo(restrictedPagerPosition, dates)
-        }
+        viewModelController.onResume()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val dates = computePagerDates()
         val requestedPagerPosition = arguments.getDate(ARG_REQUESTED_PAGER_POSITION)
-        val restrictedPagerPosition = requestedPagerPosition?.inRangeOrNull(
-                dates.first(),
-                dates.last()
-        ) ?: dates.first()
+        val restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT)
+        val requestedDishName = arguments.getString(ARG_DISH_NAME)
 
-        viewModel = viewModel {
-            ViewModel(
-                    pagerInfo = MutableLiveData<PagerInfo>().apply {
-                        value = PagerInfo(restrictedPagerPosition, dates)
-                    },
-                    restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT),
-                    requestedDishName = arguments.getString(ARG_DISH_NAME)
-            )
-        }
-
+        // TODO Howto inject the VM?
+        viewModel = viewModel { initialRestaurantViewModel(requestedPagerPosition, restaurant, requestedDishName) }
+        viewModelController = RestaurantViewModelController(viewModel)
         viewModel.pagerInfo.observe(this, Observer<PagerInfo> {
             display(it!!, viewModel.requestedDishName)
             viewModel.requestedDishName = null // Request was fulfilled
@@ -143,15 +105,6 @@ class RestaurantFragment : LifecycleFragment() {
      */
     val pagerSelectedDate: Date
         get() = adapter.dates[dayPager.currentItem]
-
-    /**
-     * Return a list of dates to be used for fetching dishes.
-     */
-    private fun computePagerDates(): List<Date> {
-        val today = System.currentTimeMillis()
-        val dayInMs = TimeUnit.DAYS.toMillis(1)
-        return (0..DAY_COUNT - 1).map { Date(today + it * dayInMs).atMidnight }
-    }
 
     /**
      * ViewPager adapter

@@ -28,7 +28,7 @@ import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.*
-import com.cbruegg.mensaupb.fragment.RestaurantFragment
+import com.cbruegg.mensaupb.restaurant.RestaurantFragment
 import com.cbruegg.mensaupb.provider.DishesAppWidgetProvider
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
@@ -244,7 +244,7 @@ class MainActivity : MvpBaseActivity<MainView, MainPresenter>(), MainView {
      */
     private fun DbRestaurant.load(day: Date?, showDishWithGermanName: String?) {
         supportActionBar?.title = name
-        val restaurantFragment = RestaurantFragment.newInstance(
+        val restaurantFragment = RestaurantFragment(
                 this,
                 day ?: midnight,
                 showDishWithGermanName
