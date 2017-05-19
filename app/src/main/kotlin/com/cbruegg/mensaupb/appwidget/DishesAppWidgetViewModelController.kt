@@ -2,48 +2,51 @@ package com.cbruegg.mensaupb.appwidget
 
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
+import com.cbruegg.mensaupb.extensions.use
 import com.cbruegg.mensaupb.viewmodel.uiSorted
-import com.cbruegg.sikoanmvp.MvpPresenter
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 
-class DishesAppWidgetConfigPresenter(
+class DishesAppWidgetViewModelController(
         private val repository: Repository,
         private val dishesWidgetConfigurationManager: DishesWidgetConfigurationManager,
-        private val appWidgetId: Int
-) : MvpPresenter<DishesAppWidgetConfigView>() {
+        private val appWidgetId: Int,
+        private val viewModel: DishesAppWidgetViewModel
+) {
 
     private var restaurantList = emptyList<DbRestaurant>()
 
     fun onConfirmClicked(restaurantItemIndex: Int) {
         val selectedRestaurant = restaurantList[restaurantItemIndex]
         dishesWidgetConfigurationManager.putConfiguration(appWidgetId, DishesWidgetConfiguration(selectedRestaurant.id))
-        view?.updateWidget()
-        view?.close(true)
+        viewModel.closed.data = true
     }
 
-    override fun initView() {
-        super.initView()
+    fun load() = launch(UI) {
+        viewModel.loadingMutex.use {
+            if (viewModel.restaurants.data.isNotEmpty() || viewModel.networkError.data) {
+                return@use
+            }
 
-        view?.setConfirmButtonStatus(false)
-        view?.setProgressBarVisible(true)
-
-        launch(UI) {
-            view?.setProgressBarVisible(true)
+            viewModel.showProgress.data = true
             repository
                     .restaurantsAsync()
                     .await()
-                    .fold({ view?.showNetworkError(it) }) { (restaurants, _) ->
+                    .fold({
+                        viewModel.networkError.data = true
+                        it.printStackTrace()
+                    }) { (restaurants, _) ->
                         restaurantList = restaurants.uiSorted()
-                        view?.setRestaurantSpinnerList(restaurantList)
-                        view?.setConfirmButtonStatus(true)
+                        viewModel.restaurants.data = restaurantList
+                        viewModel.networkError.data = false
+                        viewModel.confirmButtonStatus.data = true
                     }
-            view?.setProgressBarVisible(false)
-        }.register()
+            viewModel.showProgress.data = false
+        }
     }
 
     fun onCancel() {
-        view?.close(false)
+        viewModel.closed.data = true
     }
 
 }

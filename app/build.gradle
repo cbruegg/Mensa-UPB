@@ -72,7 +72,6 @@ dependencies {
     compile "com.squareup.moshi:moshi-parent:$moshiVersion"
     compile "com.squareup.moshi:moshi-adapters:$moshiVersion"
     compile "com.squareup.moshi:moshi-kotlin:$moshiVersion"
-    compile 'com.cbruegg.sikoan-mvp:sikoan-mvp:1.0.3'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
     compile 'org.funktionale:funktionale:1.0.1'
