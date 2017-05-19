@@ -65,7 +65,7 @@ class RestaurantFragment
 
     override fun onResume() {
         super.onResume()
-        viewModelController.onResume()
+        viewModelController.reloadIfNeeded()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -77,7 +77,7 @@ class RestaurantFragment
 
         // TODO Howto inject the VM?
         viewModel = viewModel { initialRestaurantViewModel(requestedPagerPosition, restaurant, requestedDishName) }
-        viewModelController = RestaurantViewModelController(viewModel) // TODO Should this also be reused?
+        viewModelController = RestaurantViewModelController(viewModel)
         viewModel.pagerInfo.observe(this, observer<PagerInfo> {
             display(it, viewModel.requestedDishName)
             viewModel.requestedDishName = null // Request was fulfilled
@@ -90,7 +90,7 @@ class RestaurantFragment
         dayPager.adapter = adapter
         dayPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
-                viewModel.pagerInfo.value!!.position = pagerInfo.dates[position]
+                viewModel.pagerInfo.value.position = pagerInfo.dates[position]
             }
         })
         dayPagerTabs.setupWithViewPager(dayPager)

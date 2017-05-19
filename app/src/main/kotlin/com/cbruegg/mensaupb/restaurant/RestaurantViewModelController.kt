@@ -35,19 +35,19 @@ private fun computePagerDates(): List<Date> {
 
 class RestaurantViewModelController(private val restaurantViewModel: RestaurantViewModel) {
 
-    fun onResume() {
+    fun reloadIfNeeded() {
         val shouldReload = restaurantViewModel.lastLoadMeta?.let {
             it.whenLoaded < oldestAllowedCacheDate || it.pagerDates != computePagerDates()
         } ?: true
 
         if (shouldReload) {
-            updateViewModel()
+            reload()
         }
     }
 
-    private fun updateViewModel() {
+    private fun reload() {
         val dates = computePagerDates()
-        val requestedPagerPosition = restaurantViewModel.pagerInfo.value!!.position
+        val requestedPagerPosition = restaurantViewModel.pagerInfo.data.position
         val restrictedPagerPosition = requestedPagerPosition.inRangeOrNull(
                 dates.first(),
                 dates.last()

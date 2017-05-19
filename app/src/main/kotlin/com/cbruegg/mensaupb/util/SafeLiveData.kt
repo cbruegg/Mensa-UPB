@@ -13,21 +13,13 @@ open class LiveData<T>(initialValue: T) : LiveData<T>() {
         value = initialValue
     }
 
-    override fun getValue(): T {
-        return super.getValue() as T
-    }
+    override fun getValue(): T = super.getValue() as T
 
-    override fun observeForever(observer: Observer<T>) {
-        super.observeForever(observer)
-    }
+    override fun observeForever(observer: Observer<T>) = super.observeForever(observer)
 
-    override fun removeObserver(observer: Observer<T>) {
-        super.removeObserver(observer)
-    }
+    override fun removeObserver(observer: Observer<T>) = super.removeObserver(observer)
 
-    override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
-        super.observe(owner, observer)
-    }
+    override fun observe(owner: LifecycleOwner, observer: Observer<T>) = super.observe(owner, observer)
 }
 
 open class MutableLiveData<T>(initialValue: T) : com.cbruegg.mensaupb.util.LiveData<T>(initialValue) {
