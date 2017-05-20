@@ -31,9 +31,9 @@ class MainViewModelController(
         reloadIfNeeded()
     }
 
-    fun onRestaurantClick(restaurant: DbRestaurant) {
+    fun onRestaurantClick(restaurant: DbRestaurant, currentlyDisplayedDate: Date?) {
         viewModel.drawerShown.data = false
-        viewModel.restaurantLoadSpec.data = RestaurantLoadSpec(restaurant)
+        viewModel.restaurantLoadSpec.data = RestaurantLoadSpec(restaurant, requestedDay = currentlyDisplayedDate)
     }
 
     private fun showDishesForRestaurant(restaurant: DbRestaurant) {

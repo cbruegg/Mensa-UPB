@@ -165,7 +165,6 @@ class MainActivity : AppCompatActivity(), LifecycleRegistryOwner {
             intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
     )
 
-
     private lateinit var viewModel: MainViewModel
     private lateinit var viewModelController: MainViewModelController
     private var lastRestaurantId by StringSharedPreferencesPropertyDelegate<String?>(
@@ -192,7 +191,7 @@ class MainActivity : AppCompatActivity(), LifecycleRegistryOwner {
 
         // Setup the restaurant list in the drawer
         restaurantAdapter.onClickListener = { restaurant, _ ->
-            viewModelController.onRestaurantClick(restaurant)
+            viewModelController.onRestaurantClick(restaurant, currentlyDisplayedDay)
         }
         restaurantList.adapter = restaurantAdapter
         restaurantList.layoutManager = LinearLayoutManager(this)
