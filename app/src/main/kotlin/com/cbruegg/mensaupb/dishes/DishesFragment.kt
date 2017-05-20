@@ -97,10 +97,11 @@ class DishesFragment
         }
         viewModel.dishViewModels.observe(this) { dishListViewModels ->
             showDishes(dishListViewModels)
-            noDishesMessage.visibility = if (!viewModel.isLoading.value && dishListViewModels.isEmpty()) View.VISIBLE else View.GONE
+            noDishesMessage.visibility = noDishesMessageVisibility(dishListViewModels, viewModel.isLoading.data)
         }
         viewModel.isLoading.observe(this) {
             progressBar.visibility = if (it) View.VISIBLE else View.GONE
+            noDishesMessage.visibility = noDishesMessageVisibility(viewModel.dishViewModels.data, it)
         }
         viewModel.isStale.observe(this) { isStale ->
             if (isStale) {
@@ -113,6 +114,9 @@ class DishesFragment
             networkErrorMessage.visibility = if (it) View.VISIBLE else View.GONE
         }
     }
+
+    private fun noDishesMessageVisibility(dishListViewModels: List<DishListViewModel>, isLoading: Boolean) =
+            if (!isLoading && dishListViewModels.isEmpty()) View.VISIBLE else View.GONE
 
     override fun onResume() {
         super.onResume()
