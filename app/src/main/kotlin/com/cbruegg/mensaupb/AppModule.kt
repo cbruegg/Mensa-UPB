@@ -28,6 +28,7 @@ class AppModule(private val app: MensaApplication) {
         val source = DatabaseSource(app, Models.DEFAULT, 13)
         if (BuildConfig.DEBUG) {
             source.setTableCreationMode(TableCreationMode.DROP_CREATE)
+            source.setLoggingEnabled(true)
         } else {
             source.setTableCreationMode(TableCreationMode.CREATE)
         }

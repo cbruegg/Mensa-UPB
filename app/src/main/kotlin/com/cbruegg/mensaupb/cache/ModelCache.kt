@@ -185,7 +185,7 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
             } else null
 
             if (result != null) {
-                Log.d(TAG, "retrieve(${restaurant.name}, $dateAtMidnight): HIT, $stale")
+                Log.d(TAG, "retrieve(${restaurant.name}, $dateAtMidnight): HIT, isStale: $stale")
             } else {
                 Log.d(TAG, "retrieve(${restaurant.name}, $dateAtMidnight): MISS")
             }
