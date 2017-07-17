@@ -9,6 +9,7 @@ import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.Restaurant
 import com.cbruegg.mensaupb.parser.parseDishes
 import com.cbruegg.mensaupb.parser.parseRestaurantsFromApi
+import com.cbruegg.mensaupb.util.await
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
@@ -42,14 +43,16 @@ class Downloader @Inject constructor(private val httpClient: OkHttpClient) {
     fun downloadRestaurantsAsync(): Deferred<IOEither<List<Restaurant>>> = networkAsync {
         withTimeoutOrNull(TIMEOUT_MS) {
             val request = Request.Builder().url(RESTAURANT_URL).build()
-            parseRestaurantsFromApi(httpClient.newCall(request).execute().body()!!.source())
+            val response = httpClient.newCall(request).await()
+            parseRestaurantsFromApi(response.body()!!.source())
         } ?: throw IOException("Network timeout!")
     }
 
     fun downloadDishesAsync(restaurant: DbRestaurant, date: Date): Deferred<IOEither<List<Dish>>> = networkAsync {
         withTimeoutOrNull(TIMEOUT_MS) {
             val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
-            parseDishes(httpClient.newCall(request).execute().body()!!.source())
+            val response = httpClient.newCall(request).await()
+            parseDishes(response.body()!!.source())
         } ?: throw IOException("Network timeout!")
     }
 
