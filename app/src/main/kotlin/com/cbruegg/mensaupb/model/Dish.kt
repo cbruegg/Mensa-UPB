@@ -1,7 +1,7 @@
 package com.cbruegg.mensaupb.model
 
 import com.squareup.moshi.Json
-import java.util.*
+import java.util.Date
 
 /**
  * Model representing a dish object returned by the API.

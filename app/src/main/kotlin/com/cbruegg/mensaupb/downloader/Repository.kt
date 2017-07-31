@@ -2,7 +2,11 @@ package com.cbruegg.mensaupb.downloader
 
 import android.content.Context
 import com.cbruegg.mensaupb.app
-import com.cbruegg.mensaupb.cache.*
+import com.cbruegg.mensaupb.cache.DbDish
+import com.cbruegg.mensaupb.cache.DbRestaurant
+import com.cbruegg.mensaupb.cache.ModelCache
+import com.cbruegg.mensaupb.cache.Stale
+import com.cbruegg.mensaupb.cache.toNonStale
 import com.cbruegg.mensaupb.util.AllOpen
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.Unconfined
@@ -10,7 +14,7 @@ import kotlinx.coroutines.experimental.async
 import org.funktionale.either.Either
 import org.funktionale.either.RightProjection
 import java.io.IOException
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 /**

@@ -4,7 +4,7 @@ import android.arch.lifecycle.ViewModel
 import com.cbruegg.mensaupb.util.MutableLiveData
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
-import java.util.*
+import java.util.Date
 
 data class DishesViewModel(
         val isLoading: MutableLiveData<Boolean>,

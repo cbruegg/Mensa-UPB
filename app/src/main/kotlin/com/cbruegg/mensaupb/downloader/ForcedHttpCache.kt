@@ -2,7 +2,6 @@ package com.cbruegg.mensaupb.downloader
 
 import android.content.Context
 import android.net.Uri
-import android.os.Parcelable
 import android.util.Log
 import com.cbruegg.mensaupb.DbThread
 import com.cbruegg.mensaupb.compat.OkHttp3Downloader
@@ -10,17 +9,26 @@ import com.cbruegg.mensaupb.extensions.md5
 import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.util.FileConverter
 import com.cbruegg.mensaupb.util.MediaTypeConverter
-import io.requery.*
+import io.requery.Column
+import io.requery.Convert
+import io.requery.Entity
+import io.requery.Key
+import io.requery.Persistable
+import io.requery.Table
 import io.requery.kotlin.BlockingEntityStore
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
-import okhttp3.*
+import okhttp3.Interceptor
+import okhttp3.MediaType
+import okhttp3.Protocol
+import okhttp3.Response
+import okhttp3.ResponseBody
 import okio.Okio
 import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
-import java.util.*
+import java.util.Date
 
 private const val QUERY_PARAM_INDICATOR = "mensaForceCached"
 private const val QUERY_PARAM_INDICATOR_VALUE = true.toString()

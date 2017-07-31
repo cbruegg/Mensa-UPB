@@ -1,7 +1,11 @@
 package com.cbruegg.mensaupb.parser
 
-import com.squareup.moshi.*
-import java.util.*
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.KotlinJsonAdapterFactory
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Rfc3339DateJsonAdapter
+import com.squareup.moshi.Types
+import java.util.Date
 
 object MoshiProvider {
     /**

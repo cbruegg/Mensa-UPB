@@ -1,7 +1,7 @@
 package com.cbruegg.mensaupb.extensions
 
 import android.content.Intent
-import java.util.*
+import java.util.Date
 
 fun Intent.putDateExtra(key: String, date: Date?) {
     putExtra(key, date?.time ?: -1)

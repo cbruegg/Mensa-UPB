@@ -1,6 +1,6 @@
 package com.cbruegg.mensaupb.util
 
-import java.util.*
+import java.util.Locale
 
 /**
  * @param [values] Locale.language to value

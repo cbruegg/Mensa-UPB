@@ -10,7 +10,7 @@ import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
-import java.util.*
+import java.util.Date
 
 private const val MAX_DISH_AGE_MS = 3L * 60 * 60 * 1000
 

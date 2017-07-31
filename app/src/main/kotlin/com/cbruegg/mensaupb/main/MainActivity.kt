@@ -30,14 +30,18 @@ import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
-import com.cbruegg.mensaupb.extensions.*
+import com.cbruegg.mensaupb.extensions.getDateExtra
+import com.cbruegg.mensaupb.extensions.midnight
+import com.cbruegg.mensaupb.extensions.putDateExtra
+import com.cbruegg.mensaupb.extensions.setAll
+import com.cbruegg.mensaupb.extensions.toggleDrawer
 import com.cbruegg.mensaupb.provider.DishesAppWidgetProvider
 import com.cbruegg.mensaupb.restaurant.RestaurantFragment
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 /**

@@ -8,7 +8,7 @@ import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
-import java.util.*
+import java.util.Date
 
 private const val MAX_RESTAURANTS_AGE_MS = 24L * 60 * 60 * 1000
 

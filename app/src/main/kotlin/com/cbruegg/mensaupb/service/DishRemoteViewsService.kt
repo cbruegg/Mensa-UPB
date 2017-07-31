@@ -16,13 +16,16 @@ import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.downloader.forceCached
-import com.cbruegg.mensaupb.extensions.*
+import com.cbruegg.mensaupb.extensions.TAG
+import com.cbruegg.mensaupb.extensions.midnight
+import com.cbruegg.mensaupb.extensions.stackTraceString
+import com.cbruegg.mensaupb.extensions.toUri
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeoutOrNull
 import java.io.IOException
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

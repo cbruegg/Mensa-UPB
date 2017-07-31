@@ -5,7 +5,7 @@ import com.cbruegg.mensaupb.cache.oldestAllowedCacheDate
 import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.inRangeOrNull
 import com.cbruegg.mensaupb.util.MutableLiveData
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 fun initialRestaurantViewModel(requestedPagerPosition: Date?, restaurant: DbRestaurant, requestedDishName: String?): RestaurantViewModel {

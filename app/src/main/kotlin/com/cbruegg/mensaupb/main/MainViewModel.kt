@@ -3,7 +3,7 @@ package com.cbruegg.mensaupb.main
 import android.arch.lifecycle.ViewModel
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.util.MutableLiveData
-import java.util.*
+import java.util.Date
 
 data class RestaurantLoadSpec(
         val restaurant: DbRestaurant,

@@ -1,7 +1,7 @@
 package com.cbruegg.mensaupb.extensions
 
 import android.os.Bundle
-import java.util.*
+import java.util.Date
 
 fun Bundle.putDate(key: String, date: Date?) {
     putLong(key, date?.time ?: -1)

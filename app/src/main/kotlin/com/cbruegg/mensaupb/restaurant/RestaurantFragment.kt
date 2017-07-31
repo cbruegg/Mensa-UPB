@@ -24,7 +24,7 @@ import com.cbruegg.mensaupb.util.viewModel
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 private const val ARG_RESTAURANT = "restaurant"

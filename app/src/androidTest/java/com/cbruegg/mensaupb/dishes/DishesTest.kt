@@ -25,15 +25,12 @@ import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.*
 import java.io.IOException
-import java.util.*
+import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 class DishesTest {
 
     val sampleRestaurant = object : DbRestaurant {
-        override fun writeToParcel(dest: Parcel?, flags: Int) = nothing()
-        override fun describeContents() = nothing()
-
         override val id: String
             get() = "id"
         override val name: String
@@ -87,10 +84,6 @@ class DishesTest {
             get() = "http://someurl.de/"
         override val restaurant: DbRestaurant
             get() = sampleRestaurant
-
-        override fun writeToParcel(dest: Parcel?, flags: Int) = nothing()
-
-        override fun describeContents() = nothing()
 
     }
 

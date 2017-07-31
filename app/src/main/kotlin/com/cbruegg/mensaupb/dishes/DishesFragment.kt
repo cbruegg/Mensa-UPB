@@ -27,7 +27,7 @@ import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 private const val ARG_RESTAURANT = "restaurant"

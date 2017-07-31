@@ -1,6 +1,7 @@
 package com.cbruegg.mensaupb.extensions
 
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 /**
  * Return a clone of this Date set to 0:00:00:0000

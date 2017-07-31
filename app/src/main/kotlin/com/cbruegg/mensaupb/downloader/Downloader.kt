@@ -19,7 +19,7 @@ import okhttp3.Request
 import org.funktionale.either.Either
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 private const val API_ID = BuildConfig.API_ID

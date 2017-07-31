@@ -7,8 +7,16 @@ import com.cbruegg.mensaupb.model.Dish
 import com.cbruegg.mensaupb.model.PriceType
 import com.cbruegg.mensaupb.serializeForSql
 import com.cbruegg.mensaupb.util.LanguageStringSelector
-import io.requery.*
-import java.util.*
+import io.requery.CascadeAction
+import io.requery.Column
+import io.requery.Entity
+import io.requery.Generated
+import io.requery.Key
+import io.requery.ManyToOne
+import io.requery.Persistable
+import io.requery.Table
+import io.requery.Transient
+import java.util.Date
 
 const val TABLE_DB_DISH = "dishes"
 

@@ -9,7 +9,6 @@ import com.cbruegg.mensaupb.extensions.replace
 import com.cbruegg.mensaupb.model.PriceType
 import com.cbruegg.mensaupb.model.UserType
 import java.text.DecimalFormat
-import java.util.*
 
 sealed class DishListViewModel
 
