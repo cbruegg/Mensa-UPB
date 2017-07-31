@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-allopen'
-apply plugin: 'kotlin-noarg'
 
 android {
     compileSdkVersion 25
@@ -48,10 +47,6 @@ kotlin {
     experimental {
         coroutines "enable"
     }
-}
-
-noArg {
-    annotation("com.cbruegg.mensaupb.util.NoArgConstructor")
 }
 
 dependencies {
@@ -119,7 +114,6 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
     }
 }
 repositories {
