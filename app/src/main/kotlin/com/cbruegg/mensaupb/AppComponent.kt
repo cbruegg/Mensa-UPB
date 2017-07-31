@@ -18,7 +18,7 @@ interface AppComponent {
     fun inject(app: MensaApplication)
     fun inject(mainActivity: MainActivity)
     fun inject(dishesFragment: DishesFragment)
-    fun inject(restaurantFragment: RestaurantFragment) // TODO remove this?
+    fun inject(restaurantFragment: RestaurantFragment)
     fun inject(modelCache: ModelCache)
     fun inject(dishesWidgetUpdateService: DishesWidgetUpdateService)
     fun inject(dishRemoteViewsFactory: DishRemoteViewsService.DishRemoteViewsFactory)
