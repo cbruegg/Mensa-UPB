@@ -2,10 +2,8 @@ package com.cbruegg.mensaupb.appwidget
 
 import android.appwidget.AppWidgetManager
 import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
@@ -13,6 +11,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
+import com.cbruegg.mensaupb.activity.LifecycleActivity
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.downloader.Repository
@@ -25,7 +24,7 @@ import javax.inject.Inject
  * Activity used for configuring an app widget. It must
  * be supplied an an AppWidgetId using [AppWidgetManager.EXTRA_APPWIDGET_ID].
  */
-class DishesAppWidgetConfigActivity : AppCompatActivity(), LifecycleRegistryOwner {
+class DishesAppWidgetConfigActivity : LifecycleActivity() {
 
     private val spinner by bindView<Spinner>(R.id.widget_config_spinner)
     private val cancelButton by bindView<Button>(R.id.widget_config_cancel)
@@ -41,8 +40,6 @@ class DishesAppWidgetConfigActivity : AppCompatActivity(), LifecycleRegistryOwne
     @Inject lateinit var repository: Repository
     private lateinit var viewModel: DishesAppWidgetViewModel
     private lateinit var viewModelController: DishesAppWidgetViewModelController
-
-    override fun getLifecycle() = lifecycleRegistry
 
     private fun createController(viewModel: DishesAppWidgetViewModel) = DishesAppWidgetViewModelController(
             repository,

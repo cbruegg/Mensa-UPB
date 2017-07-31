@@ -2,7 +2,6 @@ package com.cbruegg.mensaupb.main
 
 import android.appwidget.AppWidgetManager
 import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -13,7 +12,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -24,6 +22,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
+import com.cbruegg.mensaupb.activity.LifecycleActivity
 import com.cbruegg.mensaupb.activity.PreferenceActivity
 import com.cbruegg.mensaupb.adapter.RestaurantAdapter
 import com.cbruegg.mensaupb.app
@@ -47,7 +46,7 @@ import javax.inject.Inject
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
  */
-class MainActivity : AppCompatActivity(), LifecycleRegistryOwner {
+class MainActivity : LifecycleActivity() {
 
     companion object {
 
@@ -111,8 +110,6 @@ class MainActivity : AppCompatActivity(), LifecycleRegistryOwner {
     @Inject lateinit var repository: Repository
     @Inject lateinit var oneOff: OneOff
     private val lifecycleRegistry = LifecycleRegistry(this)
-
-    override fun getLifecycle() = lifecycleRegistry
 
     private var isLoading: Boolean
         get() = progressBar.visibility == View.VISIBLE

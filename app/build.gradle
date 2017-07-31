@@ -52,7 +52,7 @@ kotlin {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    def supportVersion = "25.3.1"
+    def supportVersion = "25.4.0"
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support:recyclerview-v7:$supportVersion"
     compile "com.android.support:design:$supportVersion"
@@ -61,7 +61,7 @@ dependencies {
     compile "com.android.support:support-annotations:$supportVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    compile 'com.squareup.okhttp3:okhttp:3.8.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
 
     def moshiVersion = "1.5.0"
     compile "com.squareup.moshi:moshi-parent:$moshiVersion"
@@ -69,16 +69,19 @@ dependencies {
     compile "com.squareup.moshi:moshi-kotlin:$moshiVersion"
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
-    compile 'org.funktionale:funktionale:1.0.1'
-    compile 'org.funktionale:funktionale-either:1.0.1'
+
+    def funktionaleVersion = "1.1"
+    compile "org.funktionale:funktionale:$funktionaleVersion"
+    compile "org.funktionale:funktionale-either:$funktionaleVersion"
 
     kapt "com.android.databinding:compiler:$rootProject.androidToolsVersion"
 
-    kapt 'com.google.dagger:dagger-compiler:2.10'
-    compile 'com.google.dagger:dagger:2.10'
+    def daggerVersion = "2.11"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    compile "com.google.dagger:dagger:$daggerVersion"
     provided 'javax.annotation:jsr250-api:1.0'
 
-    def coroutineVersion = "0.15"
+    def coroutineVersion = "0.17"
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion"
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion"
 
@@ -94,16 +97,17 @@ dependencies {
     debugCompile "com.facebook.stetho:stetho:$stethoVersion"
     debugCompile "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
 
-    compile "android.arch.lifecycle:runtime:1.0.0-alpha1"
-    compile "android.arch.lifecycle:extensions:1.0.0-alpha1"
-    kapt "android.arch.lifecycle:compiler:1.0.0-alpha1"
+    def aarchVersion = "1.0.0-alpha7"
+    compile "android.arch.lifecycle:runtime:$aarchVersion"
+    compile "android.arch.lifecycle:extensions:$aarchVersion"
+    kapt "android.arch.lifecycle:compiler:$aarchVersion"
 
     androidTestCompile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
     androidTestCompile "junit:junit:4.12"
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test:runner:1.0.0'
+    androidTestCompile 'com.android.support.test:rules:1.0.0'
     androidTestCompile "com.android.support:support-annotations:$supportVersion"
-    androidTestCompile "org.mockito:mockito-android:2.8.9"
+    androidTestCompile "org.mockito:mockito-android:2.8.47"
 }
 
 buildscript {
