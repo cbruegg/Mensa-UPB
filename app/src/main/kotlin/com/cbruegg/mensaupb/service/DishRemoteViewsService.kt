@@ -20,7 +20,7 @@ import com.cbruegg.mensaupb.extensions.*
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withTimeout
+import kotlinx.coroutines.experimental.withTimeoutOrNull
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -97,20 +97,20 @@ class DishRemoteViewsService : RemoteViewsService() {
                     .retrieveConfiguration(appWidgetId)
                     ?: return@runBlocking
 
-            withTimeout(TIMEOUT_MS) {
+            withTimeoutOrNull(TIMEOUT_MS) {
                 val restaurant = repository.restaurantsAsync()
                         .await()
                         .component2()
                         ?.value
                         ?.firstOrNull { it -> it.id == restaurantId }
-                        ?: return@withTimeout
+                        ?: return@withTimeoutOrNull
                 this@DishRemoteViewsFactory.restaurant = restaurant
                 dishes = repository.dishesAsync(restaurant, shownDate)
                         .await()
                         .component2()
                         ?.value
                         ?.sortedWith(ctx.userType.dishComparator)
-                        ?: return@withTimeout
+                        ?: return@withTimeoutOrNull
             }
         }
 

@@ -1,6 +1,5 @@
 package com.cbruegg.mensaupb.cache
 
-import android.os.Parcelable
 import com.cbruegg.mensaupb.deserializeFromSql
 import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.model.Badge
@@ -17,7 +16,7 @@ const val TABLE_DB_DISH = "dishes"
  * Model representing a dish object.
  */
 @Entity @Table(name = TABLE_DB_DISH)
-abstract class DbDish : Persistable, Parcelable {
+abstract class DbDish : Persistable {
 
     @get:Column(name = "id")
     @get:Key @get:Generated abstract val id: Int

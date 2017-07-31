@@ -1,6 +1,5 @@
 package com.cbruegg.mensaupb.cache
 
-import android.os.Parcelable
 import io.requery.*
 import java.util.*
 
@@ -13,7 +12,7 @@ private const val UNIQUE_IDX = "unique_idx"
  * [lastUpdate].
  */
 @Entity @Table(name = TABLE_DB_RESTAURANT_CACHE_ENTRY, uniqueIndexes = arrayOf(UNIQUE_IDX))
-interface DbRestaurantCacheEntry : Persistable, Parcelable {
+interface DbRestaurantCacheEntry : Persistable {
 
     @get:Column(name = "id") @get:Key @get:Generated
     val id: Int
@@ -33,7 +32,7 @@ interface DbRestaurantCacheEntry : Persistable, Parcelable {
  * the list of restaurants was updated.
  */
 @Entity @Table(name = "restaurant_list_cache_meta")
-interface DbRestaurantListCacheMeta : Persistable, Parcelable {
+interface DbRestaurantListCacheMeta : Persistable {
     @get:Column(name = "id") @get:Key
     @Deprecated(message = "Only used for sqlite internally.", replaceWith = ReplaceWith(""))
     val id: Int

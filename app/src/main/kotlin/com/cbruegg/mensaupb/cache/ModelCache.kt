@@ -29,7 +29,7 @@ val oldestAllowedCacheDate: Date
  * If any cache entry is older than this, discard it.
  */
 val oldestAllowedStaleCacheDate: Date
-    get() = now - 2L * 24 * 60 * 60 * 1000
+    get() = if (debugIgnoreCache) now else now - 2L * 24 * 60 * 60 * 1000
 
 /**
  * Class responsible for caching data used by the app.
@@ -123,13 +123,6 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
      * @return The original dish list
      */
     fun cache(restaurant: DbRestaurant, date: Date, dishes: List<Dish>): Deferred<List<DbDish>> = async(DbThread) {
-        run {
-            // TODO (Debugging) Remove this in production
-            val dbRestaurant = data.findByKey(DbRestaurant::class, restaurant.id)
-            require(restaurant == dbRestaurant) { "Trying to insert data referring to restaurant not in DB yet!" }
-            Log.d(TAG, "Restaurant passed to cache(...) is same instance as in DB: ${restaurant === dbRestaurant}")
-        }
-
         val dateAtMidnight = date.atMidnight
         val dbDishes = dishes.toDbDishes(restaurant)
         Log.d(TAG, "Storing dishes for ${restaurant.id} and date $dateAtMidnight")

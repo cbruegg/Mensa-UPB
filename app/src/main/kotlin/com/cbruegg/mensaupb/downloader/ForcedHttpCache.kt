@@ -158,7 +158,7 @@ private fun cleanUpAsync(data: BlockingEntityStore<Persistable>, cacheSize: Long
 }
 
 @Entity @Table(name = "forced_cache_entries")
-interface DbForcedCacheEntry : Persistable, Parcelable {
+interface DbForcedCacheEntry : Persistable {
 
     @get:Column(name = "file") @get:Key @get:Convert(FileConverter::class)
     val file: File

@@ -87,7 +87,7 @@ dependencies {
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion"
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion"
 
-    def requeryVersion = "1.3.2"
+    def requeryVersion = "1.4.0"
     compile "io.requery:requery:$requeryVersion"
     compile "io.requery:requery-android:$requeryVersion"
     compile "io.requery:requery-kotlin:$requeryVersion"
@@ -112,7 +112,7 @@ dependencies {
 }
 
 buildscript {
-    ext.kotlinVersion = '1.1.2-3'
+    ext.kotlinVersion = '1.1.3-2'
     repositories {
         jcenter()
     }

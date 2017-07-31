@@ -16,6 +16,7 @@ import com.cbruegg.mensaupb.activity.userType
 import com.cbruegg.mensaupb.adapter.DishListViewModelAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
+import com.cbruegg.mensaupb.cache.DbRestaurantEntity
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.getDate
 import com.cbruegg.mensaupb.extensions.putDate
@@ -24,6 +25,8 @@ import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
+import io.requery.Persistable
+import io.requery.kotlin.BlockingEntityStore
 import java.util.*
 import javax.inject.Inject
 
@@ -40,7 +43,7 @@ private const val ARG_DISH_NAME = "dish_name"
 fun DishesFragment(restaurant: DbRestaurant, date: Date, dishName: String? = null): DishesFragment {
     @Suppress("DEPRECATION") val fragment = DishesFragment()
     fragment.arguments = Bundle().apply {
-        putParcelable(ARG_RESTAURANT, restaurant)
+        putString(ARG_RESTAURANT, restaurant.id)
         putDate(ARG_DATE, date)
         putString(ARG_DISH_NAME, dishName)
     }
@@ -60,6 +63,7 @@ class DishesFragment
     private val networkErrorMessage: TextView by bindView(R.id.network_error_message)
     private val progressBar: ProgressBar by bindView(R.id.dish_progress_bar)
     @Inject lateinit var repository: Repository
+    @Inject lateinit var data: BlockingEntityStore<Persistable>
 
     private val adapter = DishListViewModelAdapter()
 
@@ -78,9 +82,11 @@ class DishesFragment
             initialDishesViewModel()
         }
         val appContext = app
+        val restaurant = data.findByKey(DbRestaurant::class, arguments.getString(ARG_RESTAURANT))!! // TODO Move this somewhere else?
+
         viewModelController = DishesViewModelController(
                 repository,
-                arguments.getParcelable(ARG_RESTAURANT),
+                restaurant,
                 arguments.getDate(ARG_DATE)!!,
                 context.userType,
                 { toDishViewModels(appContext, it) },

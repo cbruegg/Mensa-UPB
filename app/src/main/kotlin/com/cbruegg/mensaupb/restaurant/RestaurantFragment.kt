@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.bindView
 import com.cbruegg.mensaupb.R
+import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.dishes.DishesFragment
 import com.cbruegg.mensaupb.extensions.getDate
@@ -20,8 +21,11 @@ import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.extensions.putDate
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
+import io.requery.Persistable
+import io.requery.kotlin.BlockingEntityStore
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 private const val ARG_RESTAURANT = "restaurant"
 private const val ARG_REQUESTED_PAGER_POSITION = "pager_position"
@@ -38,7 +42,7 @@ fun RestaurantFragment(restaurant: DbRestaurant,
                        dishName: String? = null): RestaurantFragment {
     @Suppress("DEPRECATION") val fragment = RestaurantFragment()
     fragment.arguments = Bundle().apply {
-        putParcelable(ARG_RESTAURANT, restaurant)
+        putString(ARG_RESTAURANT, restaurant.id)
         putDate(ARG_REQUESTED_PAGER_POSITION, pagerPosition)
         putString(ARG_DISH_NAME, dishName)
     }
@@ -60,6 +64,8 @@ class RestaurantFragment
     private val dayPagerTabs: TabLayout by bindView(R.id.day_pager_tabs)
     private lateinit var adapter: DishesPagerAdapter
 
+    @Inject lateinit var data: BlockingEntityStore<Persistable>
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
             = inflater.inflate(R.layout.fragment_restaurant, container, false)
 
@@ -68,12 +74,18 @@ class RestaurantFragment
         viewModelController.reloadIfNeeded()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        app.appComponent.inject(this)
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         val requestedPagerPosition = arguments.getDate(ARG_REQUESTED_PAGER_POSITION)
-        val restaurant = arguments.getParcelable<DbRestaurant>(ARG_RESTAURANT)
+        val restaurantId = arguments.getString(ARG_RESTAURANT)
         val requestedDishName = arguments.getString(ARG_DISH_NAME)
+        val restaurant = data.findByKey(DbRestaurant::class, restaurantId)!!
 
         // TODO Howto inject the VM?
         viewModel = viewModel { initialRestaurantViewModel(requestedPagerPosition, restaurant, requestedDishName) }

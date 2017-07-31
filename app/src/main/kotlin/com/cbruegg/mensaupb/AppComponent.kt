@@ -5,6 +5,7 @@ import com.cbruegg.mensaupb.cache.ModelCache
 import com.cbruegg.mensaupb.dishes.DishesFragment
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.main.MainActivity
+import com.cbruegg.mensaupb.restaurant.RestaurantFragment
 import com.cbruegg.mensaupb.service.DishRemoteViewsService
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import dagger.Component
@@ -17,6 +18,7 @@ interface AppComponent {
     fun inject(app: MensaApplication)
     fun inject(mainActivity: MainActivity)
     fun inject(dishesFragment: DishesFragment)
+    fun inject(restaurantFragment: RestaurantFragment) // TODO remove this?
     fun inject(modelCache: ModelCache)
     fun inject(dishesWidgetUpdateService: DishesWidgetUpdateService)
     fun inject(dishRemoteViewsFactory: DishRemoteViewsService.DishRemoteViewsFactory)
