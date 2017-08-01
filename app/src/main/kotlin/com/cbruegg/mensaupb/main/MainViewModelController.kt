@@ -89,7 +89,10 @@ class MainViewModelController(
      */
     private fun reloadIfNeeded() = launch(UI) {
         synchronized(viewModel) {
-            val shouldReload = viewModel.lastLoadMeta < now - MAX_RESTAURANTS_AGE_MS
+            val shouldReload = viewModel.lastLoadMeta < now - MAX_RESTAURANTS_AGE_MS ||
+                    requestedDishName != null ||
+                    requestedRestaurantId != null ||
+                    requestedSelectedDay != null
             if (shouldReload) {
                 viewModel.lastLoadMeta = now
             } else {

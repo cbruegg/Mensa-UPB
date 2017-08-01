@@ -1,7 +1,6 @@
 package com.cbruegg.mensaupb.main
 
 import android.appwidget.AppWidgetManager
-import android.arch.lifecycle.LifecycleRegistry
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -29,8 +28,10 @@ import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
+import com.cbruegg.mensaupb.extensions.getDate
 import com.cbruegg.mensaupb.extensions.getDateExtra
 import com.cbruegg.mensaupb.extensions.midnight
+import com.cbruegg.mensaupb.extensions.putDate
 import com.cbruegg.mensaupb.extensions.putDateExtra
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.extensions.toggleDrawer
@@ -93,6 +94,7 @@ class MainActivity : LifecycleActivity() {
     private val STUDENTENWERK_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/")
     private val STUDENTENWERK_OPENING_HOURS_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/oeffnungszeiten")
     private val REQUEST_CODE_PREFERENCES = 1
+    private val KEY_CURRENTLY_DISPLAYED_DAY = "currently_displayed_day"
 
     /*
      * Views
@@ -156,13 +158,13 @@ class MainActivity : LifecycleActivity() {
         sendBroadcast(intent)
     }
 
-    private fun createViewModelController(mainViewModel: MainViewModel) = MainViewModelController(
+    private fun createViewModelController(mainViewModel: MainViewModel, savedInstanceState: Bundle?) = MainViewModelController(
             repository,
             oneOff,
             mainViewModel,
             intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID) ?: lastRestaurantId,
             intent.getStringExtra(ARG_REQUESTED_DISH_NAME),
-            intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
+            savedInstanceState?.getDate(KEY_CURRENTLY_DISPLAYED_DAY) ?: intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
     )
 
     private lateinit var viewModel: MainViewModel
@@ -187,7 +189,7 @@ class MainActivity : LifecycleActivity() {
         app.appComponent.inject(this)
 
         viewModel = viewModel(::initialMainViewModel)
-        viewModelController = createViewModelController(viewModel)
+        viewModelController = createViewModelController(viewModel, savedInstanceState)
 
         // Setup the restaurant list in the drawer
         restaurantAdapter.onClickListener = { restaurant, _ ->
@@ -226,6 +228,13 @@ class MainActivity : LifecycleActivity() {
 
         viewModelController.start()
         requestWidgetUpdate()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // We save this manually since RestaurantFragment will be reloaded
+        // due to the initial call to the observer of restaurantLoadSpec
+        outState.putDate(KEY_CURRENTLY_DISPLAYED_DAY, currentlyDisplayedDay)
     }
 
     private fun showNetworkError() {
