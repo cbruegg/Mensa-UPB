@@ -86,8 +86,8 @@ private fun DbDish.toDishViewModel(userType: UserType, context: Context, positio
             .joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionId) })
             .toString()
             .capitalizeFirstChar()
-    val description = Html.fromHtml(context.getString(R.string.row_dish_description, name, priceText, badgesText)).trim()
-    return DishViewModel(this, priceText, allergensText, badgesText, this.displayName(), description)
+    val description = Html.fromHtml(context.getString(R.string.row_dish_description, displayName(), priceText, badgesText)).trim()
+    return DishViewModel(this, priceText, allergensText, badgesText, displayName(), description)
 }
 
 
