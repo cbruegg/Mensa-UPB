@@ -186,7 +186,7 @@ class MainActivity : LifecycleActivity() {
 
         app.appComponent.inject(this)
 
-        viewModel = viewModel { initialMainViewModel() }
+        viewModel = viewModel(::initialMainViewModel)
         viewModelController = createViewModelController(viewModel)
 
         // Setup the restaurant list in the drawer

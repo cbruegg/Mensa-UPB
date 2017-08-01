@@ -53,7 +53,7 @@ class DishesAppWidgetConfigActivity : LifecycleActivity() {
         setContentView(R.layout.activity_app_widget_config)
         setResult(RESULT_CANCELED)
 
-        viewModel = viewModel { initialDishesAppWidgetViewModel() }
+        viewModel = viewModel(::initialDishesAppWidgetViewModel)
         viewModelController = createController(viewModel)
 
         viewModel.networkError.observe(this) {

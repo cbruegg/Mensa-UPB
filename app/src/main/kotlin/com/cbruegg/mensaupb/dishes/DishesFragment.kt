@@ -16,7 +16,6 @@ import com.cbruegg.mensaupb.activity.userType
 import com.cbruegg.mensaupb.adapter.DishListViewModelAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.cache.DbRestaurantEntity
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.getDate
 import com.cbruegg.mensaupb.extensions.putDate
