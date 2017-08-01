@@ -32,9 +32,9 @@ private fun getDisplaySize(context: Context): Pair<Int, Int> {
  */
 fun showDishDetailsDialog(context: Context, dishViewModel: DishViewModel, onDismiss: () -> Unit = {}) {
     val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_dish_details, null, false)
-    val imageView = dialogView.findViewById(R.id.dish_image) as ImageView
-    val descriptionView = dialogView.findViewById(R.id.dish_description) as TextView
-    val progressBar = dialogView.findViewById(R.id.dish_image_progressbar) as ProgressBar
+    val imageView = dialogView.findViewById<ImageView>(R.id.dish_image)
+    val descriptionView = dialogView.findViewById<TextView>(R.id.dish_description)
+    val progressBar = dialogView.findViewById<ProgressBar>(R.id.dish_image_progressbar)
 
     val alertDialog = AlertDialog.Builder(context)
             .setView(dialogView)

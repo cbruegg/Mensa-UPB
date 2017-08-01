@@ -4,15 +4,15 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-allopen'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
 
     compileOptions.incremental = true
 
     defaultConfig {
         applicationId "com.cbruegg.mensaupb"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 13
         versionName "1.4.5"
         vectorDrawables.useSupportLibrary = true
@@ -52,7 +52,7 @@ kotlin {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    def supportVersion = "25.4.0"
+    def supportVersion = "26.0.0"
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support:recyclerview-v7:$supportVersion"
     compile "com.android.support:design:$supportVersion"

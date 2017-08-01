@@ -5,5 +5,9 @@ import android.arch.lifecycle.LifecycleRegistryOwner
 import android.support.v7.app.AppCompatActivity
 
 abstract class LifecycleActivity: AppCompatActivity(), LifecycleRegistryOwner {
-    override fun getLifecycle() = LifecycleRegistry(this)
+
+    @Suppress("LeakingThis")
+    private val registry = LifecycleRegistry(this)
+
+    override fun getLifecycle() = registry
 }
