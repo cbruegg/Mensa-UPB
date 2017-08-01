@@ -109,7 +109,6 @@ class MainActivity : LifecycleActivity() {
 
     @Inject lateinit var repository: Repository
     @Inject lateinit var oneOff: OneOff
-    private val lifecycleRegistry = LifecycleRegistry(this)
 
     private var isLoading: Boolean
         get() = progressBar.visibility == View.VISIBLE

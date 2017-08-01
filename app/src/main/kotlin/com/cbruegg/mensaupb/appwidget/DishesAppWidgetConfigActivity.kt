@@ -31,7 +31,6 @@ class DishesAppWidgetConfigActivity : LifecycleActivity() {
     private val confirmButton by bindView<Button>(R.id.widget_config_confirm)
     private val progressBar by bindView<ProgressBar>(R.id.widget_config_progressbar)
 
-    private val lifecycleRegistry = LifecycleRegistry(this)
     private val appWidgetId by lazy {
         intent.extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID)
