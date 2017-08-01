@@ -81,7 +81,8 @@ class DishesFragment
             initialDishesViewModel()
         }
         val appContext = app
-        val restaurant = data.findByKey(DbRestaurant::class, arguments.getString(ARG_RESTAURANT))!! // TODO Move this somewhere else?
+        val restaurant = data.findByKey(DbRestaurant::class, arguments.getString(ARG_RESTAURANT))
+                ?: throw IllegalArgumentException("Supplied restaurant ID is not in the database!")
 
         viewModelController = DishesViewModelController(
                 repository,

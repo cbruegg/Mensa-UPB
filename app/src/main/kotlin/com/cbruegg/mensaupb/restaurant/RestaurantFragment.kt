@@ -87,7 +87,6 @@ class RestaurantFragment
         val requestedDishName = arguments.getString(ARG_DISH_NAME)
         val restaurant = data.findByKey(DbRestaurant::class, restaurantId)!!
 
-        // TODO Howto inject the VM?
         viewModel = viewModel { initialRestaurantViewModel(requestedPagerPosition, restaurant, requestedDishName) }
         viewModelController = RestaurantViewModelController(viewModel)
         viewModel.pagerInfo.observe(this) {
