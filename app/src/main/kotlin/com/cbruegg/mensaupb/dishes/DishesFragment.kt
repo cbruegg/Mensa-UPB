@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import butterknife.bindView
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
+import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.userType
 import com.cbruegg.mensaupb.adapter.DishListViewModelAdapter
@@ -64,7 +66,7 @@ class DishesFragment
     @Inject lateinit var repository: Repository
     @Inject lateinit var data: BlockingEntityStore<Persistable>
 
-    private val adapter = DishListViewModelAdapter()
+    private val adapter by lazy { DishListViewModelAdapter(GlideApp.with(this)) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,6 +138,7 @@ class DishesFragment
         adapter.onClickListener = { dishViewModel, _ -> viewModelController.onDishClicked(dishViewModel) }
         dishList.adapter = adapter
         dishList.layoutManager = LinearLayoutManager(activity)
+        dishList.addOnScrollListener(RecyclerViewPreloader(this, adapter, adapter, 5))
 
         super.onViewCreated(view, savedInstanceState)
     }

@@ -20,6 +20,7 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import butterknife.bindView
+import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.LifecycleActivity
 import com.cbruegg.mensaupb.activity.PreferenceActivity
@@ -103,7 +104,7 @@ class MainActivity : LifecycleActivity() {
     private val restaurantList: RecyclerView by bindView(R.id.restaurant_list)
     private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
     private val progressBar: ProgressBar by bindView(R.id.main_progress_bar)
-    val restaurantAdapter = RestaurantAdapter()
+    private val restaurantAdapter by lazy { RestaurantAdapter(GlideApp.with(this)) }
 
     /*
      * Other vars

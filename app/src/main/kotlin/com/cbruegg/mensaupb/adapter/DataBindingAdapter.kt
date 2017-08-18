@@ -1,11 +1,16 @@
 package com.cbruegg.mensaupb.adapter
 
 import android.databinding.ViewDataBinding
+import android.support.annotation.IdRes
 import android.support.annotation.LayoutRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import com.bumptech.glide.ListPreloader
+import com.bumptech.glide.RequestBuilder
 import com.cbruegg.mensaupb.BR
+import com.cbruegg.mensaupb.GlideRequests
 
 /**
  * A RecyclerView adapter that auto-updates the RecyclerView on changes
@@ -15,8 +20,22 @@ import com.cbruegg.mensaupb.BR
  * @param [delegateFor]  A selector for the delegate to use for the specific instance.
  *                       For the same instance, this should always return the same delegate.
  */
-class DataBindingAdapter<DATA : Any>(private val delegateFor: (DATA) -> DataBindingViewTypeDelegate<DATA>)
-    : ObservableListAdapter<DATA, BindingHolder<ViewDataBinding>>() {
+class DataBindingAdapter<DATA : Any>(
+        private val glide: GlideRequests,
+        private val imageUrlGetter: (DATA) -> String?,
+        private val delegateFor: (DATA) -> DataBindingViewTypeDelegate<DATA>
+) : ObservableListAdapter<DATA, BindingHolder<ViewDataBinding>>(),
+        ListPreloader.PreloadModelProvider<DATA>,
+        ListPreloader.PreloadSizeProvider<DATA> {
+
+    private val stolenSizeByViewType = mutableMapOf<Int, IntArray>()
+
+    override fun getPreloadRequestBuilder(item: DATA): RequestBuilder<*> = glide.load(imageUrlGetter(item))
+
+    override fun getPreloadItems(position: Int): List<DATA> = listOf(list[position])
+
+    override fun getPreloadSize(item: DATA, adapterPosition: Int, perItemPosition: Int): IntArray? =
+            stolenSizeByViewType[getItemViewType(adapterPosition)]
 
     private val delegateByViewType = mutableMapOf<Int, DataBindingViewTypeDelegate<DATA>>()
 
@@ -31,6 +50,11 @@ class DataBindingAdapter<DATA : Any>(private val delegateFor: (DATA) -> DataBind
         holder.binding.setVariable(delegate.modelVar, item)
         holder.binding.setVariable(delegate.onClickListenerVar, onClickListener)
         holder.binding.executePendingBindings()
+
+        if (viewType !in stolenSizeByViewType && delegate.imageId != null) {
+            val iv = holder.itemView.findViewById<ImageView>(delegate.imageId)
+            stolenSizeByViewType[viewType] = intArrayOf(iv.width, iv.height)
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -58,10 +82,19 @@ inline fun <reified DATA : Any> DataBindingAdapter(
         /**
          * Variable id to set the onClickListener to.
          */
-        onClickListenerVar: Int = BR.onClickListener
+        onClickListenerVar: Int = BR.onClickListener,
+        /**
+         * Id of a view holding an image. Needs to have a fixed size.
+         */
+        @IdRes imageId: Int?,
+        glide: GlideRequests,
+        /**
+         * Optionally returns an image URL for preloading.
+         */
+        noinline imageUrlGetter: (DATA) -> String?
 ): DataBindingAdapter<DATA> {
-    val delegate = DataBindingViewTypeDelegate<DATA>(layoutId, modelVar, onClickListenerVar)
-    return DataBindingAdapter<DATA> { delegate }
+    val delegate = DataBindingViewTypeDelegate<DATA>(layoutId, modelVar, onClickListenerVar, imageId)
+    return DataBindingAdapter<DATA>(glide, imageUrlGetter) { delegate }
 }
 
 data class DataBindingViewTypeDelegate<DATA>(
@@ -76,5 +109,9 @@ data class DataBindingViewTypeDelegate<DATA>(
         /**
          * Variable id to set the onClickListener to.
          */
-        val onClickListenerVar: Int = BR.onClickListener
+        val onClickListenerVar: Int = BR.onClickListener,
+        /**
+         * Optional ID of a view holding an image
+         */
+        @IdRes val imageId: Int? = null
 )
