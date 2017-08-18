@@ -50,64 +50,64 @@ kotlin {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     def supportVersion = "26.0.1"
-    compile "com.android.support:appcompat-v7:$supportVersion"
-    compile "com.android.support:recyclerview-v7:$supportVersion"
-    compile "com.android.support:design:$supportVersion"
-    compile "com.android.support:preference-v7:$supportVersion"
-    compile "com.android.support:customtabs:$supportVersion"
-    compile "com.android.support:support-annotations:$supportVersion"
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    implementation "com.android.support:appcompat-v7:$supportVersion"
+    implementation "com.android.support:recyclerview-v7:$supportVersion"
+    implementation "com.android.support:design:$supportVersion"
+    implementation "com.android.support:preference-v7:$supportVersion"
+    implementation "com.android.support:customtabs:$supportVersion"
+    implementation "com.android.support:support-annotations:$supportVersion"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation 'com.squareup.okhttp3:okhttp:3.8.1'
 
     def moshiVersion = "1.5.0"
-    compile "com.squareup.moshi:moshi-parent:$moshiVersion"
-    compile "com.squareup.moshi:moshi-adapters:$moshiVersion"
-    compile "com.squareup.moshi:moshi-kotlin:$moshiVersion"
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
+    implementation "com.squareup.moshi:moshi-parent:$moshiVersion"
+    implementation "com.squareup.moshi:moshi-adapters:$moshiVersion"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
 
     def funktionaleVersion = "1.1"
-    compile "org.funktionale:funktionale:$funktionaleVersion"
-    compile "org.funktionale:funktionale-either:$funktionaleVersion"
+    implementation "org.funktionale:funktionale:$funktionaleVersion"
+    implementation "org.funktionale:funktionale-either:$funktionaleVersion"
 
     kapt "com.android.databinding:compiler:$rootProject.androidToolsVersion"
 
     def daggerVersion = "2.11"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
-    compile "com.google.dagger:dagger:$daggerVersion"
-    provided 'javax.annotation:jsr250-api:1.0'
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    compileOnly 'javax.annotation:jsr250-api:1.0'
 
     def coroutineVersion = "0.17"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion"
 
     def requeryVersion = "1.4.0"
-    compile "io.requery:requery:$requeryVersion"
-    compile "io.requery:requery-android:$requeryVersion"
-    compile "io.requery:requery-kotlin:$requeryVersion"
+    implementation "io.requery:requery:$requeryVersion"
+    implementation "io.requery:requery-android:$requeryVersion"
+    implementation "io.requery:requery-kotlin:$requeryVersion"
     kapt "io.requery:requery-processor:$requeryVersion"
 
-    compile "org.ccil.cowan.tagsoup:tagsoup:1.2.1"
+    implementation "org.ccil.cowan.tagsoup:tagsoup:1.2.1"
 
     def stethoVersion = "1.5.0"
-    debugCompile "com.facebook.stetho:stetho:$stethoVersion"
-    debugCompile "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
+    debugImplementation "com.facebook.stetho:stetho:$stethoVersion"
+    debugImplementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
 
-    def aarchVersion = "1.0.0-alpha7"
-    compile "android.arch.lifecycle:runtime:$aarchVersion"
-    compile "android.arch.lifecycle:extensions:$aarchVersion"
+    def aarchVersion = "1.0.0-alpha9"
+    implementation "android.arch.lifecycle:runtime:$aarchVersion"
+    implementation "android.arch.lifecycle:extensions:$aarchVersion"
     kapt "android.arch.lifecycle:compiler:$aarchVersion"
 
-    androidTestCompile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-    androidTestCompile "junit:junit:4.12"
-    androidTestCompile 'com.android.support.test:runner:1.0.0'
-    androidTestCompile 'com.android.support.test:rules:1.0.0'
-    androidTestCompile "com.android.support:support-annotations:$supportVersion"
-    androidTestCompile "org.mockito:mockito-android:2.8.47"
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+    androidTestImplementation "junit:junit:4.12"
+    androidTestImplementation 'com.android.support.test:runner:1.0.0'
+    androidTestImplementation 'com.android.support.test:rules:1.0.0'
+    androidTestImplementation "com.android.support:support-annotations:$supportVersion"
+    androidTestImplementation "org.mockito:mockito-android:2.8.47"
 }
 
 buildscript {
