@@ -92,8 +92,8 @@ class MainActivity : LifecycleActivity() {
 
     private val PREFS_FILE_NAME = "main_activity_prefs"
     private val PREFS_KEY_LAST_SELECTED_RESTAURANT = "last_selected_restaurant"
-    private val STUDENTENWERK_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/")
-    private val STUDENTENWERK_OPENING_HOURS_URI = Uri.parse("http://www.studentenwerk-pb.de/gastronomie/oeffnungszeiten")
+    private val STUDENTENWERK_URI = Uri.parse("http://www.studierendenwerk-pb.de/gastronomie/")
+    private val STUDENTENWERK_OPENING_HOURS_URI = Uri.parse("http://www.studierendenwerk-pb.de/gastronomie/oeffnungszeiten")
     private val REQUEST_CODE_PREFERENCES = 1
     private val KEY_CURRENTLY_DISPLAYED_DAY = "currently_displayed_day"
 

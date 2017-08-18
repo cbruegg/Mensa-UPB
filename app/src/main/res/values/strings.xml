@@ -17,7 +17,7 @@
     <string name="user_type_preference_default" translatable="false">student</string>
     <string name="settings">Settings</string>
     <string name="restaurants">Restaurants</string>
-    <string name="studentenwerk_paderborn" translatable="false">Studentenwerk Paderborn</string>
+    <string name="studentenwerk_paderborn" translatable="false">Studierendenwerk Paderborn</string>
 
     <string name="network_error">There was an error while connecting to the network service.</string>
     <string name="dish_image">Dish image</string>

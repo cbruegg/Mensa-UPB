@@ -23,7 +23,7 @@ import java.util.Date
 import javax.inject.Inject
 
 private const val API_ID = BuildConfig.API_ID
-private const val BASE_URL = "http://www.studentenwerk-pb.de/fileadmin/shareddata/access2.php?id=" + API_ID
+private const val BASE_URL = "http://www.studierendenwerk-pb.de/fileadmin/shareddata/access2.php?id=" + API_ID
 private const val RESTAURANT_URL = BASE_URL + "&getrestaurants=1"
 private const val TIMEOUT_MS = 10_000L
 
