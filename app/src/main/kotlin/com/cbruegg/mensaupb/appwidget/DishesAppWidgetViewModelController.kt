@@ -2,10 +2,10 @@ package com.cbruegg.mensaupb.appwidget
 
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
-import com.cbruegg.mensaupb.extensions.use
 import com.cbruegg.mensaupb.viewmodel.uiSorted
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.sync.withLock
 
 class DishesAppWidgetViewModelController(
         private val repository: Repository,
@@ -23,9 +23,9 @@ class DishesAppWidgetViewModelController(
     }
 
     fun load() = launch(UI) {
-        viewModel.loadingMutex.use {
+        viewModel.loadingMutex.withLock {
             if (viewModel.restaurants.data.isNotEmpty() || viewModel.networkError.data) {
-                return@use
+                return@withLock
             }
 
             viewModel.showProgress.data = true
