@@ -19,8 +19,6 @@ object ImageBindingAdapter {
             return
         }
 
-        // TODO add recyclerview integration
-
         GlideApp.with(view)
                 .load(url) // Performs automatic caching based on url (not headers!)
                 .transition(DrawableTransitionOptions.withCrossFade())
