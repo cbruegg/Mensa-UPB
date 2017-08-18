@@ -19,6 +19,7 @@ import com.cbruegg.mensaupb.GlideRequests
  *
  * @param [delegateFor]  A selector for the delegate to use for the specific instance.
  *                       For the same instance, this should always return the same delegate.
+ * @param [imageUrlGetter] Optionally returns an image for preloading
  */
 class DataBindingAdapter<DATA : Any>(
         private val glide: GlideRequests,
@@ -84,7 +85,7 @@ inline fun <reified DATA : Any> DataBindingAdapter(
          */
         onClickListenerVar: Int = BR.onClickListener,
         /**
-         * Id of a view holding an image. Needs to have a fixed size.
+         * Id of a view holding an image used for preloading. Needs to have a fixed size.
          */
         @IdRes imageId: Int?,
         glide: GlideRequests,
@@ -111,7 +112,7 @@ data class DataBindingViewTypeDelegate<DATA>(
          */
         val onClickListenerVar: Int = BR.onClickListener,
         /**
-         * Optional ID of a view holding an image
+         * Optional ID of a view holding an image used for preloading.
          */
         @IdRes val imageId: Int? = null
 )
