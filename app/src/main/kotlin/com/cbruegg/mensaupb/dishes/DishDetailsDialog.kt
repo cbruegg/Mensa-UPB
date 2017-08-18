@@ -2,6 +2,7 @@ package com.cbruegg.mensaupb.dishes
 
 import android.content.Context
 import android.graphics.Point
+import android.graphics.drawable.Drawable
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +11,14 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
+import com.cbruegg.mensaupb.util.OnlyScaleDownCenterInside
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 
 /**
  * @return the size of the display in pixels. The first element of the pair is the width,
@@ -47,24 +52,25 @@ fun showDishDetailsDialog(context: Context, dishViewModel: DishViewModel, onDism
 
     // fit() doesn't work here, as AlertDialogs don't provide
     // a container for inflation, so some LayoutParams don't work
-    Picasso.with(context)
+    GlideApp.with(context)
             .load(dishViewModel.dish.imageUrl)
-            .resize(displaySize.first, displaySize.second)
-            .onlyScaleDown()
-            .centerInside()
-            .into(imageView, object : Callback {
-                override fun onSuccess() {
+            .override(displaySize.first, displaySize.second)
+            .transform(OnlyScaleDownCenterInside)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    Toast.makeText(context, R.string.could_not_load_image, Toast.LENGTH_SHORT).show()
+                    alertDialog.dismiss()
+                    return true
+                }
+
+                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                     progressBar.visibility = View.GONE
                     imageView.visibility = View.VISIBLE
                     descriptionView.visibility = View.VISIBLE
+                    return false
                 }
-
-                override fun onError() {
-                    Toast.makeText(context, R.string.could_not_load_image, Toast.LENGTH_SHORT).show()
-                    alertDialog.dismiss()
-                }
-
             })
+            .into(imageView)
     val fullTextBuilder = StringBuilder()
     if (dishViewModel.containsAllergens) {
         fullTextBuilder.append(dishViewModel.allergensText).append("\n")

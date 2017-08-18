@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
+import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.activity.userType
@@ -15,13 +16,10 @@ import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
-import com.cbruegg.mensaupb.downloader.forceCached
 import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.midnight
 import com.cbruegg.mensaupb.extensions.stackTraceString
-import com.cbruegg.mensaupb.extensions.toUri
 import com.cbruegg.mensaupb.viewmodel.dishComparator
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeoutOrNull
 import java.io.IOException
@@ -73,10 +71,12 @@ class DishRemoteViewsService : RemoteViewsService() {
 
             if (!dish.thumbnailImageUrl.isNullOrEmpty()) {
                 try {
-                    val bitmap = Picasso.with(ctx)
-                            .load(dish.thumbnailImageUrl!!.toUri().forceCached)
-                            .resizeDimen(R.dimen.row_dish_widget_image_size, R.dimen.row_dish_widget_image_size)
+                    val size = ctx.resources.getDimensionPixelSize(R.dimen.row_dish_widget_image_size)
+                    val bitmap = GlideApp.with(ctx)
+                            .asBitmap()
+                            .load(dish.thumbnailImageUrl)
                             .centerCrop()
+                            .submit(size, size)
                             .get()
                     remoteViews.setImageViewBitmap(R.id.dish_widget_image, bitmap)
                 } catch (e: IOException) {

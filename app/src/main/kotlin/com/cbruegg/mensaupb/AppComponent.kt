@@ -23,4 +23,5 @@ interface AppComponent {
     fun inject(dishesWidgetUpdateService: DishesWidgetUpdateService)
     fun inject(dishRemoteViewsFactory: DishRemoteViewsService.DishRemoteViewsFactory)
     fun inject(dishesAppWidgetConfigActivity: DishesAppWidgetConfigActivity)
+    fun inject(glideModule: AppGlideModule)
 }

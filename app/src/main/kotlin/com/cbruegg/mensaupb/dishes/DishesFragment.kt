@@ -140,7 +140,7 @@ class DishesFragment
         super.onViewCreated(view, savedInstanceState)
     }
 
-    fun showDishes(dishes: List<DishListViewModel>) {
+    private fun showDishes(dishes: List<DishListViewModel>) {
         adapter.list.setAll(dishes)
     }
 
