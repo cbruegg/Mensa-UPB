@@ -54,7 +54,9 @@ class DataBindingAdapter<DATA : Any>(
 
         if (viewType !in stolenSizeByViewType && delegate.imageId != null) {
             val iv = holder.itemView.findViewById<ImageView>(delegate.imageId)
-            stolenSizeByViewType[viewType] = intArrayOf(iv.width, iv.height)
+            if (iv.width != 0 && iv.height != 0) {
+                stolenSizeByViewType[viewType] = intArrayOf(iv.width, iv.height)
+            }
         }
     }
 

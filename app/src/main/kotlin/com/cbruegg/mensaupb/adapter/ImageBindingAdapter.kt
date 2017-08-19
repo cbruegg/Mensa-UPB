@@ -21,7 +21,7 @@ object ImageBindingAdapter {
 
         GlideApp.with(view)
                 .load(url) // Performs automatic caching based on url (not headers!)
-                .transition(DrawableTransitionOptions.withCrossFade())
+                .transition(DrawableTransitionOptions.withCrossFade(200))
                 .into(view)
     }
 }
