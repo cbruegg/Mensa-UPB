@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -22,7 +23,6 @@ import android.widget.Toast
 import butterknife.bindView
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
-import com.cbruegg.mensaupb.activity.LifecycleActivity
 import com.cbruegg.mensaupb.activity.PreferenceActivity
 import com.cbruegg.mensaupb.adapter.RestaurantAdapter
 import com.cbruegg.mensaupb.app
@@ -48,7 +48,7 @@ import javax.inject.Inject
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
  */
-class MainActivity : LifecycleActivity() {
+class MainActivity : AppCompatActivity() {
 
     companion object {
 
