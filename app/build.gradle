@@ -14,7 +14,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 26
         versionCode 13
-        versionName "1.4.5"
+        versionName "1.4.6"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -52,7 +52,7 @@ kotlin {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    def supportVersion = "26.0.1"
+    def supportVersion = "26.1.0"
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation "com.android.support:recyclerview-v7:$supportVersion"
     implementation "com.android.support:design:$supportVersion"
@@ -104,10 +104,11 @@ dependencies {
     debugImplementation "com.facebook.stetho:stetho:$stethoVersion"
     debugImplementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
 
-    def aarchVersion = "1.0.0-alpha9"
-    implementation "android.arch.lifecycle:runtime:$aarchVersion"
-    implementation "android.arch.lifecycle:extensions:$aarchVersion"
-    kapt "android.arch.lifecycle:compiler:$aarchVersion"
+    // The following libs don't share a common version for some reason.
+    // See https://commonsware.com/blog/2017/09/14/making-sense-architecture-components-versions.html
+    implementation "android.arch.lifecycle:runtime:1.0.0"
+    implementation "android.arch.lifecycle:extensions:1.0.0-alpha9-1"
+    kapt "android.arch.lifecycle:compiler:1.0.0-alpha9-1"
 
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
     androidTestImplementation "junit:junit:4.12"
