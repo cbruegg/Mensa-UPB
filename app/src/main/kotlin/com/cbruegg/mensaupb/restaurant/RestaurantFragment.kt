@@ -96,8 +96,10 @@ class RestaurantFragment
     }
 
     private fun display(pagerInfo: PagerInfo, requestedDishName: String?) {
+        val pagerIndex = pagerInfo.dates.indexOf(pagerInfo.position) // May be -1
+
         adapter = DishesPagerAdapter(activity, childFragmentManager, viewModel.restaurant,
-                pagerInfo.dates, requestedDishName)
+                pagerInfo.dates, requestedDishName, pagerIndex)
         dayPager.adapter = adapter
         dayPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
@@ -105,7 +107,7 @@ class RestaurantFragment
             }
         })
         dayPagerTabs.setupWithViewPager(dayPager)
-        dayPager.currentItem = pagerInfo.dates.indexOf(pagerInfo.position)
+        dayPager.currentItem = pagerIndex
 
         viewModel.lastLoadMeta = LastLoadMeta(pagerInfo.dates, whenLoaded = now)
     }
@@ -125,15 +127,16 @@ class RestaurantFragment
                                      private val restaurant: DbRestaurant,
                                      val dates: List<Date>,
                                      /**
-                                      * If set, look for a matching dish on the first page
-                                      * and display its image
+                                      * If set, look for a matching dish on the page
+                                      * specified by [dishNamePositionInPager] and display its image
                                       */
-                                     private val dishName: String?) : FragmentStatePagerAdapter(fm) {
+                                     private val dishName: String?,
+                                     private val dishNamePositionInPager: Int?) : FragmentStatePagerAdapter(fm) {
 
         private val dateFormatter = SimpleDateFormat(context.getString(R.string.dateTabFormat))
 
         override fun getItem(position: Int) = DishesFragment(restaurant, dates[position],
-                if (position == 0) dishName else null)
+                if (position == dishNamePositionInPager) dishName else null)
 
         override fun getCount() = dates.size
 

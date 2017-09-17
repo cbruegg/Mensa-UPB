@@ -17,13 +17,13 @@ import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.TAG
-import com.cbruegg.mensaupb.extensions.midnight
+import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.stackTraceString
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeoutOrNull
-import java.io.IOException
 import java.util.Date
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -42,7 +42,7 @@ class DishRemoteViewsService : RemoteViewsService() {
     class DishRemoteViewsFactory(private val ctx: Context, private val appWidgetId: Int) : RemoteViewsFactory {
 
         private val shownDate: Date
-            get() = Date(System.currentTimeMillis() + DishesWidgetUpdateService.DATE_OFFSET)
+            get() = Date(System.currentTimeMillis() + DishesWidgetUpdateService.DATE_OFFSET).atMidnight
 
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
         private var dishes = emptyList<DbDish>()
@@ -60,7 +60,7 @@ class DishRemoteViewsService : RemoteViewsService() {
             val thumbnailVisibility = if (dish.thumbnailImageUrl.isNullOrEmpty()) View.GONE else View.VISIBLE
 
             val dishIntent = Intent().apply {
-                MainActivity.fillIntent(this, restaurant, dish, selectDay = midnight)
+                MainActivity.fillIntent(this, restaurant, dish, selectDay = shownDate)
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
             val remoteViews = RemoteViews(ctx.packageName, R.layout.row_dish_widget).apply {
@@ -79,9 +79,10 @@ class DishRemoteViewsService : RemoteViewsService() {
                             .submit(size, size)
                             .get()
                     remoteViews.setImageViewBitmap(R.id.dish_widget_image, bitmap)
-                } catch (e: IOException) {
+                } catch (e: ExecutionException) {
                     Log.e(TAG, "Downloading '${dish.thumbnailImageUrl}' failed! Not setting an image for '${dish.name}'.")
                     Log.e(TAG, e.stackTraceString)
+                    remoteViews.setViewVisibility(R.id.dish_widget_image, View.GONE)
                 }
             }
 
