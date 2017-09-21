@@ -10,7 +10,6 @@ import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
@@ -23,6 +22,7 @@ import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
+import kotterknife.bindView
 import java.text.SimpleDateFormat
 import java.util.Date
 import javax.inject.Inject

@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
-import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
 import com.cbruegg.mensaupb.app
@@ -17,6 +16,7 @@ import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
+import kotterknife.bindView
 import javax.inject.Inject
 
 /**

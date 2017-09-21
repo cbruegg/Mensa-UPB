@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import butterknife.bindView
+import kotterknife.bindView
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R

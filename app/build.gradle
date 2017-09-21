@@ -15,7 +15,6 @@ android {
         targetSdkVersion 26
         versionCode 14
         versionName "1.4.6"
-        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         def apiIdProps = new Properties()
