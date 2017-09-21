@@ -1,13 +1,13 @@
 package com.cbruegg.mensaupb
 
-import android.app.Application
 import android.content.Context
+import android.support.multidex.MultiDexApplication
 import android.support.v4.app.Fragment
 import installStetho
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
-class MensaApplication : Application() {
+class MensaApplication : MultiDexApplication() {
 
     // TODO Fix empty screen when launched behind lockscreen
 
