@@ -13,8 +13,8 @@ android {
         applicationId "com.cbruegg.mensaupb"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 14
-        versionName "1.4.6"
+        versionCode 15
+        versionName "1.4.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         def apiIdProps = new Properties()
