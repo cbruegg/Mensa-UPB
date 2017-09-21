@@ -80,7 +80,7 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
 
         confirmButton.setOnClickListener {
             viewModelController.onConfirmClicked(spinner.selectedItemPosition)
-            updateWidget()
+            DishesWidgetUpdateService.scheduleUpdate(this, 15, appWidgetId)
         }
         cancelButton.setOnClickListener { viewModelController.onCancel() }
 
@@ -92,14 +92,6 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
      */
     private fun showNetworkError() {
         Toast.makeText(this, R.string.network_error, Toast.LENGTH_LONG).show()
-    }
-
-    /**
-     * Start the widget update service.
-     */
-    private fun updateWidget() {
-        val serviceIntent = DishesWidgetUpdateService.createStartIntent(this, appWidgetId)
-        startService(serviceIntent)
     }
 
 }

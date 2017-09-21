@@ -47,7 +47,11 @@
                 android:resource="@xml/dishes_app_widget_info" />
         </receiver>
 
-        <service android:name=".service.DishesWidgetUpdateService" />
+        <service android:name=".service.DishesWidgetUpdateService">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
 
         <service
             android:name=".service.DishRemoteViewsService"
