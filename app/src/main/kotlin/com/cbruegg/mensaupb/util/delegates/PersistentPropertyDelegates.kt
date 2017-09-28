@@ -7,10 +7,10 @@ import kotlin.reflect.KProperty
 typealias PersistentPropertyDelegate<T> = ReadWriteProperty<Any, T>
 
 abstract class SharedPreferencesPropertyDelegate<T>(
-        protected val sharedPreferencesGetter: () -> SharedPreferences,
+        private val sharedPreferencesProvider: () -> SharedPreferences,
         protected val key: String
 ): PersistentPropertyDelegate<T> {
-    protected val sharedPreferences by lazy { sharedPreferencesGetter() }
+    protected val sharedPreferences by lazy { sharedPreferencesProvider() }
 }
 
 class StringSharedPreferencesPropertyDelegate<S: String?>(

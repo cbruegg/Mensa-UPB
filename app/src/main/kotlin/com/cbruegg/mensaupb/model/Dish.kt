@@ -28,5 +28,5 @@ data class Dish(
         @Json(name = "image") val imageUrl: String?,
         @Json(name = "thumbnail") val thumbnailImageUrl: String?
 ) {
-    @delegate:Transient val badges by lazy { badgesStrings?.map { Badge.findById(it) }?.filterNotNull() ?: emptyList<Badge>() }
+    @delegate:Transient val badges by lazy { badgesStrings?.mapNotNull { Badge.findById(it) } ?: emptyList() }
 }

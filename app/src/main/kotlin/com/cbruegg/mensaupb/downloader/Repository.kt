@@ -56,9 +56,9 @@ import javax.inject.Inject
 
     private suspend fun <L, R, X> RightProjection<L, R>.mapSuspend(f: suspend (R) -> X): Either<L, X> =
             if (e.isLeft()) {
-                Either.Left<L, X>(e.left().get())
+                Either.Left(e.left().get())
             } else {
-                Either.Right<L, X>(f(e.right().get()))
+                Either.Right(f(e.right().get()))
             }
 
     private suspend fun <T : Any> tryStale(
@@ -75,7 +75,7 @@ import javax.inject.Inject
                     Either.Right<IOException, Stale<T>>(cached)
                 }
             }) {
-                Either.Right<IOException, Stale<T>>(it.toNonStale())
+                Either.Right(it.toNonStale())
             }
         } else Either.Right(cached)
     }

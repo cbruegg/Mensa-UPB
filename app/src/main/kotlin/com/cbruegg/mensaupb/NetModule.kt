@@ -6,8 +6,6 @@ import com.cbruegg.mensaupb.downloader.Repository
 import dagger.Module
 import dagger.Provides
 import installStetho
-import io.requery.Persistable
-import io.requery.kotlin.BlockingEntityStore
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
@@ -21,10 +19,7 @@ class NetModule {
 
     @Provides
     @Singleton
-    fun provideOkHttp(context: Context, data: BlockingEntityStore<Persistable>): OkHttpClient =
-            OkHttpClient.Builder()
-                    .installStetho()
-                    .build()
+    fun provideOkHttp(): OkHttpClient = OkHttpClient.Builder().installStetho().build()
 
     @Provides
     @Singleton

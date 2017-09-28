@@ -19,8 +19,7 @@ import android.util.Base64
 inline fun <T> Iterable<T>.serializeForSql(toString: (T) -> String): String =
         map { toString(it) }
                 .onEach { require(it.isNotEmpty()) { "Serialized form must not be empty. " } }
-                .map { Base64.encodeToString(it.toByteArray(), Base64.DEFAULT) }
-                .joinToString(separator = ",")
+                .joinToString(separator = ",") { Base64.encodeToString(it.toByteArray(), Base64.DEFAULT) }
 
 /**
  * Analogue to [serializeForSql]

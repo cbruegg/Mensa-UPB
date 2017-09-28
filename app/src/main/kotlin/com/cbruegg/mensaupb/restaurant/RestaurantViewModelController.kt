@@ -14,12 +14,11 @@ fun initialRestaurantViewModel(requestedPagerPosition: Date?, restaurant: DbRest
             dates.first(),
             dates.last()
     ) ?: dates.first()
-    val viewModel = RestaurantViewModel(
+    return RestaurantViewModel(
             pagerInfo = MutableLiveData(PagerInfo(restrictedPagerPosition, dates)),
             restaurant = restaurant,
             requestedDishName = requestedDishName
     )
-    return viewModel
 }
 
 private const val DAY_COUNT = 7L
@@ -30,7 +29,7 @@ private const val DAY_COUNT = 7L
 private fun computePagerDates(): List<Date> {
     val today = System.currentTimeMillis()
     val dayInMs = TimeUnit.DAYS.toMillis(1)
-    return (0..DAY_COUNT - 1).map { Date(today + it * dayInMs).atMidnight }
+    return (0 until DAY_COUNT).map { Date(today + it * dayInMs).atMidnight }
 }
 
 class RestaurantViewModelController(private val restaurantViewModel: RestaurantViewModel) {
@@ -38,7 +37,7 @@ class RestaurantViewModelController(private val restaurantViewModel: RestaurantV
     fun reloadIfNeeded() {
         val shouldReload = restaurantViewModel.lastLoadMeta?.let { (pagerDates, whenLoaded) ->
             whenLoaded < oldestAllowedCacheDate || pagerDates != computePagerDates()
-        } ?: true
+        } != false
 
         if (shouldReload) {
             reload()

@@ -13,7 +13,6 @@ import com.cbruegg.mensaupb.viewmodel.HeaderViewModel
  */
 fun RestaurantAdapter(glide: GlideRequests) = DataBindingAdapter<DbRestaurant>(R.layout.row_restaurant, BR.restaurant,
         imageId = null, glide = glide) { null }
-typealias RestaurantAdapter = DataBindingAdapter<DbRestaurant>
 
 
 private val headerDelegate = DataBindingViewTypeDelegate<DishListViewModel>(R.layout.row_header, BR.headerViewModel)
@@ -32,5 +31,3 @@ fun DishListViewModelAdapter(glide: GlideRequests) = DataBindingAdapter<DishList
             }
         }
 )
-typealias DishListViewModelAdapter = DataBindingAdapter<DishListViewModel>
-

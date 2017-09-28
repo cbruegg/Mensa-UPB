@@ -97,7 +97,7 @@ inline fun <reified DATA : Any> DataBindingAdapter(
         noinline imageUrlGetter: (DATA) -> String?
 ): DataBindingAdapter<DATA> {
     val delegate = DataBindingViewTypeDelegate<DATA>(layoutId, modelVar, onClickListenerVar, imageId)
-    return DataBindingAdapter<DATA>(glide, imageUrlGetter) { delegate }
+    return DataBindingAdapter(glide, imageUrlGetter) { delegate }
 }
 
 data class DataBindingViewTypeDelegate<DATA>(

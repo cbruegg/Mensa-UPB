@@ -23,7 +23,7 @@ data class DishViewModel(
         val name: String,
         val description: CharSequence
 ): DishListViewModel() {
-    val hasBadges = dish.badges.filterNotNull().isNotEmpty()
+    val hasBadges = dish.badges.isNotEmpty()
     val containsAllergens = dish.allergens.isNotEmpty()
     val hasThumbnail = !dish.thumbnailImageUrl.isNullOrEmpty()
     val hasBigImage = !dish.imageUrl.isNullOrEmpty()
@@ -82,7 +82,6 @@ private fun DbDish.toDishViewModel(userType: UserType, context: Context, positio
     val priceText = "${NUMBER_FORMAT.format(userPrice)} € ${if (priceType == PriceType.WEIGHTED) context.getString(R.string.per_100_gramm) else ""}"
     val allergensText = "${context.getString(R.string.allergens)} ${allergens.replace("A1", context.getString(R.string.allergen_gluten_description)).joinToString()}"
     val badgesText = badges
-            .filterNotNull()
             .joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionId) })
             .toString()
             .capitalizeFirstChar()
