@@ -9,7 +9,6 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
-import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.activity.userType
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
@@ -19,6 +18,7 @@ import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.stackTraceString
+import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeoutOrNull
@@ -45,8 +45,8 @@ class DishRemoteViewsService : RemoteViewsService() {
             get() = Date(System.currentTimeMillis() + DishesWidgetUpdateService.DATE_OFFSET).atMidnight
 
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
-        private var dishes = emptyList<DbDish>()
-        private var restaurant: DbRestaurant? = null
+        @Volatile private var dishes = emptyList<DbDish>()
+        @Volatile private var restaurant: DbRestaurant? = null
         @Inject lateinit var repository: Repository
 
         init {
