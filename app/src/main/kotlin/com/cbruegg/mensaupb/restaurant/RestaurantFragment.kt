@@ -1,16 +1,15 @@
 package com.cbruegg.mensaupb.restaurant
 
-import android.arch.lifecycle.LifecycleFragment
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
@@ -23,6 +22,7 @@ import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
+import kotterknife.bindView
 import java.text.SimpleDateFormat
 import java.util.Date
 import javax.inject.Inject
@@ -55,7 +55,7 @@ fun RestaurantFragment(restaurant: DbRestaurant,
  */
 class RestaurantFragment
 @Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor()
-    : LifecycleFragment() {
+    : Fragment() {
 
     private lateinit var viewModel: RestaurantViewModel
     private lateinit var viewModelController: RestaurantViewModelController

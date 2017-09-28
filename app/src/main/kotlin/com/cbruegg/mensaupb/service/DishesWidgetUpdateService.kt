@@ -1,12 +1,11 @@
 package com.cbruegg.mensaupb.service
 
 import android.app.PendingIntent
-import android.app.Service
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.IBinder
+import android.os.Bundle
 import android.widget.RemoteViews
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.app
@@ -16,6 +15,13 @@ import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Failure
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Success
+import com.firebase.jobdispatcher.Constraint
+import com.firebase.jobdispatcher.FirebaseJobDispatcher
+import com.firebase.jobdispatcher.GooglePlayDriver
+import com.firebase.jobdispatcher.JobParameters
+import com.firebase.jobdispatcher.JobService
+import com.firebase.jobdispatcher.RetryStrategy
+import com.firebase.jobdispatcher.Trigger
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
@@ -29,7 +35,46 @@ import javax.inject.Inject
  * A service that is responsible for updating
  * all dishes widgets.
  */
-class DishesWidgetUpdateService : Service() {
+class DishesWidgetUpdateService : JobService() {
+
+    override fun onStopJob(params: JobParameters): Boolean {
+        return job?.cancel() == true
+    }
+
+    override fun onStartJob(params: JobParameters): Boolean {
+        app.appComponent.inject(this)
+
+        val appWidgetIds = params.extras?.getIntArray(ARG_APPWIDGET_IDS) ?: throw IllegalArgumentException("Missing extras!")
+        val configManager = DishesWidgetConfigurationManager(this@DishesWidgetUpdateService)
+
+        job = launch(UI) {
+            val reschedule = withTimeout(TIMEOUT_MS) {
+                val restaurantsById = repository.restaurantsAsync()
+                        .await()
+                        .component2()
+                        ?.value
+                        ?.associateBy { it.id }
+                        ?: return@withTimeout true
+
+                appWidgetIds
+                        .map { appWidgetId ->
+                            val config = configManager.retrieveConfiguration(appWidgetId)
+                                    ?: return@map null
+                            val restaurant = restaurantsById[config.restaurantId]
+                                    ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
+
+                            DishAppWidgetResult.Success(appWidgetId, restaurant)
+                        }
+                        .filterNotNull()
+                        .forEach { updateAppWidget(it) }
+
+                return@withTimeout false
+            }
+            jobFinished(params, reschedule)
+        }
+
+        return job?.isActive == true
+    }
 
     /**
      * Case class for app widget content results.
@@ -37,7 +82,7 @@ class DishesWidgetUpdateService : Service() {
      * @see Failure
      * @see Success
      */
-    sealed class DishAppWidgetResult(open val appWidgetId: Int) {
+    private sealed class DishAppWidgetResult(open val appWidgetId: Int) {
         data class Success(override val appWidgetId: Int, val restaurant: DbRestaurant) : DishAppWidgetResult(appWidgetId)
         data class Failure(override val appWidgetId: Int, val reason: Reason) : DishAppWidgetResult(appWidgetId) {
             enum class Reason {
@@ -74,10 +119,28 @@ class DishesWidgetUpdateService : Service() {
         /**
          * Function for creating intent that start this service.
          */
-        fun createStartIntent(context: Context, vararg appWidgetIds: Int): Intent =
-                Intent(context, DishesWidgetUpdateService::class.java).apply {
-                    putExtra(ARG_APPWIDGET_IDS, appWidgetIds)
+        private fun createStartExtras(vararg appWidgetIds: Int): Bundle =
+                Bundle().apply {
+                    putIntArray(ARG_APPWIDGET_IDS, appWidgetIds)
                 }
+
+        /**
+         * Schedule an update for the specified widgets within the next
+         * few minutes.
+         */
+        fun scheduleUpdate(context: Context, maxWaitTimeSeconds: Int, vararg appWidgetIds: Int) {
+            val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(context))
+            val job = dispatcher.newJobBuilder()
+                    .setService(DishesWidgetUpdateService::class.java)
+                    .setTag("dishes-widget-update")
+                    .setTrigger(Trigger.executionWindow(0, maxWaitTimeSeconds))
+                    .setReplaceCurrent(true)
+                    .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
+                    .setConstraints(Constraint.ON_ANY_NETWORK)
+                    .setExtras(DishesWidgetUpdateService.createStartExtras(*appWidgetIds))
+                    .build()
+            dispatcher.mustSchedule(job)
+        }
 
     }
 
@@ -86,43 +149,6 @@ class DishesWidgetUpdateService : Service() {
         get() = Date(System.currentTimeMillis() + DATE_OFFSET + INTERNAL_DATE_OFFSET)
 
     @Inject lateinit var repository: Repository
-
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        app.appComponent.inject(this)
-
-        val appWidgetIds = intent.getIntArrayExtra(ARG_APPWIDGET_IDS)
-        val configManager = DishesWidgetConfigurationManager(this@DishesWidgetUpdateService)
-
-        job = launch(UI) {
-            withTimeout(TIMEOUT_MS) {
-                val restaurantsById = repository.restaurantsAsync()
-                        .await()
-                        .component2()
-                        ?.value
-                        ?.associateBy { it.id }
-                        ?: return@withTimeout
-
-                appWidgetIds
-                        .map { appWidgetId ->
-                            val config = configManager.retrieveConfiguration(appWidgetId)
-                                    ?: return@map null
-                            val restaurant = restaurantsById[config.restaurantId]
-                                    ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
-
-                            DishAppWidgetResult.Success(appWidgetId, restaurant)
-                        }
-                        .filterNotNull()
-                        .forEach { updateAppWidget(it) }
-                stopSelf()
-            }
-        }
-
-        return START_REDELIVER_INTENT
-    }
-
-    override fun onBind(intent: Intent): IBinder? {
-        return null
-    }
 
     /**
      * If the result is successful, update the remote views
@@ -136,7 +162,8 @@ class DishesWidgetUpdateService : Service() {
                         appWidgetResult.restaurant
                     }
                     is DishAppWidgetResult.Failure -> {
-                        return updateWithError(appWidgetResult)
+                        updateWithError(appWidgetResult)
+                        return
                     }
                 }
 
@@ -183,11 +210,6 @@ class DishesWidgetUpdateService : Service() {
         val remoteViews = RemoteViews(packageName, R.layout.app_widget_dishes)
         remoteViews.setTextViewText(R.id.dishes_widget_restaurant_name, errorText)
         appWidgetManager.updateAppWidget(appWidgetResult.appWidgetId, remoteViews)
-    }
-
-    override fun onDestroy() {
-        job?.cancel()
-        super.onDestroy()
     }
 
 }

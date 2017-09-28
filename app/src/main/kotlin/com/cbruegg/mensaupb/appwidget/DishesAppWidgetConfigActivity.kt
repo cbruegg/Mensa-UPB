@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
-import butterknife.bindView
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
 import com.cbruegg.mensaupb.app
@@ -17,6 +16,7 @@ import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
+import kotterknife.bindView
 import javax.inject.Inject
 
 /**
@@ -80,7 +80,7 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
 
         confirmButton.setOnClickListener {
             viewModelController.onConfirmClicked(spinner.selectedItemPosition)
-            updateWidget()
+            DishesWidgetUpdateService.scheduleUpdate(this, 15, appWidgetId)
         }
         cancelButton.setOnClickListener { viewModelController.onCancel() }
 
@@ -92,14 +92,6 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
      */
     private fun showNetworkError() {
         Toast.makeText(this, R.string.network_error, Toast.LENGTH_LONG).show()
-    }
-
-    /**
-     * Start the widget update service.
-     */
-    private fun updateWidget() {
-        val serviceIntent = DishesWidgetUpdateService.createStartIntent(this, appWidgetId)
-        startService(serviceIntent)
     }
 
 }

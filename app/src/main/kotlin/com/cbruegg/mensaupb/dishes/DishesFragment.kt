@@ -1,8 +1,8 @@
 package com.cbruegg.mensaupb.dishes
 
-import android.arch.lifecycle.LifecycleFragment
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import butterknife.bindView
+import kotterknife.bindView
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
@@ -57,7 +57,7 @@ fun DishesFragment(restaurant: DbRestaurant, date: Date, dishName: String? = nul
  */
 class DishesFragment
 @Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor()
-    : LifecycleFragment() {
+    : Fragment() {
 
     private val dishList: RecyclerView by bindView(R.id.dish_list)
     private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)

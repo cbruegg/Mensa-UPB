@@ -13,10 +13,10 @@ android {
         applicationId "com.cbruegg.mensaupb"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 14
-        versionName "1.4.6"
-        vectorDrawables.useSupportLibrary = true
+        versionCode 16
+        versionName "1.4.7-1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
 
         def apiIdProps = new Properties()
         apiIdProps.load(new FileInputStream(rootProject.file("api_id.properties")))
@@ -60,8 +60,11 @@ dependencies {
     implementation "com.android.support:customtabs:$supportVersion"
     implementation "com.android.support:support-annotations:$supportVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:multidex:1.0.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     implementation 'com.squareup.okhttp3:okhttp:3.8.1'
+
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.1'
 
     def moshiVersion = "1.5.0"
     implementation "com.squareup.moshi:moshi-parent:$moshiVersion"

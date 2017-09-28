@@ -12,7 +12,7 @@ class DishesAppWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        context.startService(DishesWidgetUpdateService.createStartIntent(context, *appWidgetIds))
+        DishesWidgetUpdateService.scheduleUpdate(context, 15 * 60, *appWidgetIds)
     }
 
 }
