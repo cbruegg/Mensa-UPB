@@ -5,7 +5,7 @@ apply plugin: 'kotlin-allopen'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
 
     compileOptions.incremental = true
 
@@ -62,9 +62,9 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.android.support:multidex:1.0.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    implementation 'com.squareup.okhttp3:okhttp:3.8.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
 
-    implementation 'com.firebase:firebase-jobdispatcher:0.8.1'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.2'
 
     def moshiVersion = "1.5.0"
     implementation "com.squareup.moshi:moshi-parent:$moshiVersion"
@@ -93,7 +93,7 @@ dependencies {
     implementation "io.requery:requery-kotlin:$requeryVersion"
     kapt "io.requery:requery-processor:$requeryVersion"
 
-    def glideVersion = "4.0.0"
+    def glideVersion = "4.1.1"
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
     implementation("com.github.bumptech.glide:recyclerview-integration:$glideVersion") {
@@ -110,8 +110,8 @@ dependencies {
     // The following libs don't share a common version for some reason.
     // See https://commonsware.com/blog/2017/09/14/making-sense-architecture-components-versions.html
     implementation "android.arch.lifecycle:runtime:1.0.0"
-    implementation "android.arch.lifecycle:extensions:1.0.0-alpha9-1"
-    kapt "android.arch.lifecycle:compiler:1.0.0-alpha9-1"
+    implementation "android.arch.lifecycle:extensions:1.0.0-beta1"
+    kapt "android.arch.lifecycle:compiler:1.0.0-beta1"
 
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
     androidTestImplementation "junit:junit:4.12"
