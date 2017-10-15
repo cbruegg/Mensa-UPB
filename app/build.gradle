@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-allopen'
+apply plugin: 'kotlinx-serialization'
 
 android {
     compileSdkVersion 26
@@ -66,11 +67,11 @@ dependencies {
 
     implementation 'com.firebase:firebase-jobdispatcher:0.8.3'
 
-    def moshiVersion = "1.5.0"
-    implementation "com.squareup.moshi:moshi-parent:$moshiVersion"
-    implementation "com.squareup.moshi:moshi-adapters:$moshiVersion"
-    implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
+
     implementation 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
+
+    implementation 'com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.0.0'
 
     def funktionaleVersion = "1.1"
     implementation "org.funktionale:funktionale:$funktionaleVersion"
@@ -123,11 +124,14 @@ dependencies {
 
 buildscript {
     ext.kotlinVersion = '1.1.51'
+    ext.serialization_version = '0.1.1'
     repositories {
         jcenter()
+        maven { url "https://kotlin.bintray.com/kotlinx" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.kotlinx:kotlinx-gradle-serialization-plugin:$serialization_version"
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
     }
 }
@@ -135,4 +139,6 @@ repositories {
     google()
     jcenter()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "https://kotlin.bintray.com/kotlinx" }
+    maven { url "https://dl.bintray.com/cbruegg/cbruegg" }
 }

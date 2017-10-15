@@ -3,7 +3,6 @@ package com.cbruegg.mensaupb.adapter
 import android.content.Context
 import android.widget.ArrayAdapter
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.model.Restaurant
 
 /**
  * A convenience implementation of an ArrayAdapter

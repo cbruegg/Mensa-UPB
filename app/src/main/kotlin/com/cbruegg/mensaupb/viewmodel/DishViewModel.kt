@@ -1,13 +1,15 @@
 package com.cbruegg.mensaupb.viewmodel
 
 import android.content.Context
+import android.support.annotation.StringRes
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.compat.Html
 import com.cbruegg.mensaupb.extensions.capitalizeFirstChar
 import com.cbruegg.mensaupb.extensions.replace
-import com.cbruegg.mensaupb.model.PriceType
 import com.cbruegg.mensaupb.model.UserType
+import com.cbruegg.mensaupbservice.api.Badge
+import com.cbruegg.mensaupbservice.api.PriceType
 import java.text.DecimalFormat
 
 sealed class DishListViewModel
@@ -82,13 +84,19 @@ private fun DbDish.toDishViewModel(userType: UserType, context: Context, positio
     val priceText = "${NUMBER_FORMAT.format(userPrice)} € ${if (priceType == PriceType.WEIGHTED) context.getString(R.string.per_100_gramm) else ""}"
     val allergensText = "${context.getString(R.string.allergens)} ${allergens.replace("A1", context.getString(R.string.allergen_gluten_description)).joinToString()}"
     val badgesText = badges
-            .joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionId) })
+            .joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionStringId) })
             .toString()
             .capitalizeFirstChar()
     val description = Html.fromHtml(context.getString(R.string.row_dish_description, displayName(), priceText, badgesText)).trim()
     return DishViewModel(this, priceText, allergensText, badgesText, displayName(), description)
 }
 
+private val Badge.descriptionStringId get() = when (this) {
+    Badge.VEGAN -> R.string.vegan
+    Badge.VEGETARIAN -> R.string.vegetarian
+    Badge.NONFAT -> R.string.nonfat
+    Badge.LACTOSE_FREE -> R.string.lactose_free
+}
 
 /**
  * A comparator that sorts by the dish category and the price

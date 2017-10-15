@@ -10,24 +10,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <TextView
-            android:id="@+id/no_dishes_message"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:text="@string/no_dishes_found"
-            android:visibility="gone" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/network_error_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableTop="@drawable/ic_error_outline_black_24dp"
-            android:gravity="center"
-            android:text="@string/network_error"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/no_dishes_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/no_dishes_found"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/network_error_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/ic_error_outline_black_24dp"
+                android:gravity="center"
+                android:text="@string/network_error"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <ProgressBar
             android:id="@+id/dish_progress_bar"

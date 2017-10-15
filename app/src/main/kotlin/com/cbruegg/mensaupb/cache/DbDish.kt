@@ -2,11 +2,11 @@ package com.cbruegg.mensaupb.cache
 
 import com.cbruegg.mensaupb.deserializeFromSql
 import com.cbruegg.mensaupb.extensions.atMidnight
-import com.cbruegg.mensaupb.model.Badge
-import com.cbruegg.mensaupb.model.Dish
-import com.cbruegg.mensaupb.model.PriceType
 import com.cbruegg.mensaupb.serializeForSql
 import com.cbruegg.mensaupb.util.LanguageStringSelector
+import com.cbruegg.mensaupbservice.api.Badge
+import com.cbruegg.mensaupbservice.api.Dish
+import com.cbruegg.mensaupbservice.api.PriceType
 import io.requery.CascadeAction
 import io.requery.Column
 import io.requery.Entity

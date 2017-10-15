@@ -9,8 +9,8 @@ import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.minus
 import com.cbruegg.mensaupb.extensions.now
-import com.cbruegg.mensaupb.model.Dish
-import com.cbruegg.mensaupb.model.Restaurant
+import com.cbruegg.mensaupbservice.api.Dish
+import com.cbruegg.mensaupbservice.api.Restaurant
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
 import kotlinx.coroutines.experimental.Deferred
