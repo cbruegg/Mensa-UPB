@@ -71,7 +71,7 @@ dependencies {
 
     implementation 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
 
-    implementation 'com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.0.0'
+    implementation 'com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.0.4'
 
     def funktionaleVersion = "1.1"
     implementation "org.funktionale:funktionale:$funktionaleVersion"
@@ -124,7 +124,7 @@ dependencies {
 
 buildscript {
     ext.kotlinVersion = '1.1.51'
-    ext.serialization_version = '0.1.1'
+    ext.serialization_version = '0.2'
     repositories {
         jcenter()
         maven { url "https://kotlin.bintray.com/kotlinx" }
