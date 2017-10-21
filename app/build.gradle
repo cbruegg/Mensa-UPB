@@ -71,7 +71,7 @@ dependencies {
 
     implementation 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
 
-    implementation 'com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.0.4'
+    implementation 'com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.0.5'
 
     def funktionaleVersion = "1.1"
     implementation "org.funktionale:funktionale:$funktionaleVersion"
