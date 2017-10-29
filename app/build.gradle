@@ -111,8 +111,8 @@ dependencies {
     // The following libs don't share a common version for some reason.
     // See https://commonsware.com/blog/2017/09/14/making-sense-architecture-components-versions.html
     implementation "android.arch.lifecycle:runtime:1.0.0"
-    implementation "android.arch.lifecycle:extensions:1.0.0-beta2"
-    kapt "android.arch.lifecycle:compiler:1.0.0-beta2"
+    implementation "android.arch.lifecycle:extensions:1.0.0-rc1"
+    kapt "android.arch.lifecycle:compiler:1.0.0-rc1"
 
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
     androidTestImplementation "junit:junit:4.12"
