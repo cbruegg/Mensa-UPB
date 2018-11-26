@@ -2,7 +2,6 @@ package com.cbruegg.mensaupb.restaurant
 
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -22,7 +21,7 @@ import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.fragment_restaurant.*
 import java.text.SimpleDateFormat
 import java.util.Date
 import javax.inject.Inject
@@ -61,8 +60,6 @@ class RestaurantFragment
     private lateinit var viewModel: RestaurantViewModel
     private lateinit var viewModelController: RestaurantViewModelController
 
-    private val dayPager: ViewPager by bindView(R.id.day_pager)
-    private val dayPagerTabs: TabLayout by bindView(R.id.day_pager_tabs)
     private lateinit var adapter: DishesPagerAdapter
 
     @Inject

@@ -9,16 +9,13 @@ import android.os.Bundle
 import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ProgressBar
 import android.widget.Toast
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
@@ -41,7 +38,7 @@ import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.activity_main.*
 import java.util.Date
 import javax.inject.Inject
 
@@ -101,9 +98,6 @@ class MainActivity : AppCompatActivity() {
      * Views
      */
 
-    private val restaurantList: RecyclerView by bindView(R.id.restaurant_list)
-    private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
-    private val progressBar: ProgressBar by bindView(R.id.main_progress_bar)
     private val restaurantAdapter by lazy { RestaurantAdapter(GlideApp.with(this)) }
 
     /*
@@ -116,9 +110,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var oneOff: OneOff
 
     private var isLoading: Boolean
-        get() = progressBar.visibility == View.VISIBLE
+        get() = mainProgressBar.visibility == View.VISIBLE
         set(value) {
-            progressBar.visibility = if (value) View.VISIBLE else View.GONE
+            mainProgressBar.visibility = if (value) View.VISIBLE else View.GONE
         }
 
     private val currentlyDisplayedDay: Date?

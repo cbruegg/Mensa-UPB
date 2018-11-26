@@ -5,9 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.Spinner
 import android.widget.Toast
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
@@ -16,7 +13,7 @@ import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.activity_app_widget_config.*
 import javax.inject.Inject
 
 /**
@@ -24,11 +21,6 @@ import javax.inject.Inject
  * be supplied an an AppWidgetId using [AppWidgetManager.EXTRA_APPWIDGET_ID].
  */
 class DishesAppWidgetConfigActivity : AppCompatActivity() {
-
-    private val spinner by bindView<Spinner>(R.id.widget_config_spinner)
-    private val cancelButton by bindView<Button>(R.id.widget_config_cancel)
-    private val confirmButton by bindView<Button>(R.id.widget_config_confirm)
-    private val progressBar by bindView<ProgressBar>(R.id.widget_config_progressbar)
 
     private val appWidgetId by lazy {
         intent.extras.getInt(
@@ -64,13 +56,13 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
             }
         }
         viewModel.restaurants.observe(this) {
-            spinner.adapter = RestaurantSpinnerAdapter(this, it)
+            widgetConfigSpinner.adapter = RestaurantSpinnerAdapter(this, it)
         }
         viewModel.confirmButtonStatus.observe(this) {
-            confirmButton.isEnabled = it
+            widgetConfigConfirm.isEnabled = it
         }
         viewModel.showProgress.observe(this) {
-            progressBar.visibility = if (it) View.VISIBLE else View.INVISIBLE
+            widgetConfigProgressBar.visibility = if (it) View.VISIBLE else View.INVISIBLE
         }
         viewModel.closed.observe(this) {
             if (it) {
@@ -81,11 +73,11 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
             }
         }
 
-        confirmButton.setOnClickListener {
-            viewModelController.onConfirmClicked(spinner.selectedItemPosition)
+        widgetConfigConfirm.setOnClickListener {
+            viewModelController.onConfirmClicked(widgetConfigSpinner.selectedItemPosition)
             DishesWidgetUpdateService.scheduleUpdate(this, 15, appWidgetId)
         }
-        cancelButton.setOnClickListener { viewModelController.onCancel() }
+        widgetConfigCancel.setOnClickListener { viewModelController.onCancel() }
 
         viewModelController.load()
     }

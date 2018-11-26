@@ -4,12 +4,9 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
@@ -27,7 +24,7 @@ import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
-import kotterknife.bindView
+import kotlinx.android.synthetic.main.fragment_dishes.*
 import java.util.Date
 import javax.inject.Inject
 
@@ -58,10 +55,6 @@ fun DishesFragment(restaurant: DbRestaurant, date: Date, dishName: String? = nul
 class DishesFragment
 @Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : Fragment() {
 
-    private val dishList: RecyclerView by bindView(R.id.dish_list)
-    private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)
-    private val networkErrorMessage: TextView by bindView(R.id.network_error_message)
-    private val progressBar: ProgressBar by bindView(R.id.dish_progress_bar)
     @Inject
     lateinit var repository: Repository
     @Inject
@@ -110,7 +103,7 @@ class DishesFragment
             noDishesMessage.visibility = noDishesMessageVisibility(dishListViewModels, viewModel.isLoading.data)
         }
         viewModel.isLoading.observe(this) {
-            progressBar.visibility = if (it) View.VISIBLE else View.GONE
+            dishProgressBar.visibility = if (it) View.VISIBLE else View.GONE
             noDishesMessage.visibility = noDishesMessageVisibility(viewModel.dishViewModels.data, it)
         }
         viewModel.isStale.observe(this) { isStale ->

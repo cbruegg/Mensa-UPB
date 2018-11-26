@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
+        android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -12,7 +12,7 @@
             android:orientation="vertical">
 
             <ProgressBar
-                android:id="@+id/main_progress_bar"
+                android:id="@+id/mainProgressBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/restaurant_list"
+            android:id="@+id/restaurantList"
             android:layout_width="280dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"

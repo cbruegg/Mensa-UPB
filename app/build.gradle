@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlinx-serialization'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-allopen'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 28
@@ -57,8 +58,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.0'
 
     implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
-
-    implementation 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
 
     implementation 'com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.1.0'
 
