@@ -6,20 +6,21 @@ import com.cbruegg.mensaupb.extensions.minus
 import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.Date
 
 private const val MAX_RESTAURANTS_AGE_MS = 24L * 60 * 60 * 1000
 
 class MainViewModelController(
-        private val repository: Repository,
-        private val oneOff: OneOff,
-        private val viewModel: MainViewModel,
-        private var requestedRestaurantId: String?,
-        private var requestedDishName: String?,
-        private var requestedSelectedDay: Date?
-){
+    private val repository: Repository,
+    private val oneOff: OneOff,
+    private val viewModel: MainViewModel,
+    private var requestedRestaurantId: String?,
+    private var requestedDishName: String?,
+    private var requestedSelectedDay: Date?
+) {
 
     private val DEFAULT_RESTAURANT_NAME = "Mensa Academica"
 
@@ -87,7 +88,7 @@ class MainViewModelController(
      * or the network, reloading the fragments afterwards.
      * This is useful for reloading after receiving a new intent.
      */
-    private fun reloadIfNeeded() = launch(UI) {
+    private fun reloadIfNeeded() = GlobalScope.launch(Dispatchers.Main) {
         synchronized(viewModel) {
             val shouldReload = viewModel.lastLoadMeta < now - MAX_RESTAURANTS_AGE_MS ||
                     requestedDishName != null ||
@@ -102,20 +103,20 @@ class MainViewModelController(
 
         viewModel.isLoading.data = true
         repository.restaurantsAsync(acceptStale = true)
-                .await()
-                .fold({
-                    viewModel.restaurants.data = emptyList()
-                    viewModel.networkError.data = true
-                    it.printStackTrace()
-                }) { (restaurants, _) ->
-                    // Since restaurants change rarely, don't show isStale
-                    val preparedList = restaurants.uiSorted()
+            .await()
+            .fold({
+                viewModel.restaurants.data = emptyList()
+                viewModel.networkError.data = true
+                it.printStackTrace()
+            }) { (restaurants, _) ->
+                // Since restaurants change rarely, don't show isStale
+                val preparedList = restaurants.uiSorted()
 
-                    viewModel.restaurants.data = preparedList
-                    viewModel.networkError.data = false
-                    checkShowFirstTimeDrawer()
-                    loadDefaultRestaurant(preparedList)
-                }
+                viewModel.restaurants.data = preparedList
+                viewModel.networkError.data = false
+                checkShowFirstTimeDrawer()
+                loadDefaultRestaurant(preparedList)
+            }
         viewModel.isLoading.data = false
     }
 }

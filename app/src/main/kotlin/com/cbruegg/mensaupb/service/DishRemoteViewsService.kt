@@ -20,8 +20,8 @@ import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.stackTraceString
 import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.viewmodel.dishComparator
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withTimeoutOrNull
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Date
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
@@ -33,8 +33,7 @@ import javax.inject.Inject
  */
 class DishRemoteViewsService : RemoteViewsService() {
 
-    override fun onGetViewFactory(intent: Intent)
-            = DishRemoteViewsFactory(this, intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID))
+    override fun onGetViewFactory(intent: Intent) = DishRemoteViewsFactory(this, intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID))
 
     /**
      * Factory for the remote dish views.
@@ -45,9 +44,12 @@ class DishRemoteViewsService : RemoteViewsService() {
             get() = Date(System.currentTimeMillis() + DishesWidgetUpdateService.DATE_OFFSET).atMidnight
 
         private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
-        @Volatile private var dishes = emptyList<DbDish>()
-        @Volatile private var restaurant: DbRestaurant? = null
-        @Inject lateinit var repository: Repository
+        @Volatile
+        private var dishes = emptyList<DbDish>()
+        @Volatile
+        private var restaurant: DbRestaurant? = null
+        @Inject
+        lateinit var repository: Repository
 
         init {
             ctx.app.appComponent.inject(this)
@@ -73,11 +75,11 @@ class DishRemoteViewsService : RemoteViewsService() {
                 try {
                     val size = ctx.resources.getDimensionPixelSize(R.dimen.row_dish_widget_image_size)
                     val bitmap = GlideApp.with(ctx)
-                            .asBitmap()
-                            .load(dish.thumbnailImageUrl)
-                            .centerCrop()
-                            .submit(size, size)
-                            .get()
+                        .asBitmap()
+                        .load(dish.thumbnailImageUrl)
+                        .centerCrop()
+                        .submit(size, size)
+                        .get()
                     remoteViews.setImageViewBitmap(R.id.dish_widget_image, bitmap)
                 } catch (e: ExecutionException) {
                     Log.e(TAG, "Downloading '${dish.thumbnailImageUrl}' failed! Not setting an image for '${dish.name}'.")
@@ -98,22 +100,22 @@ class DishRemoteViewsService : RemoteViewsService() {
 
         override fun onDataSetChanged() = runBlocking {
             val (restaurantId) = DishesWidgetConfigurationManager(ctx)
-                    .retrieveConfiguration(appWidgetId)
+                .retrieveConfiguration(appWidgetId)
                     ?: return@runBlocking
 
             withTimeoutOrNull(TIMEOUT_MS) {
                 val restaurant = repository.restaurantsAsync()
-                        .await()
-                        .component2()
-                        ?.value
-                        ?.firstOrNull { it -> it.id == restaurantId }
+                    .await()
+                    .component2()
+                    ?.value
+                    ?.firstOrNull { it -> it.id == restaurantId }
                         ?: return@withTimeoutOrNull
                 this@DishRemoteViewsFactory.restaurant = restaurant
                 dishes = repository.dishesAsync(restaurant, shownDate)
-                        .await()
-                        .component2()
-                        ?.value
-                        ?.sortedWith(ctx.userType.dishComparator)
+                    .await()
+                    .component2()
+                    ?.value
+                    ?.sortedWith(ctx.userType.dishComparator)
                         ?: return@withTimeoutOrNull
             }
         }

@@ -63,10 +63,10 @@ class MainActivity : AppCompatActivity() {
          * of the given restaurant.
          */
         fun createStartIntent(
-                context: Context,
-                restaurant: DbRestaurant? = null,
-                dish: DbDish? = null,
-                selectDay: Date? = null
+            context: Context,
+            restaurant: DbRestaurant? = null,
+            dish: DbDish? = null,
+            selectDay: Date? = null
         ): Intent = Intent(context, MainActivity::class.java).apply {
             fillIntent(this, restaurant, dish, selectDay)
         }
@@ -75,10 +75,10 @@ class MainActivity : AppCompatActivity() {
          * Same as [createStartIntent], except this fills an existing intent.
          */
         fun fillIntent(
-                intent: Intent,
-                restaurant: DbRestaurant? = null,
-                dish: DbDish? = null,
-                selectDay: Date? = null
+            intent: Intent,
+            restaurant: DbRestaurant? = null,
+            dish: DbDish? = null,
+            selectDay: Date? = null
         ) {
             intent.putExtra(ARG_REQUESTED_RESTAURANT_ID, restaurant?.id)
             intent.putExtra(ARG_REQUESTED_DISH_NAME, dish?.name)
@@ -110,8 +110,10 @@ class MainActivity : AppCompatActivity() {
      * Other vars
      */
 
-    @Inject lateinit var repository: Repository
-    @Inject lateinit var oneOff: OneOff
+    @Inject
+    lateinit var repository: Repository
+    @Inject
+    lateinit var oneOff: OneOff
 
     private var isLoading: Boolean
         get() = progressBar.visibility == View.VISIBLE
@@ -121,16 +123,16 @@ class MainActivity : AppCompatActivity() {
 
     private val currentlyDisplayedDay: Date?
         get() = (supportFragmentManager
-                .findFragmentById(R.id.fragment_container) as? RestaurantFragment)
-                ?.pagerSelectedDate
+            .findFragmentById(R.id.fragment_container) as? RestaurantFragment)
+            ?.pagerSelectedDate
 
     private inline fun showAppWidgetAd(crossinline onDismiss: () -> Unit) {
         AlertDialog.Builder(this)
-                .setTitle(R.string.did_you_know)
-                .setMessage(R.string.appwidget_ad)
-                .setPositiveButton(R.string.ok, null)
-                .setOnDismissListener { onDismiss() }
-                .show()
+            .setTitle(R.string.did_you_know)
+            .setMessage(R.string.appwidget_ad)
+            .setPositiveButton(R.string.ok, null)
+            .setOnDismissListener { onDismiss() }
+            .show()
     }
 
     private fun setRestaurants(restaurants: List<DbRestaurant>) {
@@ -160,20 +162,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createViewModelController(mainViewModel: MainViewModel, savedInstanceState: Bundle?) = MainViewModelController(
-            repository,
-            oneOff,
-            mainViewModel,
-            intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID) ?: lastRestaurantId,
-            intent.getStringExtra(ARG_REQUESTED_DISH_NAME),
-            savedInstanceState?.getDate(KEY_CURRENTLY_DISPLAYED_DAY) ?: intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
+        repository,
+        oneOff,
+        mainViewModel,
+        intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID) ?: lastRestaurantId,
+        intent.getStringExtra(ARG_REQUESTED_DISH_NAME),
+        savedInstanceState?.getDate(KEY_CURRENTLY_DISPLAYED_DAY) ?: intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
     )
 
     private lateinit var viewModel: MainViewModel
     private lateinit var viewModelController: MainViewModelController
     private var lastRestaurantId by StringSharedPreferencesPropertyDelegate<String?>(
-            sharedPreferences = { getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE) },
-            key = PREFS_KEY_LAST_SELECTED_RESTAURANT,
-            defaultValue = null
+        sharedPreferences = { getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE) },
+        key = PREFS_KEY_LAST_SELECTED_RESTAURANT,
+        defaultValue = null
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -270,12 +272,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun Uri.showInCustomTab() {
         CustomTabsIntent.Builder()
-                .enableUrlBarHiding()
-                .setInstantAppsEnabled(false)
-                .setShowTitle(true)
-                .setToolbarColor(ContextCompat.getColor(this@MainActivity, R.color.primary))
-                .build()
-                .launchUrl(this@MainActivity, this)
+            .enableUrlBarHiding()
+            .setInstantAppsEnabled(false)
+            .setShowTitle(true)
+            .setToolbarColor(ContextCompat.getColor(this@MainActivity, R.color.primary))
+            .build()
+            .launchUrl(this@MainActivity, this)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -294,14 +296,14 @@ class MainActivity : AppCompatActivity() {
     private fun DbRestaurant.load(day: Date?, showDishWithGermanName: String?) {
         supportActionBar?.title = name
         val restaurantFragment = RestaurantFragment(
-                this,
-                day ?: midnight,
-                showDishWithGermanName
+            this,
+            day ?: midnight,
+            showDishWithGermanName
         )
         supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container, restaurantFragment)
-                .commit()
+            .beginTransaction()
+            .replace(R.id.fragment_container, restaurantFragment)
+            .commit()
     }
 
     override fun onNewIntent(intent: Intent?) {

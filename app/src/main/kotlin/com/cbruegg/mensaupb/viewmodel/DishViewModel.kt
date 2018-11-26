@@ -1,7 +1,6 @@
 package com.cbruegg.mensaupb.viewmodel
 
 import android.content.Context
-import android.support.annotation.StringRes
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.compat.Html
@@ -18,13 +17,13 @@ sealed class DishListViewModel
  * Wrapper for [DbDish] objects providing easy access to various attributes for data binding.
  */
 data class DishViewModel(
-        val dish: DbDish,
-        val priceText: String,
-        val allergensText: String,
-        val badgesText: String?,
-        val name: String,
-        val description: CharSequence
-): DishListViewModel() {
+    val dish: DbDish,
+    val priceText: String,
+    val allergensText: String,
+    val badgesText: String?,
+    val name: String,
+    val description: CharSequence
+) : DishListViewModel() {
     val hasBadges = dish.badges.isNotEmpty()
     val containsAllergens = dish.allergens.isNotEmpty()
     val hasThumbnail = !dish.thumbnailImageUrl.isNullOrEmpty()
@@ -71,7 +70,7 @@ data class DishViewModel(
 
 }
 
-data class HeaderViewModel(val text: CharSequence, val showDivider: Boolean): DishListViewModel()
+data class HeaderViewModel(val text: CharSequence, val showDivider: Boolean) : DishListViewModel()
 
 private val NUMBER_FORMAT = DecimalFormat("0.00")
 
@@ -84,19 +83,20 @@ private fun DbDish.toDishViewModel(userType: UserType, context: Context, positio
     val priceText = "${NUMBER_FORMAT.format(userPrice)} € ${if (priceType == PriceType.WEIGHTED) context.getString(R.string.per_100_gramm) else ""}"
     val allergensText = "${context.getString(R.string.allergens)} ${allergens.replace("A1", context.getString(R.string.allergen_gluten_description)).joinToString()}"
     val badgesText = badges
-            .joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionStringId) })
-            .toString()
-            .capitalizeFirstChar()
+        .joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionStringId) })
+        .toString()
+        .capitalizeFirstChar()
     val description = Html.fromHtml(context.getString(R.string.row_dish_description, displayName(), priceText, badgesText)).trim()
     return DishViewModel(this, priceText, allergensText, badgesText, displayName(), description)
 }
 
-private val Badge.descriptionStringId get() = when (this) {
-    Badge.VEGAN -> R.string.vegan
-    Badge.VEGETARIAN -> R.string.vegetarian
-    Badge.NONFAT -> R.string.nonfat
-    Badge.LACTOSE_FREE -> R.string.lactose_free
-}
+private val Badge.descriptionStringId
+    get() = when (this) {
+        Badge.VEGAN -> R.string.vegan
+        Badge.VEGETARIAN -> R.string.vegetarian
+        Badge.NONFAT -> R.string.nonfat
+        Badge.LACTOSE_FREE -> R.string.lactose_free
+    }
 
 /**
  * A comparator that sorts by the dish category and the price
@@ -105,10 +105,10 @@ private val Badge.descriptionStringId get() = when (this) {
 @Suppress("Destructure")
 val UserType.dishComparator: Comparator<DbDish>
     get() = compareByDescending<DbDish> { it.displayCategory() } // Sort by category
-            .thenComparator { d1, d2 ->
-                if (d1.priceType == d2.priceType) 0 else if (d1.priceType == PriceType.FIXED) -1 else 1
-            } // Weighted is worse
-            .thenBy { selectPrice(it) } // then by actual price
+        .thenComparator { d1, d2 ->
+            if (d1.priceType == d2.priceType) 0 else if (d1.priceType == PriceType.FIXED) -1 else 1
+        } // Weighted is worse
+        .thenBy { selectPrice(it) } // then by actual price
 
 /**
  * Compute the DishViewModels for a list of Dishes.
@@ -137,5 +137,4 @@ private fun isFirstInCategory(index: Int, dishes: List<DbDish>): Boolean {
     return indexDish.displayCategory() != previousDish?.displayCategory?.invoke()
 }
 
-private fun headerTextForIndex(index: Int, dishes: List<DbDish>): String?
-        = if (isFirstInCategory(index, dishes)) dishes[index].displayCategory() else null
+private fun headerTextForIndex(index: Int, dishes: List<DbDish>): String? = if (isFirstInCategory(index, dishes)) dishes[index].displayCategory() else null

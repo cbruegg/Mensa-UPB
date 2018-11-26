@@ -22,6 +22,5 @@ class DishesWidgetConfigurationManager(context: Context) {
     /**
      * @see [DishesWidgetConfiguration.Companion.from]
      */
-    fun retrieveConfiguration(appWidgetId: Int): DishesWidgetConfiguration?
-            = DishesWidgetConfiguration.from(appWidgetId, store)
+    fun retrieveConfiguration(appWidgetId: Int): DishesWidgetConfiguration? = DishesWidgetConfiguration.from(appWidgetId, store)
 }

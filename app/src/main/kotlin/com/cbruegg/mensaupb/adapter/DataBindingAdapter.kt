@@ -22,12 +22,12 @@ import com.cbruegg.mensaupb.GlideRequests
  * @param [imageUrlGetter] Optionally returns an image for preloading
  */
 class DataBindingAdapter<DATA : Any>(
-        private val glide: GlideRequests,
-        private val imageUrlGetter: (DATA) -> String?,
-        private val delegateFor: (DATA) -> DataBindingViewTypeDelegate<DATA>
+    private val glide: GlideRequests,
+    private val imageUrlGetter: (DATA) -> String?,
+    private val delegateFor: (DATA) -> DataBindingViewTypeDelegate<DATA>
 ) : ObservableListAdapter<DATA, BindingHolder<ViewDataBinding>>(),
-        ListPreloader.PreloadModelProvider<DATA>,
-        ListPreloader.PreloadSizeProvider<DATA> {
+    ListPreloader.PreloadModelProvider<DATA>,
+    ListPreloader.PreloadSizeProvider<DATA> {
 
     private val stolenSizeByViewType = mutableMapOf<Int, IntArray>()
 
@@ -36,7 +36,7 @@ class DataBindingAdapter<DATA : Any>(
     override fun getPreloadItems(position: Int): List<DATA> = listOf(list[position])
 
     override fun getPreloadSize(item: DATA, adapterPosition: Int, perItemPosition: Int): IntArray? =
-            stolenSizeByViewType[getItemViewType(adapterPosition)]
+        stolenSizeByViewType[getItemViewType(adapterPosition)]
 
     private val delegateByViewType = mutableMapOf<Int, DataBindingViewTypeDelegate<DATA>>()
 
@@ -74,47 +74,47 @@ class DataBindingAdapter<DATA : Any>(
  * one viewType.
  */
 inline fun <reified DATA : Any> DataBindingAdapter(
-        /**
-         * Layout to use for rows
-         */
-        @LayoutRes layoutId: Int,
-        /**
-         * Variable id from [BR] to assign the model [DATA] to.
-         */
-        modelVar: Int,
-        /**
-         * Variable id to set the onClickListener to.
-         */
-        onClickListenerVar: Int = BR.onClickListener,
-        /**
-         * Id of a view holding an image used for preloading. Needs to have a fixed size.
-         */
-        @IdRes imageId: Int?,
-        glide: GlideRequests,
-        /**
-         * Optionally returns an image URL for preloading.
-         */
-        noinline imageUrlGetter: (DATA) -> String?
+    /**
+     * Layout to use for rows
+     */
+    @LayoutRes layoutId: Int,
+    /**
+     * Variable id from [BR] to assign the model [DATA] to.
+     */
+    modelVar: Int,
+    /**
+     * Variable id to set the onClickListener to.
+     */
+    onClickListenerVar: Int = BR.onClickListener,
+    /**
+     * Id of a view holding an image used for preloading. Needs to have a fixed size.
+     */
+    @IdRes imageId: Int?,
+    glide: GlideRequests,
+    /**
+     * Optionally returns an image URL for preloading.
+     */
+    noinline imageUrlGetter: (DATA) -> String?
 ): DataBindingAdapter<DATA> {
     val delegate = DataBindingViewTypeDelegate<DATA>(layoutId, modelVar, onClickListenerVar, imageId)
     return DataBindingAdapter(glide, imageUrlGetter) { delegate }
 }
 
 data class DataBindingViewTypeDelegate<DATA>(
-        /**
-         * Layout to use for rows
-         */
-        @LayoutRes val layoutId: Int,
-        /**
-         * Variable id from [BR] to assign the model [DATA] to.
-         */
-        val modelVar: Int,
-        /**
-         * Variable id to set the onClickListener to.
-         */
-        val onClickListenerVar: Int = BR.onClickListener,
-        /**
-         * Optional ID of a view holding an image used for preloading.
-         */
-        @IdRes val imageId: Int? = null
+    /**
+     * Layout to use for rows
+     */
+    @LayoutRes val layoutId: Int,
+    /**
+     * Variable id from [BR] to assign the model [DATA] to.
+     */
+    val modelVar: Int,
+    /**
+     * Variable id to set the onClickListener to.
+     */
+    val onClickListenerVar: Int = BR.onClickListener,
+    /**
+     * Optional ID of a view holding an image used for preloading.
+     */
+    @IdRes val imageId: Int? = null
 )

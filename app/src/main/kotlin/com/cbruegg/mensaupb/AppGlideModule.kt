@@ -17,9 +17,10 @@ import javax.inject.Inject
 @GlideModule
 class AppGlideModule : AppGlideModule() {
 
-    @Inject lateinit var client: OkHttpClient
+    @Inject
+    lateinit var client: OkHttpClient
 
-    private val cacheSizeBytes = 50 * 1024 * 1024
+    private val cacheSizeBytes = 50 * 1024 * 1024L
 
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
         super.registerComponents(context, glide, registry)

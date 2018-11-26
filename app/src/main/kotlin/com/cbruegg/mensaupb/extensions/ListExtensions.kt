@@ -13,6 +13,6 @@ fun <T, G : T> MutableList<T>.setAll(collection: Collection<G>) {
  * This method doesn't modify the original list
  */
 fun <T, G : T> List<T>.replace(toReplace: G, by: G): List<T> =
-        List(size) { i ->
-            if (this[i] == toReplace) by else this[i]
-        }
+    List(size) { i ->
+        if (this[i] == toReplace) by else this[i]
+    }

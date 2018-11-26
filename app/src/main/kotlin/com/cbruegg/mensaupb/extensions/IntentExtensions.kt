@@ -8,4 +8,4 @@ fun Intent.putDateExtra(key: String, date: Date?) {
 }
 
 fun Intent.getDateExtra(key: String): Date? =
-        getLongExtra(key, -1).let { if (it == -1L) null else it }?.let(::Date)
+    getLongExtra(key, -1).let { if (it == -1L) null else it }?.let(::Date)

@@ -31,19 +31,22 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
     private val progressBar by bindView<ProgressBar>(R.id.widget_config_progressbar)
 
     private val appWidgetId by lazy {
-        intent.extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                AppWidgetManager.INVALID_APPWIDGET_ID)
+        intent.extras.getInt(
+            AppWidgetManager.EXTRA_APPWIDGET_ID,
+            AppWidgetManager.INVALID_APPWIDGET_ID
+        )
     }
 
-    @Inject lateinit var repository: Repository
+    @Inject
+    lateinit var repository: Repository
     private lateinit var viewModel: DishesAppWidgetViewModel
     private lateinit var viewModelController: DishesAppWidgetViewModelController
 
     private fun createController(viewModel: DishesAppWidgetViewModel) = DishesAppWidgetViewModelController(
-            repository,
-            DishesWidgetConfigurationManager(this),
-            appWidgetId,
-            viewModel
+        repository,
+        DishesWidgetConfigurationManager(this),
+        appWidgetId,
+        viewModel
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

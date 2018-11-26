@@ -42,10 +42,10 @@ fun showDishDetailsDialog(context: Context, dishViewModel: DishViewModel, onDism
     val progressBar = dialogView.findViewById<ProgressBar>(R.id.dish_image_progressbar)
 
     val alertDialog = AlertDialog.Builder(context)
-            .setView(dialogView)
-            .setCancelable(true)
-            .setOnDismissListener { onDismiss() }
-            .create()
+        .setView(dialogView)
+        .setCancelable(true)
+        .setOnDismissListener { onDismiss() }
+        .create()
     alertDialog.show()
 
     val displaySize = getDisplaySize(context)
@@ -53,24 +53,24 @@ fun showDishDetailsDialog(context: Context, dishViewModel: DishViewModel, onDism
     // fit() doesn't work here, as AlertDialogs don't provide
     // a container for inflation, so some LayoutParams don't work
     GlideApp.with(context)
-            .load(dishViewModel.dish.imageUrl)
-            .override(displaySize.first, displaySize.second)
-            .transform(OnlyScaleDownCenterInside)
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    Toast.makeText(context, R.string.could_not_load_image, Toast.LENGTH_SHORT).show()
-                    alertDialog.dismiss()
-                    return true
-                }
+        .load(dishViewModel.dish.imageUrl)
+        .override(displaySize.first, displaySize.second)
+        .transform(OnlyScaleDownCenterInside)
+        .listener(object : RequestListener<Drawable> {
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                Toast.makeText(context, R.string.could_not_load_image, Toast.LENGTH_SHORT).show()
+                alertDialog.dismiss()
+                return true
+            }
 
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    progressBar.visibility = View.GONE
-                    imageView.visibility = View.VISIBLE
-                    descriptionView.visibility = View.VISIBLE
-                    return false
-                }
-            })
-            .into(imageView)
+            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                progressBar.visibility = View.GONE
+                imageView.visibility = View.VISIBLE
+                descriptionView.visibility = View.VISIBLE
+                return false
+            }
+        })
+        .into(imageView)
     val fullTextBuilder = StringBuilder()
     if (dishViewModel.containsAllergens) {
         fullTextBuilder.append(dishViewModel.allergensText).append("\n")

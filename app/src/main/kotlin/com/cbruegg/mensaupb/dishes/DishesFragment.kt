@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import kotterknife.bindView
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
@@ -28,6 +27,7 @@ import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
+import kotterknife.bindView
 import java.util.Date
 import javax.inject.Inject
 
@@ -56,15 +56,16 @@ fun DishesFragment(restaurant: DbRestaurant, date: Date, dishName: String? = nul
  * The factory method newInstance needs to be used.
  */
 class DishesFragment
-@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor()
-    : Fragment() {
+@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : Fragment() {
 
     private val dishList: RecyclerView by bindView(R.id.dish_list)
     private val noDishesMessage: TextView by bindView(R.id.no_dishes_message)
     private val networkErrorMessage: TextView by bindView(R.id.network_error_message)
     private val progressBar: ProgressBar by bindView(R.id.dish_progress_bar)
-    @Inject lateinit var repository: Repository
-    @Inject lateinit var data: BlockingEntityStore<Persistable>
+    @Inject
+    lateinit var repository: Repository
+    @Inject
+    lateinit var data: BlockingEntityStore<Persistable>
 
     private val adapter by lazy { DishListViewModelAdapter(GlideApp.with(this)) }
 
@@ -83,22 +84,23 @@ class DishesFragment
             initialDishesViewModel()
         }
         val appContext = app
+        val arguments = arguments ?: error("No arguments supplied!")
         val restaurant = data.findByKey(DbRestaurant::class, arguments.getString(ARG_RESTAURANT))
                 ?: throw IllegalArgumentException("Supplied restaurant ID is not in the database!")
 
         viewModelController = DishesViewModelController(
-                repository,
-                restaurant,
-                arguments.getDate(ARG_DATE)!!,
-                context.userType,
-                { toDishViewModels(appContext, it) },
-                arguments.getString(ARG_DISH_NAME),
-                viewModel
+            repository,
+            restaurant,
+            arguments.getDate(ARG_DATE)!!,
+            context!!.userType,
+            { toDishViewModels(appContext, it) },
+            arguments.getString(ARG_DISH_NAME),
+            viewModel
         )
 
         viewModel.showDialogFor.observe(this) { dishViewModel ->
             if (dishViewModel != null) {
-                showDishDetailsDialog(context, dishViewModel) {
+                showDishDetailsDialog(context!!, dishViewModel) {
                     viewModelController.onDetailsDialogDismissed()
                 }
             }
@@ -124,7 +126,7 @@ class DishesFragment
     }
 
     private fun noDishesMessageVisibility(dishListViewModels: List<DishListViewModel>, isLoading: Boolean) =
-            if (!isLoading && dishListViewModels.isEmpty()) View.VISIBLE else View.GONE
+        if (!isLoading && dishListViewModels.isEmpty()) View.VISIBLE else View.GONE
 
     override fun onResume() {
         super.onResume()
@@ -132,7 +134,7 @@ class DishesFragment
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.fragment_dishes, container, false)
+        inflater.inflate(R.layout.fragment_dishes, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         adapter.onClickListener = { dishViewModel, _ -> viewModelController.onDishClicked(dishViewModel) }

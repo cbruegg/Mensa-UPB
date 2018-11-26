@@ -10,10 +10,11 @@ import com.cbruegg.mensaupb.parser.parseRestaurantsFromApi
 import com.cbruegg.mensaupb.util.await
 import com.cbruegg.mensaupbservice.api.Dish
 import com.cbruegg.mensaupbservice.api.Restaurant
-import kotlinx.coroutines.experimental.CoroutineDispatcher
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.withTimeoutOrNull
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.funktionale.either.Either
@@ -64,10 +65,10 @@ class Downloader @Inject constructor(private val httpClient: OkHttpClient) {
      * Perform the action with the [dispatcher] and wrap it in [eitherTryIo].
      */
     private fun <T : Any> networkAsync(dispatcher: CoroutineDispatcher = IOPool, f: suspend () -> T): Deferred<IOEither<T>> =
-            async(dispatcher) {
-                eitherTryIo {
-                    f()
-                }
+        GlobalScope.async(dispatcher) {
+            eitherTryIo {
+                f()
             }
+        }
 
 }

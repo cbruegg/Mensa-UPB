@@ -38,8 +38,10 @@ class AppModule(private val app: MensaApplication) {
                 if (oldVersion == 13 && newVersion > 13) {
                     // Clear removed cache
                     val forcedCacheTable = "forced_cache_entries"
-                    val cursor = db.query(forcedCacheTable, arrayOf("file"), null,
-                            null, null, null, null)
+                    val cursor = db.query(
+                        forcedCacheTable, arrayOf("file"), null,
+                        null, null, null, null
+                    )
                     cursor.use {
                         if (it.moveToFirst()) {
                             do {

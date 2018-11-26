@@ -8,4 +8,4 @@ fun Bundle.putDate(key: String, date: Date?) {
 }
 
 fun Bundle.getDate(key: String): Date? =
-        getLong(key, -1).let { if (it == -1L) null else it }?.let(::Date)
+    getLong(key, -1).let { if (it == -1L) null else it }?.let(::Date)

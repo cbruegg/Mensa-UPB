@@ -14,4 +14,4 @@ fun Application.installStetho() {
  * Install Stetho if this is a debug build.
  */
 fun OkHttpClient.Builder.installStetho(): OkHttpClient.Builder =
-        addNetworkInterceptor(StethoInterceptor())
+    addNetworkInterceptor(StethoInterceptor())

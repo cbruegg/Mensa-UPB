@@ -3,15 +3,16 @@ package com.cbruegg.mensaupb.appwidget
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.viewmodel.uiSorted
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.sync.withLock
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 
 class DishesAppWidgetViewModelController(
-        private val repository: Repository,
-        private val dishesWidgetConfigurationManager: DishesWidgetConfigurationManager,
-        private val appWidgetId: Int,
-        private val viewModel: DishesAppWidgetViewModel
+    private val repository: Repository,
+    private val dishesWidgetConfigurationManager: DishesWidgetConfigurationManager,
+    private val appWidgetId: Int,
+    private val viewModel: DishesAppWidgetViewModel
 ) {
 
     private var restaurantList = emptyList<DbRestaurant>()
@@ -22,7 +23,7 @@ class DishesAppWidgetViewModelController(
         viewModel.closed.data = true
     }
 
-    fun load() = launch(UI) {
+    fun load() = GlobalScope.launch(Dispatchers.Main) {
         viewModel.loadingMutex.withLock {
             if (viewModel.restaurants.data.isNotEmpty() || viewModel.networkError.data) {
                 return@withLock
@@ -30,17 +31,17 @@ class DishesAppWidgetViewModelController(
 
             viewModel.showProgress.data = true
             repository
-                    .restaurantsAsync()
-                    .await()
-                    .fold({
-                        viewModel.networkError.data = true
-                        it.printStackTrace()
-                    }) { (restaurants, _) ->
-                        restaurantList = restaurants.uiSorted()
-                        viewModel.restaurants.data = restaurantList
-                        viewModel.networkError.data = false
-                        viewModel.confirmButtonStatus.data = true
-                    }
+                .restaurantsAsync()
+                .await()
+                .fold({
+                    viewModel.networkError.data = true
+                    it.printStackTrace()
+                }) { (restaurants, _) ->
+                    restaurantList = restaurants.uiSorted()
+                    viewModel.restaurants.data = restaurantList
+                    viewModel.networkError.data = false
+                    viewModel.confirmButtonStatus.data = true
+                }
             viewModel.showProgress.data = false
         }
     }

@@ -23,11 +23,14 @@ const val TABLE_DB_DISH = "dishes"
 /**
  * Model representing a dish object.
  */
-@Entity @Table(name = TABLE_DB_DISH)
+@Entity
+@Table(name = TABLE_DB_DISH)
 abstract class DbDish : Persistable {
 
     @get:Column(name = "id")
-    @get:Key @get:Generated abstract val id: Int
+    @get:Key
+    @get:Generated
+    abstract val id: Int
 
     @get:Column(name = "date")
     abstract val date: Date
@@ -86,24 +89,33 @@ abstract class DbDish : Persistable {
     @get:Column(name = "thumbnailImageUrl")
     abstract val thumbnailImageUrl: String?
 
-    @get:Column(name = "restaurant") @get:ManyToOne(cascade = arrayOf(CascadeAction.DELETE))
+    @get:Column(name = "restaurant")
+    @get:ManyToOne(cascade = arrayOf(CascadeAction.DELETE))
     abstract val restaurant: DbRestaurant
 
-    @get:Transient val badges: List<Badge> by lazy { badgesStr.deserializeFromSql { Badge.valueOf(it) } }
-    @get:Transient val allergens: List<String> by lazy { allergensStr.deserializeFromSql { it } }
+    @get:Transient
+    val badges: List<Badge> by lazy { badgesStr.deserializeFromSql { Badge.valueOf(it) } }
+    @get:Transient
+    val allergens: List<String> by lazy { allergensStr.deserializeFromSql { it } }
 
-    @get:Transient val name get() = nameDE
+    @get:Transient
+    val name
+        get() = nameDE
 
-    @get:Transient val displayName: LanguageStringSelector<String> by lazy {
+    @get:Transient
+    val displayName: LanguageStringSelector<String> by lazy {
         LanguageStringSelector("en" to nameEN, "de" to nameDE)
     }
-    @get:Transient val displayDescription: LanguageStringSelector<String?> by lazy {
+    @get:Transient
+    val displayDescription: LanguageStringSelector<String?> by lazy {
         LanguageStringSelector("en" to descriptionEN, "de" to descriptionDE)
     }
-    @get:Transient val displayCategory: LanguageStringSelector<String> by lazy {
+    @get:Transient
+    val displayCategory: LanguageStringSelector<String> by lazy {
         LanguageStringSelector("en" to categoryEN, "de" to categoryDE)
     }
-    @get:Transient val displaySubcategory: LanguageStringSelector<String> by lazy {
+    @get:Transient
+    val displaySubcategory: LanguageStringSelector<String> by lazy {
         LanguageStringSelector("en" to subcategoryEN, "de" to subcategoryDE)
     }
 

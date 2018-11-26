@@ -17,8 +17,8 @@ val Throwable.stackTraceString
  * or a caught [IOException] on the [Either.Left] side.
  */
 inline fun <T : Any> eitherTryIo(f: () -> T): Either<IOException, T> =
-        try {
-            Either.Right(f())
-        } catch (e: IOException) {
-            Either.Left(e)
-        }
+    try {
+        Either.Right(f())
+    } catch (e: IOException) {
+        Either.Left(e)
+    }

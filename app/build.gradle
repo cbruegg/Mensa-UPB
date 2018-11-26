@@ -1,19 +1,16 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlinx-serialization'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-allopen'
-apply plugin: 'kotlinx-serialization'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
-
-    compileOptions.incremental = true
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.cbruegg.mensaupb"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 28
         versionCode 18
         versionName "1.5.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -44,57 +41,49 @@ android {
     }
 }
 
-kotlin {
-    experimental {
-        coroutines "enable"
-    }
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    def supportVersion = "26.1.0"
+    def supportVersion = "28.0.0"
     implementation "com.android.support:appcompat-v7:$supportVersion"
     implementation "com.android.support:recyclerview-v7:$supportVersion"
     implementation "com.android.support:design:$supportVersion"
     implementation "com.android.support:preference-v7:$supportVersion"
     implementation "com.android.support:customtabs:$supportVersion"
     implementation "com.android.support:support-annotations:$supportVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.android.support:multidex:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:multidex:1.0.3'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
 
-    implementation 'com.firebase:firebase-jobdispatcher:0.8.3'
-
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
 
     implementation 'com.jakewharton:kotterknife:0.1.0-SNAPSHOT'
 
-    implementation 'com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.0.6'
+    implementation 'com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.1.0'
 
-    def funktionaleVersion = "1.1"
+    def funktionaleVersion = "1.2"
     implementation "org.funktionale:funktionale:$funktionaleVersion"
     implementation "org.funktionale:funktionale-either:$funktionaleVersion"
 
-    kapt "com.android.databinding:compiler:$rootProject.androidToolsVersion"
-
-    def daggerVersion = "2.12"
+    def daggerVersion = "2.19"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     implementation "com.google.dagger:dagger:$daggerVersion"
     compileOnly 'javax.annotation:jsr250-api:1.0'
 
-    def coroutineVersion = "0.19.1"
+    def coroutineVersion = "1.0.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion"
 
-    def requeryVersion = "1.4.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.9.0"
+
+    def requeryVersion = "1.5.1"
     implementation "io.requery:requery:$requeryVersion"
     implementation "io.requery:requery-android:$requeryVersion"
     implementation "io.requery:requery-kotlin:$requeryVersion"
     kapt "io.requery:requery-processor:$requeryVersion"
 
-    def glideVersion = "4.2.0"
+    def glideVersion = "4.8.0"
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation "com.github.bumptech.glide:okhttp3-integration:$glideVersion"
     implementation("com.github.bumptech.glide:recyclerview-integration:$glideVersion") {
@@ -108,31 +97,29 @@ dependencies {
     debugImplementation "com.facebook.stetho:stetho:$stethoVersion"
     debugImplementation "com.facebook.stetho:stetho-okhttp3:$stethoVersion"
 
-    // The following libs don't share a common version for some reason.
-    // See https://commonsware.com/blog/2017/09/14/making-sense-architecture-components-versions.html
-    implementation "android.arch.lifecycle:runtime:1.0.0"
-    implementation "android.arch.lifecycle:extensions:1.0.0-rc1"
-    kapt "android.arch.lifecycle:compiler:1.0.0-rc1"
+    def aarchVersion = "1.1.1"
+    implementation "android.arch.lifecycle:runtime:$aarchVersion"
+    implementation "android.arch.lifecycle:extensions:$aarchVersion"
+    kapt "android.arch.lifecycle:compiler:$aarchVersion"
 
     androidTestImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
     androidTestImplementation "junit:junit:4.12"
-    androidTestImplementation 'com.android.support.test:runner:1.0.0'
-    androidTestImplementation 'com.android.support.test:rules:1.0.0'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation "com.android.support:support-annotations:$supportVersion"
-    androidTestImplementation "org.mockito:mockito-android:2.8.47"
+    androidTestImplementation "org.mockito:mockito-android:2.23.4"
 }
 
 buildscript {
-    ext.kotlinVersion = '1.1.51'
-    ext.serialization_version = '0.2'
+    ext.kotlinVersion = '1.3.10'
     repositories {
         jcenter()
         maven { url "https://kotlin.bintray.com/kotlinx" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "org.jetbrains.kotlinx:kotlinx-gradle-serialization-plugin:$serialization_version"
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
     }
 }
 repositories {

@@ -1,10 +1,12 @@
 package com.cbruegg.mensaupb.util
 
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * Suspend extension that allows suspend [Call] inside coroutine.
@@ -23,12 +25,10 @@ suspend fun Call.await(): Response = suspendCancellableCoroutine { continuation 
         }
     })
 
-    continuation.invokeOnCompletion {
-        if (continuation.isCancelled) {
-            try {
-                cancel()
-            } catch (ignored: Throwable) {
-            }
+    continuation.invokeOnCancellation {
+        try {
+            cancel()
+        } catch (ignored: Throwable) {
         }
     }
 }

@@ -6,7 +6,8 @@ import android.util.Base64
  * Useful for creating breakpoints in empty functions.
  */
 @Suppress("unused")
-@Deprecated(message = "Remove in production.") fun nop() {
+@Deprecated(message = "Remove in production.")
+fun nop() {
 }
 
 /**
@@ -17,17 +18,17 @@ import android.util.Base64
  * [toString] must not return an empty string.
  */
 inline fun <T> Iterable<T>.serializeForSql(toString: (T) -> String): String =
-        map { toString(it) }
-                .onEach { require(it.isNotEmpty()) { "Serialized form must not be empty. " } }
-                .joinToString(separator = ",") { Base64.encodeToString(it.toByteArray(), Base64.DEFAULT) }
+    map { toString(it) }
+        .onEach { require(it.isNotEmpty()) { "Serialized form must not be empty. " } }
+        .joinToString(separator = ",") { Base64.encodeToString(it.toByteArray(), Base64.DEFAULT) }
 
 /**
  * Analogue to [serializeForSql]
  */
 inline fun <T> String.deserializeFromSql(toT: (String) -> T): List<T> =
-        if (isEmpty()) emptyList()
-        else split(',')
-                .map { toT(Base64.decode(it, Base64.DEFAULT).toString(Charsets.UTF_8)) }
+    if (isEmpty()) emptyList()
+    else split(',')
+        .map { toT(Base64.decode(it, Base64.DEFAULT).toString(Charsets.UTF_8)) }
 
 /**
  * Throws an [UnsupportedOperationException].

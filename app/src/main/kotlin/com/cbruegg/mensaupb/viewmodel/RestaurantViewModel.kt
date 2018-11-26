@@ -7,5 +7,4 @@ import com.cbruegg.mensaupb.cache.DbRestaurant
  * an appropriately-sorted list of restaurants
  * applicable for display in the whole app.
  */
-fun List<DbRestaurant>.uiSorted(): List<DbRestaurant>
-        = sortedBy { it.location }.reversed() // Paderborn should be at the top of the list
+fun List<DbRestaurant>.uiSorted(): List<DbRestaurant> = sortedBy { it.location }.reversed() // Paderborn should be at the top of the list

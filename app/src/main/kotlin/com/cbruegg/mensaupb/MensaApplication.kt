@@ -8,9 +8,9 @@ import installStetho
 class MensaApplication : MultiDexApplication() {
 
     val appComponent: AppComponent = DaggerAppComponent.builder()
-            .appModule(AppModule(this))
-            .netModule(NetModule())
-            .build()
+        .appModule(AppModule(this))
+        .netModule(NetModule())
+        .build()
 
     override fun onCreate() {
         super.onCreate()
@@ -28,4 +28,4 @@ val Context.app: MensaApplication
     get() = applicationContext as MensaApplication
 
 val Fragment.app: MensaApplication
-    get() = activity.app
+    get() = (activity ?: context!!).app

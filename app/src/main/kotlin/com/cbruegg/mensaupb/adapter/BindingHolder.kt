@@ -11,5 +11,5 @@ import android.view.View
  * @see [binding]
  */
 class BindingHolder<out T : ViewDataBinding>(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val binding: T = DataBindingUtil.bind(itemView)
+    val binding: T = DataBindingUtil.bind(itemView)!!
 }

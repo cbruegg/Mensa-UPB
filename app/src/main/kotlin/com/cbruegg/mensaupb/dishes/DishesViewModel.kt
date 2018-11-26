@@ -7,18 +7,18 @@ import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import java.util.Date
 
 data class DishesViewModel(
-        val isLoading: MutableLiveData<Boolean>,
-        val networkError: MutableLiveData<Boolean>,
-        val dishViewModels: MutableLiveData<List<DishListViewModel>>,
-        val isStale: MutableLiveData<Boolean>,
-        val showDialogFor: MutableLiveData<DishViewModel?>,
-        var lastLoadMeta: Date = Date(0)
+    val isLoading: MutableLiveData<Boolean>,
+    val networkError: MutableLiveData<Boolean>,
+    val dishViewModels: MutableLiveData<List<DishListViewModel>>,
+    val isStale: MutableLiveData<Boolean>,
+    val showDialogFor: MutableLiveData<DishViewModel?>,
+    var lastLoadMeta: Date = Date(0)
 ) : ViewModel()
 
 fun initialDishesViewModel() = DishesViewModel(
-        isLoading = MutableLiveData(true),
-        networkError = MutableLiveData(false),
-        dishViewModels = MutableLiveData(emptyList()),
-        isStale = MutableLiveData(false),
-        showDialogFor = MutableLiveData(null)
+    isLoading = MutableLiveData(true),
+    networkError = MutableLiveData(false),
+    dishViewModels = MutableLiveData(emptyList()),
+    isStale = MutableLiveData(false),
+    showDialogFor = MutableLiveData(null)
 )

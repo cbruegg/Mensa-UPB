@@ -11,13 +11,13 @@ import java.util.concurrent.TimeUnit
 fun initialRestaurantViewModel(requestedPagerPosition: Date?, restaurant: DbRestaurant, requestedDishName: String?): RestaurantViewModel {
     val dates = computePagerDates()
     val restrictedPagerPosition = requestedPagerPosition?.inRangeOrNull(
-            dates.first(),
-            dates.last()
+        dates.first(),
+        dates.last()
     ) ?: dates.first()
     return RestaurantViewModel(
-            pagerInfo = MutableLiveData(PagerInfo(restrictedPagerPosition, dates)),
-            restaurant = restaurant,
-            requestedDishName = requestedDishName
+        pagerInfo = MutableLiveData(PagerInfo(restrictedPagerPosition, dates)),
+        restaurant = restaurant,
+        requestedDishName = requestedDishName
     )
 }
 
@@ -48,8 +48,8 @@ class RestaurantViewModelController(private val restaurantViewModel: RestaurantV
         val dates = computePagerDates()
         val requestedPagerPosition = restaurantViewModel.pagerInfo.data.position
         val restrictedPagerPosition = requestedPagerPosition.inRangeOrNull(
-                dates.first(),
-                dates.last()
+            dates.first(),
+            dates.last()
         ) ?: dates.first()
 
         restaurantViewModel.apply {

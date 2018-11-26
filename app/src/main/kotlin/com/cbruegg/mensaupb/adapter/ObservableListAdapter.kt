@@ -12,8 +12,8 @@ import android.view.ViewGroup
  * It also features support for a lambda onClickListener.
  */
 abstract class ObservableListAdapter<DATA, VH : RecyclerView.ViewHolder>(
-        val list: ObservableArrayList<DATA> = ObservableArrayList(),
-        var onClickListener: ((data: DATA, position: Int) -> Unit)? = null
+    val list: ObservableArrayList<DATA> = ObservableArrayList(),
+    var onClickListener: ((data: DATA, position: Int) -> Unit)? = null
 ) : RecyclerView.Adapter<VH>() {
 
     init {

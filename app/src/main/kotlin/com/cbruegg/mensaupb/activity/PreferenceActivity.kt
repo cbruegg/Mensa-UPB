@@ -21,8 +21,8 @@ class PreferenceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         supportFragmentManager.beginTransaction()
-                .replace(android.R.id.content, PreferenceFragment())
-                .commit()
+            .replace(android.R.id.content, PreferenceFragment())
+            .commit()
     }
 
     class PreferenceFragment : PreferenceFragmentCompat() {
@@ -37,5 +37,8 @@ class PreferenceActivity : AppCompatActivity() {
  * Fetch the user type from the preferences file.
  */
 val Context.userType: UserType
-    get() = UserType.findById(PreferenceManager.getDefaultSharedPreferences(
-            this).getString(PreferenceActivity.KEY_PREF_USER_TYPE, UserType.STUDENT.id))!!
+    get() = UserType.findById(
+        PreferenceManager.getDefaultSharedPreferences(
+            this
+        ).getString(PreferenceActivity.KEY_PREF_USER_TYPE, UserType.STUDENT.id)
+    )!!

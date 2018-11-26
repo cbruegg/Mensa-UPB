@@ -37,9 +37,11 @@ private const val ARG_DISH_NAME = "dish_name"
  * @param dishName If set, the fragment looks for a matching
  * dish on the first page only and shows its image
  */
-fun RestaurantFragment(restaurant: DbRestaurant,
-                       pagerPosition: Date = midnight,
-                       dishName: String? = null): RestaurantFragment {
+fun RestaurantFragment(
+    restaurant: DbRestaurant,
+    pagerPosition: Date = midnight,
+    dishName: String? = null
+): RestaurantFragment {
     @Suppress("DEPRECATION") val fragment = RestaurantFragment()
     fragment.arguments = Bundle().apply {
         putString(ARG_RESTAURANT, restaurant.id)
@@ -54,8 +56,7 @@ fun RestaurantFragment(restaurant: DbRestaurant,
  * The factory method needs to be used.
  */
 class RestaurantFragment
-@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor()
-    : Fragment() {
+@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : Fragment() {
 
     private lateinit var viewModel: RestaurantViewModel
     private lateinit var viewModelController: RestaurantViewModelController
@@ -64,10 +65,10 @@ class RestaurantFragment
     private val dayPagerTabs: TabLayout by bindView(R.id.day_pager_tabs)
     private lateinit var adapter: DishesPagerAdapter
 
-    @Inject lateinit var data: BlockingEntityStore<Persistable>
+    @Inject
+    lateinit var data: BlockingEntityStore<Persistable>
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
-            = inflater.inflate(R.layout.fragment_restaurant, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.fragment_restaurant, container, false)
 
     override fun onResume() {
         super.onResume()
@@ -82,6 +83,7 @@ class RestaurantFragment
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        val arguments = arguments ?: error("No arguments supplied!")
         val requestedPagerPosition = arguments.getDate(ARG_REQUESTED_PAGER_POSITION)
         val restaurantId = arguments.getString(ARG_RESTAURANT)
         val requestedDishName = arguments.getString(ARG_DISH_NAME)
@@ -98,8 +100,10 @@ class RestaurantFragment
     private fun display(pagerInfo: PagerInfo, requestedDishName: String?) {
         val pagerIndex = pagerInfo.dates.indexOf(pagerInfo.position) // May be -1
 
-        adapter = DishesPagerAdapter(activity, childFragmentManager, viewModel.restaurant,
-                pagerInfo.dates, requestedDishName, pagerIndex)
+        adapter = DishesPagerAdapter(
+            context!!, childFragmentManager, viewModel.restaurant,
+            pagerInfo.dates, requestedDishName, pagerIndex
+        )
         dayPager.adapter = adapter
         dayPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
@@ -122,21 +126,25 @@ class RestaurantFragment
     /**
      * ViewPager adapter
      */
-    private class DishesPagerAdapter(context: Context,
-                                     fm: FragmentManager,
-                                     private val restaurant: DbRestaurant,
-                                     val dates: List<Date>,
-                                     /**
-                                      * If set, look for a matching dish on the page
-                                      * specified by [dishNamePositionInPager] and display its image
-                                      */
-                                     private val dishName: String?,
-                                     private val dishNamePositionInPager: Int?) : FragmentStatePagerAdapter(fm) {
+    private class DishesPagerAdapter(
+        context: Context,
+        fm: FragmentManager,
+        private val restaurant: DbRestaurant,
+        val dates: List<Date>,
+        /**
+         * If set, look for a matching dish on the page
+         * specified by [dishNamePositionInPager] and display its image
+         */
+        private val dishName: String?,
+        private val dishNamePositionInPager: Int?
+    ) : FragmentStatePagerAdapter(fm) {
 
         private val dateFormatter = SimpleDateFormat(context.getString(R.string.dateTabFormat))
 
-        override fun getItem(position: Int) = DishesFragment(restaurant, dates[position],
-                if (position == dishNamePositionInPager) dishName else null)
+        override fun getItem(position: Int) = DishesFragment(
+            restaurant, dates[position],
+            if (position == dishNamePositionInPager) dishName else null
+        )
 
         override fun getCount() = dates.size
 
