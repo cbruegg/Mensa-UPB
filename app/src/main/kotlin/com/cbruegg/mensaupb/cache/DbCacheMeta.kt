@@ -20,7 +20,7 @@ private const val UNIQUE_IDX = "unique_idx"
  * [lastUpdate].
  */
 @Entity
-@Table(name = TABLE_DB_RESTAURANT_CACHE_ENTRY, uniqueIndexes = arrayOf(UNIQUE_IDX))
+@Table(name = TABLE_DB_RESTAURANT_CACHE_ENTRY, uniqueIndexes = [UNIQUE_IDX])
 interface DbRestaurantCacheEntry : Persistable {
 
     @get:Column(name = "id")
@@ -29,7 +29,7 @@ interface DbRestaurantCacheEntry : Persistable {
     val id: Int
 
     @get:Column(name = "restaurant")
-    @get:ManyToOne(cascade = arrayOf(CascadeAction.DELETE))
+    @get:ManyToOne(cascade = [CascadeAction.DELETE])
     @get:Index(UNIQUE_IDX)
     val restaurant: DbRestaurant
 

@@ -27,7 +27,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -53,13 +52,13 @@ class DishesWidgetUpdateService : JobService() {
         val configManager = DishesWidgetConfigurationManager(this@DishesWidgetUpdateService)
 
         job = GlobalScope.launch(Dispatchers.Main) {
-            val reschedule = withTimeout(TIMEOUT_MS) {
+            val reschedule = run {
                 val restaurantsById = repository.restaurantsAsync()
                     .await()
                     .orNull()
                     ?.value
                     ?.associateBy { it.id }
-                    ?: return@withTimeout true
+                    ?: return@run true
 
                 appWidgetIds
                     .map { appWidgetId ->
@@ -73,7 +72,7 @@ class DishesWidgetUpdateService : JobService() {
                     .filterNotNull()
                     .forEach { updateAppWidget(it) }
 
-                return@withTimeout false
+                return@run false
             }
             jobFinished(params, reschedule)
         }
@@ -118,8 +117,6 @@ class DishesWidgetUpdateService : JobService() {
          * actually already fetches data for "WED".
          */
         private val INTERNAL_DATE_OFFSET = TimeUnit.MINUTES.toMillis(5)
-
-        private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
 
         /**
          * Function for creating intent that start this service.

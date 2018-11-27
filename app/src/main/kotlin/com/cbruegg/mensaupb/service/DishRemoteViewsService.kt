@@ -22,10 +22,8 @@ import com.cbruegg.mensaupb.extensions.stackTraceString
 import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.viewmodel.dishComparator
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Date
 import java.util.concurrent.ExecutionException
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
@@ -44,7 +42,6 @@ class DishRemoteViewsService : RemoteViewsService() {
         private val shownDate: Date
             get() = Date(System.currentTimeMillis() + DishesWidgetUpdateService.DATE_OFFSET).atMidnight
 
-        private val TIMEOUT_MS = TimeUnit.MINUTES.toMillis(1)
         @Volatile
         private var dishes = emptyList<DbDish>()
         @Volatile
@@ -104,21 +101,19 @@ class DishRemoteViewsService : RemoteViewsService() {
                 .retrieveConfiguration(appWidgetId)
                 ?: return@runBlocking
 
-            withTimeoutOrNull(TIMEOUT_MS) {
-                val restaurant = repository.restaurantsAsync()
-                    .await()
-                    .orNull()
-                    ?.value
-                    ?.firstOrNull { it -> it.id == restaurantId }
-                    ?: return@withTimeoutOrNull
-                this@DishRemoteViewsFactory.restaurant = restaurant
-                dishes = repository.dishesAsync(restaurant, shownDate)
-                    .await()
-                    .orNull()
-                    ?.value
-                    ?.sortedWith(ctx.userType.dishComparator)
-                        ?: return@withTimeoutOrNull
-            }
+            val restaurant = repository.restaurantsAsync()
+                .await()
+                .orNull()
+                ?.value
+                ?.firstOrNull { it -> it.id == restaurantId }
+                ?: return@runBlocking
+            this@DishRemoteViewsFactory.restaurant = restaurant
+            dishes = repository.dishesAsync(restaurant, shownDate)
+                .await()
+                .orNull()
+                ?.value
+                ?.sortedWith(ctx.userType.dishComparator)
+                    ?: return@runBlocking
         }
 
         override fun hasStableIds() = true

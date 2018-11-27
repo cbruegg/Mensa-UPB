@@ -7,9 +7,12 @@ import dagger.Module
 import dagger.Provides
 import installStetho
 import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
-@Module(includes = arrayOf(AppModule::class))
+private const val TIMEOUT_MS = 10_000L
+
+@Module(includes = [AppModule::class])
 class NetModule {
 
     @Suppress("DEPRECATION")
@@ -19,7 +22,10 @@ class NetModule {
 
     @Provides
     @Singleton
-    fun provideOkHttp(): OkHttpClient = OkHttpClient.Builder().installStetho().build()
+    fun provideOkHttp(): OkHttpClient = OkHttpClient.Builder()
+        .callTimeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
+        .installStetho()
+        .build()
 
     @Provides
     @Singleton

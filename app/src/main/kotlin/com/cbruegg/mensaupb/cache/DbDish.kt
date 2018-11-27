@@ -90,7 +90,7 @@ abstract class DbDish : Persistable {
     abstract val thumbnailImageUrl: String?
 
     @get:Column(name = "restaurant")
-    @get:ManyToOne(cascade = arrayOf(CascadeAction.DELETE))
+    @get:ManyToOne(cascade = [CascadeAction.DELETE])
     abstract val restaurant: DbRestaurant
 
     @get:Transient

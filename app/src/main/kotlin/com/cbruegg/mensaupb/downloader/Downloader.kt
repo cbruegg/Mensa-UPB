@@ -15,7 +15,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
@@ -25,8 +24,7 @@ import javax.inject.Inject
 
 private const val API_ID = BuildConfig.API_ID
 private const val BASE_URL = "https://mensaupb.cbruegg.com"
-private const val RESTAURANT_URL = BASE_URL + "/restaurants?apiId=$API_ID"
-private const val TIMEOUT_MS = 10_000L
+private const val RESTAURANT_URL = "$BASE_URL/restaurants?apiId=$API_ID"
 
 typealias IOEither<T> = Either<IOException, T>
 
@@ -42,23 +40,19 @@ class Downloader @Inject constructor(private val httpClient: OkHttpClient) {
     }
 
     fun downloadRestaurantsAsync(): Deferred<IOEither<List<Restaurant>>> = networkAsync {
-        withTimeoutOrNull(TIMEOUT_MS) {
-            val request = Request.Builder().url(RESTAURANT_URL).build()
-            val response = httpClient.newCall(request).await()
-            if (response.code() != 200) throw IOException("Server error!")
+        val request = Request.Builder().url(RESTAURANT_URL).build()
+        val response = httpClient.newCall(request).await()
+        if (response.code() != 200) throw IOException("Server error!")
 
-            parseRestaurantsFromApi(response.body()!!.source())
-        } ?: throw IOException("Network timeout!")
+        parseRestaurantsFromApi(response.body()!!.source())
     }
 
     fun downloadDishesAsync(restaurant: DbRestaurant, date: Date): Deferred<IOEither<List<Dish>>> = networkAsync {
-        withTimeoutOrNull(TIMEOUT_MS) {
-            val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
-            val response = httpClient.newCall(request).await()
-            if (response.code() != 200) throw IOException("Server error!")
+        val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
+        val response = httpClient.newCall(request).await()
+        if (response.code() != 200) throw IOException("Server error!")
 
-            parseDishes(response.body()!!.source())
-        } ?: throw IOException("Network timeout!")
+        parseDishes(response.body()!!.source())
     }
 
     /**
