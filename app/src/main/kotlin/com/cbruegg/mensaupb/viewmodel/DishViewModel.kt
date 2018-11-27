@@ -1,6 +1,7 @@
 package com.cbruegg.mensaupb.viewmodel
 
 import android.content.Context
+import android.os.Build
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.compat.Html
@@ -86,8 +87,14 @@ private fun DbDish.toDishViewModel(userType: UserType, context: Context, positio
         .joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionStringId) })
         .toString()
         .capitalizeFirstChar()
-    val description = Html.fromHtml(context.getString(R.string.row_dish_description, displayName(), priceText, badgesText)).trim()
-    return DishViewModel(this, priceText, allergensText, badgesText, displayName(), description)
+    val html = context.getString(R.string.row_dish_description, displayName(), priceText, badgesText)
+    val description = if (Build.VERSION.SDK_INT >= 24) {
+        Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY, null, null)
+    } else {
+        @Suppress("DEPRECATION")
+        Html.fromHtml(html)
+    }
+    return DishViewModel(this, priceText, allergensText, badgesText, displayName(), description.trim())
 }
 
 private val Badge.descriptionStringId
