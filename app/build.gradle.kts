@@ -8,7 +8,6 @@ import java.util.Properties
 
 apply(plugin = "kotlin-allopen")
 apply(plugin = "kotlinx-serialization")
-apply(plugin = "com.google.gms.google-services")
 
 plugins {
     id("com.android.application")
@@ -105,8 +104,6 @@ dependencies {
         setTransitive(false)
     }
     kapt("com.github.bumptech.glide:compiler:$glideVersion")
-
-    implementation("com.google.firebase:firebase-crash:16.2.1")
 
     val stethoVersion = "1.5.0"
     debugImplementation("com.facebook.stetho:stetho:$stethoVersion")
