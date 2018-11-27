@@ -3,7 +3,6 @@ package com.cbruegg.mensaupb.downloader
 import android.annotation.SuppressLint
 import arrow.core.Either
 import com.cbruegg.mensaupb.BuildConfig
-import com.cbruegg.mensaupb.IOPool
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.extensions.eitherTryIo
 import com.cbruegg.mensaupb.parser.parseDishes
@@ -12,6 +11,7 @@ import com.cbruegg.mensaupb.util.await
 import com.cbruegg.mensaupbservice.api.Dish
 import com.cbruegg.mensaupbservice.api.Restaurant
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -56,7 +56,7 @@ class Downloader @Inject constructor(private val httpClient: OkHttpClient) {
     /**
      * Perform the action with the [dispatcher] and wrap it in [eitherTryIo].
      */
-    private suspend fun <T : Any> networkAsync(dispatcher: CoroutineDispatcher = IOPool, f: suspend () -> T): IOEither<T> =
+    private suspend fun <T : Any> networkAsync(dispatcher: CoroutineDispatcher = Dispatchers.IO, f: suspend () -> T): IOEither<T> =
         withContext(dispatcher) {
             eitherTryIo {
                 f()
