@@ -8,7 +8,7 @@ import java.util.Properties
 
 apply(plugin = "kotlin-allopen")
 apply(plugin = "kotlinx-serialization")
-
+apply(plugin = "io.fabric")
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -105,6 +105,9 @@ dependencies {
     }
     kapt("com.github.bumptech.glide:compiler:$glideVersion")
 
+    implementation("com.google.firebase:firebase-core:16.0.5")
+    implementation("com.crashlytics.sdk.android:crashlytics:2.9.6")
+
     val stethoVersion = "1.5.0"
     debugImplementation("com.facebook.stetho:stetho:$stethoVersion")
     debugImplementation("com.facebook.stetho:stetho-okhttp3:$stethoVersion")
@@ -140,3 +143,4 @@ repositories {
     maven("https://kotlin.bintray.com/kotlinx")
     maven("https://dl.bintray.com/cbruegg/cbruegg")
 }
+apply(plugin = "com.google.gms.google-services")
