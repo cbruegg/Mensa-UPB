@@ -30,7 +30,7 @@ android {
 
         val apiIdProps = Properties()
         apiIdProps.load(FileInputStream(rootProject.file("api_id.properties")))
-        buildConfigField("String", "API_ID", "\"" + apiIdProps["id"] + "\"")
+        buildConfigField("String", "API_ID", "\"${apiIdProps["id"]}\"")
     }
     buildTypes {
         getByName("release") {
