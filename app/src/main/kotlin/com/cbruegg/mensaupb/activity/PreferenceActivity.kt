@@ -2,9 +2,9 @@ package com.cbruegg.mensaupb.activity
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.preference.PreferenceFragmentCompat
-import android.support.v7.preference.PreferenceManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.model.UserType
 

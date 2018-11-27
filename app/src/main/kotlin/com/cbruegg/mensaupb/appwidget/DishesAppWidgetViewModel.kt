@@ -1,6 +1,6 @@
 package com.cbruegg.mensaupb.appwidget
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.util.MutableLiveData
 import kotlinx.coroutines.sync.Mutex

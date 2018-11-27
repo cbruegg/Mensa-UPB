@@ -3,7 +3,7 @@ package com.cbruegg.mensaupb.dishes
 import android.content.Context
 import android.graphics.Point
 import android.graphics.drawable.Drawable
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager

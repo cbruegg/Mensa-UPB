@@ -1,6 +1,6 @@
 package com.cbruegg.mensaupb.dishes
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.cbruegg.mensaupb.util.MutableLiveData
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel

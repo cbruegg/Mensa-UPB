@@ -1,7 +1,7 @@
 package com.cbruegg.mensaupb.parser
 
-import android.support.test.filters.LargeTest
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.filters.LargeTest
+import androidx.test.runner.AndroidJUnit4
 import okio.Okio
 import org.intellij.lang.annotations.Language
 import org.junit.Test

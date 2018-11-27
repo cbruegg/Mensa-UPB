@@ -1,6 +1,6 @@
 package com.cbruegg.mensaupb.main
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.util.MutableLiveData
 import java.util.Date

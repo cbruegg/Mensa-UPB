@@ -2,10 +2,10 @@ package com.cbruegg.mensaupb.restaurant
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.view.ViewPager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.viewpager.widget.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,7 +55,7 @@ fun RestaurantFragment(
  * The factory method needs to be used.
  */
 class RestaurantFragment
-@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : Fragment() {
+@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : androidx.fragment.app.Fragment() {
 
     private lateinit var viewModel: RestaurantViewModel
     private lateinit var viewModelController: RestaurantViewModelController
@@ -102,7 +102,7 @@ class RestaurantFragment
             pagerInfo.dates, requestedDishName, pagerIndex
         )
         dayPager.adapter = adapter
-        dayPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+        dayPager.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 viewModel.pagerInfo.value.position = pagerInfo.dates[position]
             }
@@ -125,7 +125,7 @@ class RestaurantFragment
      */
     private class DishesPagerAdapter(
         context: Context,
-        fm: FragmentManager,
+        fm: androidx.fragment.app.FragmentManager,
         private val restaurant: DbRestaurant,
         val dates: List<Date>,
         /**
@@ -134,7 +134,7 @@ class RestaurantFragment
          */
         private val dishName: String?,
         private val dishNamePositionInPager: Int?
-    ) : FragmentStatePagerAdapter(fm) {
+    ) : androidx.fragment.app.FragmentStatePagerAdapter(fm) {
 
         private val dateFormatter = SimpleDateFormat(context.getString(R.string.dateTabFormat))
 

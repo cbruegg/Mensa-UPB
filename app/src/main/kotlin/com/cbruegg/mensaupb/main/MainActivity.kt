@@ -6,13 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.customtabs.CustomTabsIntent
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.preference.PreferenceManager
-import android.support.v7.widget.LinearLayoutManager
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -193,7 +193,7 @@ class MainActivity : AppCompatActivity() {
             viewModelController.onRestaurantClick(restaurant, currentlyDisplayedDay)
         }
         restaurantList.adapter = restaurantAdapter
-        restaurantList.layoutManager = LinearLayoutManager(this)
+        restaurantList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
 
         viewModel.restaurants.observe(this) {
             setRestaurants(it)

@@ -3,7 +3,7 @@ package com.cbruegg.mensaupb.appwidget
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
 import com.cbruegg.mensaupb.R

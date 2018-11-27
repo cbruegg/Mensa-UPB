@@ -1,9 +1,9 @@
 package com.cbruegg.mensaupb.dishes
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,7 +53,7 @@ fun DishesFragment(restaurant: DbRestaurant, date: Date, dishName: String? = nul
  * The factory method newInstance needs to be used.
  */
 class DishesFragment
-@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : Fragment() {
+@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : androidx.fragment.app.Fragment() {
 
     @Inject
     lateinit var repository: Repository
@@ -132,7 +132,7 @@ class DishesFragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         adapter.onClickListener = { dishViewModel, _ -> viewModelController.onDishClicked(dishViewModel) }
         dishList.adapter = adapter
-        dishList.layoutManager = LinearLayoutManager(activity)
+        dishList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         dishList.addOnScrollListener(RecyclerViewPreloader(this, adapter, adapter, 5))
 
         super.onViewCreated(view, savedInstanceState)
