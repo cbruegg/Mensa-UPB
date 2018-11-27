@@ -1,5 +1,6 @@
 package com.cbruegg.mensaupb.service
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -189,6 +190,7 @@ class DishesWidgetUpdateService : JobService(), CoroutineScope {
         }
         val dishPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_DISH, mainActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
+        @SuppressLint("SimpleDateFormat")
         val day = SimpleDateFormat("EEE").format(shownDate)
         val remoteViews = RemoteViews(packageName, R.layout.app_widget_dishes).apply {
             setOnClickPendingIntent(R.id.dishes_widget_restaurant_name, restaurantPendingIntent)

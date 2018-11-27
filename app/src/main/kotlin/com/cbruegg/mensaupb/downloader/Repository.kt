@@ -7,7 +7,7 @@ import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.cache.ModelCache
 import com.cbruegg.mensaupb.cache.Stale
-import com.cbruegg.mensaupb.cache.toNonStale
+import com.cbruegg.mensaupb.cache.mapValue
 import com.cbruegg.mensaupb.util.AllOpen
 import java.util.Date
 import javax.inject.Inject
@@ -33,11 +33,15 @@ class Repository @Deprecated("Inject this.") constructor(context: Context) {
      * @param onlyActive If true, only return restaurants marked as active.
      */
     suspend fun restaurants(onlyActive: Boolean = true, acceptStale: Boolean = false): IOEither<Stale<List<DbRestaurant>>> {
-        val restaurants = tryStale(acceptStale, { modelCache.retrieveRestaurants(acceptStale) }) {
+        val restaurantsEither = tryStale(acceptStale, { modelCache.retrieveRestaurants(acceptStale) }) {
             val restaurants = downloader.downloadRestaurants()
             restaurants.mapRightSuspend { modelCache.cache(it) }
         }
-        return restaurants.map { it.copy(value = it.value.filter { !onlyActive || it.isActive }) }
+        return restaurantsEither.map { restaurantsStale ->
+            restaurantsStale.mapValue { restaurants ->
+                restaurants.filter { restaurant -> !onlyActive || restaurant.isActive }
+            }
+        }
     }
 
     /**
@@ -70,7 +74,7 @@ class Repository @Deprecated("Inject this.") constructor(context: Context) {
                     Either.right(cached)
                 }
             }) {
-                Either.Right(it.toNonStale())
+                Either.Right(Stale(it, isStale = false))
             }
         } else Either.Right(cached)
     }

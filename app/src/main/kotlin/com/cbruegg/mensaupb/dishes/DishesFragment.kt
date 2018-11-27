@@ -38,6 +38,7 @@ private const val ARG_DISH_NAME = "dish_name"
  * shows its image.
  * @see DishesFragment
  */
+@Suppress("FunctionName")
 fun DishesFragment(restaurant: DbRestaurant, date: Date, dishName: String? = null): DishesFragment {
     @Suppress("DEPRECATION") val fragment = DishesFragment()
     fragment.arguments = Bundle().apply {

@@ -6,7 +6,7 @@ import com.cbruegg.mensaupb.cache.DbRestaurant
 
 /**
  * A convenience implementation of an ArrayAdapter
- * specific for [Restaurant]s.
+ * specific for [DbRestaurant]s.
  */
 class RestaurantSpinnerAdapter(context: Context, val restaurants: List<DbRestaurant>) :
     ArrayAdapter<String>(context, android.R.layout.simple_spinner_item) {

@@ -73,6 +73,7 @@ class DataBindingAdapter<DATA : Any>(
  * Factory method for [DataBindingAdapter]s supporting only
  * one viewType.
  */
+@Suppress("FunctionName")
 inline fun <reified DATA : Any> DataBindingAdapter(
     /**
      * Layout to use for rows

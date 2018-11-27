@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 private const val MAX_RESTAURANTS_AGE_MS = 24L * 60 * 60 * 1000
+private const val DEFAULT_RESTAURANT_NAME = "Mensa Academica"
 
 class MainViewModelController(
     private val repository: Repository,
@@ -20,8 +21,6 @@ class MainViewModelController(
     private var requestedDishName: String?,
     private var requestedSelectedDay: Date?
 ) : CoroutineScope by viewModel {
-
-    private val DEFAULT_RESTAURANT_NAME = "Mensa Academica"
 
     fun newRequest(requestedRestaurantId: String, requestedDishName: String?, requestedSelectedDay: Date?) {
         this.requestedRestaurantId = requestedRestaurantId

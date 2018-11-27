@@ -8,7 +8,7 @@ import android.content.SharedPreferences
 data class DishesWidgetConfiguration(val restaurantId: String) {
 
     companion object {
-        private val SUFFIX_ID = "_id"
+        private const val SUFFIX_ID = "_id"
 
         /**
          * Retrieve the Dish widget configuration

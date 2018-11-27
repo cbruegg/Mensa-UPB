@@ -9,8 +9,7 @@ import android.content.Context
  */
 class DishesWidgetConfigurationManager(context: Context) {
 
-    private val PREF_DISHES_WIDGET_CONFIG = "dishes_widget_config"
-    private val store = context.getSharedPreferences(PREF_DISHES_WIDGET_CONFIG, Context.MODE_PRIVATE)
+    private val store = context.getSharedPreferences("dishes_widget_config", Context.MODE_PRIVATE)
 
     /**
      * Save a [DishesWidgetConfiguration] for an app widget.

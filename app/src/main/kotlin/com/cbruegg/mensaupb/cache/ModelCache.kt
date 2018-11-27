@@ -85,7 +85,7 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
                 setLocation(location)
                 setName(name)
             }
-        }.also {
+        }.also { entities ->
             data.withTransaction {
                 // Don't just delete everything and re-insert here,
                 // otherwise dishes will be deleted (cascade)
@@ -93,7 +93,7 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
                     .where(DbRestaurantEntity.ID notIn restaurants.map { it.id })
                     .get()
                     .call()
-                upsert(it)
+                upsert(entities)
                 upsert(DbRestaurantListCacheMetaEntity().apply { setLastUpdate(now) })
             }
         }
@@ -195,5 +195,4 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
 
 data class Stale<out T>(val value: T, val isStale: Boolean)
 
-fun <T : Any> T.toStale() = Stale(this, isStale = true)
-fun <T : Any> T.toNonStale() = Stale(this, isStale = false)
+inline fun <T1, T2> Stale<T1>.mapValue(f: (T1) -> T2) = Stale(f(value), isStale)

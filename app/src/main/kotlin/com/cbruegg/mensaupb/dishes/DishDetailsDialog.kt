@@ -1,5 +1,6 @@
 package com.cbruegg.mensaupb.dishes
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Point
 import android.graphics.drawable.Drawable
@@ -35,6 +36,7 @@ private fun getDisplaySize(context: Context): Pair<Int, Int> {
  * Show a dialog that displays the full size image of the dish.
  * @param dishViewModel DishViewModel with an imageUrl
  */
+@SuppressLint("InflateParams")
 fun showDishDetailsDialog(context: Context, dishViewModel: DishViewModel, onDismiss: () -> Unit = {}) {
     val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_dish_details, null, false)
     val imageView = dialogView.findViewById<ImageView>(R.id.dish_image)

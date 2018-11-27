@@ -14,7 +14,7 @@ import com.cbruegg.mensaupb.model.UserType
 class PreferenceActivity : AppCompatActivity() {
 
     companion object {
-        val KEY_PREF_USER_TYPE = "user_type_preference"
+        const val KEY_PREF_USER_TYPE = "user_type_preference"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

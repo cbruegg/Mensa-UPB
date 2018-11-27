@@ -49,9 +49,9 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
 
-        private val ARG_REQUESTED_RESTAURANT_ID = "restaurant_id"
-        private val ARG_REQUESTED_DISH_NAME = "dish_name"
-        private val ARG_REQUESTED_SELECTED_DAY = "select_day"
+        private const val ARG_REQUESTED_RESTAURANT_ID = "restaurant_id"
+        private const val ARG_REQUESTED_DISH_NAME = "dish_name"
+        private const val ARG_REQUESTED_SELECTED_DAY = "select_day"
 
         /**
          * Create a start intent for this activity that displays
@@ -87,12 +87,12 @@ class MainActivity : AppCompatActivity() {
      * Constants
      */
 
-    private val PREFS_FILE_NAME = "main_activity_prefs"
-    private val PREFS_KEY_LAST_SELECTED_RESTAURANT = "last_selected_restaurant"
-    private val STUDENTENWERK_URI = Uri.parse("http://www.studierendenwerk-pb.de/gastronomie/")
-    private val STUDENTENWERK_OPENING_HOURS_URI = Uri.parse("http://www.studierendenwerk-pb.de/gastronomie/oeffnungszeiten")
-    private val REQUEST_CODE_PREFERENCES = 1
-    private val KEY_CURRENTLY_DISPLAYED_DAY = "currently_displayed_day"
+    private val prefsFileName = "main_activity_prefs"
+    private val prefsKeyLastSelectedRestaurant = "last_selected_restaurant"
+    private val studentenwerkUri = Uri.parse("http://www.studierendenwerk-pb.de/gastronomie/")
+    private val studentenwerkOpeningHoursUri = Uri.parse("http://www.studierendenwerk-pb.de/gastronomie/oeffnungszeiten")
+    private val requestCodePrefererences = 1
+    private val keyCurrentlyDisplayedDay = "currently_displayed_day"
 
     /*
      * Views
@@ -161,14 +161,14 @@ class MainActivity : AppCompatActivity() {
         mainViewModel,
         intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID) ?: lastRestaurantId,
         intent.getStringExtra(ARG_REQUESTED_DISH_NAME),
-        savedInstanceState?.getDate(KEY_CURRENTLY_DISPLAYED_DAY) ?: intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
+        savedInstanceState?.getDate(keyCurrentlyDisplayedDay) ?: intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
     )
 
     private lateinit var viewModel: MainViewModel
     private lateinit var viewModelController: MainViewModelController
     private var lastRestaurantId by StringSharedPreferencesPropertyDelegate(
-        sharedPreferences = { getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE) },
-        key = PREFS_KEY_LAST_SELECTED_RESTAURANT,
+        sharedPreferences = { getSharedPreferences(prefsFileName, Context.MODE_PRIVATE) },
+        key = prefsKeyLastSelectedRestaurant,
         defaultValue = null
     )
 
@@ -231,7 +231,7 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         // We save this manually since RestaurantFragment will be reloaded
         // due to the initial call to the observer of restaurantLoadSpec
-        outState.putDate(KEY_CURRENTLY_DISPLAYED_DAY, currentlyDisplayedDay)
+        outState.putDate(keyCurrentlyDisplayedDay, currentlyDisplayedDay)
     }
 
     private fun showNetworkError() {
@@ -250,15 +250,15 @@ class MainActivity : AppCompatActivity() {
         }
         R.id.settings -> {
             val intent = Intent(this, PreferenceActivity::class.java)
-            startActivityForResult(intent, REQUEST_CODE_PREFERENCES)
+            startActivityForResult(intent, requestCodePrefererences)
             true
         }
         R.id.stw_url -> {
-            STUDENTENWERK_URI.showInCustomTab()
+            studentenwerkUri.showInCustomTab()
             true
         }
         R.id.opening_hours -> {
-            STUDENTENWERK_OPENING_HOURS_URI.showInCustomTab()
+            studentenwerkOpeningHoursUri.showInCustomTab()
             true
         }
         else -> super.onOptionsItemSelected(item)
@@ -277,7 +277,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == REQUEST_CODE_PREFERENCES) {
+        if (requestCode == requestCodePrefererences) {
             viewModelController.onCameBackFromPreferences()
         }
     }

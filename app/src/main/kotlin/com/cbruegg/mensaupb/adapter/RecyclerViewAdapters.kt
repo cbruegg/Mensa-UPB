@@ -11,6 +11,7 @@ import com.cbruegg.mensaupb.viewmodel.HeaderViewModel
 /**
  * Adapter responsible for displaying Restaurants in a RecyclerView.
  */
+@Suppress("FunctionName")
 fun RestaurantAdapter(glide: GlideRequests) = DataBindingAdapter<DbRestaurant>(
     R.layout.row_restaurant, BR.restaurant,
     imageId = null, glide = glide
@@ -23,6 +24,7 @@ private val dishViewModelDelegate = DataBindingViewTypeDelegate<DishListViewMode
 /**
  * Adapter responsible for displaying Restaurants in a RecyclerView.
  */
+@Suppress("FunctionName")
 fun DishListViewModelAdapter(glide: GlideRequests) = DataBindingAdapter<DishListViewModel>(
     glide,
     imageUrlGetter = { item -> (item as? DishViewModel)?.dish?.thumbnailImageUrl },

@@ -106,6 +106,7 @@ abstract class DbDish : Persistable {
     val displayName: LanguageStringSelector<String> by lazy {
         LanguageStringSelector("en" to nameEN, "de" to nameDE)
     }
+    @Suppress("unused")
     @get:Transient
     val displayDescription: LanguageStringSelector<String?> by lazy {
         LanguageStringSelector("en" to descriptionEN, "de" to descriptionDE)
@@ -114,6 +115,8 @@ abstract class DbDish : Persistable {
     val displayCategory: LanguageStringSelector<String> by lazy {
         LanguageStringSelector("en" to categoryEN, "de" to categoryDE)
     }
+
+    @Suppress("unused")
     @get:Transient
     val displaySubcategory: LanguageStringSelector<String> by lazy {
         LanguageStringSelector("en" to subcategoryEN, "de" to subcategoryDE)

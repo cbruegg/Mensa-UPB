@@ -1,5 +1,6 @@
 package com.cbruegg.mensaupb.restaurant
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -33,6 +34,7 @@ private const val ARG_DISH_NAME = "dish_name"
  * @param dishName If set, the fragment looks for a matching
  * dish on the first page only and shows its image
  */
+@Suppress("FunctionName")
 fun RestaurantFragment(
     restaurant: DbRestaurant,
     pagerPosition: Date = midnight,
@@ -133,6 +135,7 @@ class RestaurantFragment
         private val dishNamePositionInPager: Int?
     ) : androidx.fragment.app.FragmentStatePagerAdapter(fm) {
 
+        @SuppressLint("SimpleDateFormat")
         private val dateFormatter = SimpleDateFormat(context.getString(R.string.dateTabFormat))
 
         override fun getItem(position: Int) = DishesFragment(
