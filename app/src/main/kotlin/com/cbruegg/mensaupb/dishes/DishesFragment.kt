@@ -1,12 +1,10 @@
 package com.cbruegg.mensaupb.dishes
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
@@ -22,6 +20,7 @@ import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
+import com.google.android.material.snackbar.Snackbar
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
 import kotlinx.android.synthetic.main.fragment_dishes.*
@@ -53,7 +52,7 @@ fun DishesFragment(restaurant: DbRestaurant, date: Date, dishName: String? = nul
  * The factory method newInstance needs to be used.
  */
 class DishesFragment
-@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : androidx.fragment.app.Fragment() {
+@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : Fragment() {
 
     @Inject
     lateinit var repository: Repository
@@ -79,7 +78,7 @@ class DishesFragment
         val appContext = app
         val arguments = arguments ?: error("No arguments supplied!")
         val restaurant = data.findByKey(DbRestaurant::class, arguments.getString(ARG_RESTAURANT))
-                ?: throw IllegalArgumentException("Supplied restaurant ID is not in the database!")
+            ?: throw IllegalArgumentException("Supplied restaurant ID is not in the database!")
 
         viewModelController = DishesViewModelController(
             repository,

@@ -2,7 +2,6 @@ package com.cbruegg.mensaupb
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
-import androidx.fragment.app.Fragment
 import installStetho
 
 class MensaApplication : MultiDexApplication() {

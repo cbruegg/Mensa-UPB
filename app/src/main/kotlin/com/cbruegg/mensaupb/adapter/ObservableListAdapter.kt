@@ -1,11 +1,10 @@
 package com.cbruegg.mensaupb.adapter
 
-import androidx.databinding.ObservableArrayList
-import androidx.databinding.ObservableList
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.ObservableArrayList
+import androidx.databinding.ObservableList
 
 /**
  * An abstract RecyclerView-Adapter that listens for changes in the provided observable list.

@@ -1,7 +1,7 @@
 package com.cbruegg.mensaupb.adapter
 
-import androidx.databinding.BindingAdapter
 import android.widget.ImageView
+import androidx.databinding.BindingAdapter
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.cbruegg.mensaupb.GlideApp
 

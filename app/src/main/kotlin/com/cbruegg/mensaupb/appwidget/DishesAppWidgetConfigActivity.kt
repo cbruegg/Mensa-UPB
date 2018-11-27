@@ -3,9 +3,9 @@ package com.cbruegg.mensaupb.appwidget
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
 import com.cbruegg.mensaupb.app

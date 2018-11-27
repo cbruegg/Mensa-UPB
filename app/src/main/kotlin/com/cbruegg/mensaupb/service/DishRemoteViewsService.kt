@@ -101,7 +101,7 @@ class DishRemoteViewsService : RemoteViewsService() {
         override fun onDataSetChanged() = runBlocking {
             val (restaurantId) = DishesWidgetConfigurationManager(ctx)
                 .retrieveConfiguration(appWidgetId)
-                    ?: return@runBlocking
+                ?: return@runBlocking
 
             withTimeoutOrNull(TIMEOUT_MS) {
                 val restaurant = repository.restaurantsAsync()
@@ -109,7 +109,7 @@ class DishRemoteViewsService : RemoteViewsService() {
                     .component2()
                     ?.value
                     ?.firstOrNull { it -> it.id == restaurantId }
-                        ?: return@withTimeoutOrNull
+                    ?: return@withTimeoutOrNull
                 this@DishRemoteViewsFactory.restaurant = restaurant
                 dishes = repository.dishesAsync(restaurant, shownDate)
                     .await()

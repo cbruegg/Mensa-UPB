@@ -58,14 +58,14 @@ class DishesWidgetUpdateService : JobService() {
                     .component2()
                     ?.value
                     ?.associateBy { it.id }
-                        ?: return@withTimeout true
+                    ?: return@withTimeout true
 
                 appWidgetIds
                     .map { appWidgetId ->
                         val config = configManager.retrieveConfiguration(appWidgetId)
-                                ?: return@map null
+                            ?: return@map null
                         val restaurant = restaurantsById[config.restaurantId]
-                                ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
+                            ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
 
                         DishAppWidgetResult.Success(appWidgetId, restaurant)
                     }

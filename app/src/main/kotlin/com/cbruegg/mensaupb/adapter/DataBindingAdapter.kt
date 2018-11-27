@@ -1,12 +1,12 @@
 package com.cbruegg.mensaupb.adapter
 
-import androidx.databinding.ViewDataBinding
-import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
+import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.ListPreloader
 import com.bumptech.glide.RequestBuilder
 import com.cbruegg.mensaupb.BR

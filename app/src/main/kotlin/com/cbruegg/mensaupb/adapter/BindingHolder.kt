@@ -1,9 +1,9 @@
 package com.cbruegg.mensaupb.adapter
 
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
 
 /**
  * A [RecyclerView.ViewHolder] for Android data binding.

@@ -1,7 +1,5 @@
 package com.cbruegg.mensaupb.extensions
 
-import androidx.drawerlayout.widget.DrawerLayout
-
 /**
  * Switch the drawer state (closed/open).
  */
