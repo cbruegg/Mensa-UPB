@@ -40,13 +40,13 @@ abstract class ObservableListAdapter<DATA, VH : RecyclerView.ViewHolder>(
         })
     }
 
-    override final fun getItemCount(): Int = list.size
+    final override fun getItemCount(): Int = list.size
 
-    override final fun onBindViewHolder(holder: VH, position: Int) {
+    final override fun onBindViewHolder(holder: VH, position: Int) {
         onBindViewHolder(holder, list[position], onClickListener.toInternalOnClickListener(list[position], position), getItemViewType(position))
     }
 
-    override final fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH = onCreateViewHolder(parent, viewType, LayoutInflater.from(parent.context))
+    final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH = onCreateViewHolder(parent, viewType, LayoutInflater.from(parent.context))
 
     abstract fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): VH
 

@@ -1,6 +1,5 @@
 package com.cbruegg.mensaupb.parser
 
-import androidx.test.filters.LargeTest
 import androidx.test.runner.AndroidJUnit4
 import okio.Okio
 import org.intellij.lang.annotations.Language
@@ -13,7 +12,8 @@ import kotlin.test.assertTrue
 @RunWith(AndroidJUnit4::class)
 class ParserTest {
 
-    @Test fun testRestaurantParsing() {
+    @Test
+    fun testRestaurantParsing() {
         @Language("JSON")
         val json = """{
           "mensa-academica-paderborn": {

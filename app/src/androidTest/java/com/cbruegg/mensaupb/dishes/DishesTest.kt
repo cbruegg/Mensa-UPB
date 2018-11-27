@@ -147,7 +147,7 @@ class DishesTest {
         val downloader = mock(Repository::class.java)
         val ex = IOException("ex")
         given(downloader.dishes(sampleRestaurant, date)).willReturn(async(CommonPool) {
-            Either.Left<IOException, List<DbDish>>(ex)
+            Either.Left(ex)
         })
         val userType = UserType.STUDENT
         val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishListViewModel> = {

@@ -18,7 +18,7 @@ class PersistentPropertyDelegatesTest(clazz: Class<*>, builder: RunnerBuilder) :
     class Nullable {
         private val context = InstrumentationRegistry.getContext()
         private val sharedPrefs = context.getSharedPreferences("testNullableString", Context.MODE_PRIVATE)
-        private var delegated by StringSharedPreferencesPropertyDelegate<String?>(sharedPrefs, "testKey", null)
+        private var delegated by StringSharedPreferencesPropertyDelegate({sharedPrefs}, "testKey", null)
 
         @Test fun testNullableString() {
             assertNull(delegated, "Value should be null-initialized")
@@ -31,7 +31,7 @@ class PersistentPropertyDelegatesTest(clazz: Class<*>, builder: RunnerBuilder) :
     class NonNull {
         private val context = InstrumentationRegistry.getContext()
         private val sharedPrefs = context.getSharedPreferences("testNullableString", Context.MODE_PRIVATE)
-        private var delegated by StringSharedPreferencesPropertyDelegate<String>(sharedPrefs, "testKey", "nonnull")
+        private var delegated by StringSharedPreferencesPropertyDelegate<String>({sharedPrefs}, "testKey", "nonnull")
 
         @Test fun testNonNullString() {
             assertEquals("nonnull", delegated, "Should be non-null")

@@ -50,7 +50,7 @@ class Repository @Deprecated("Inject this.") constructor(context: Context) {
         }
     }
 
-    private suspend inline fun <L, R, X> Either<L, R>.mapRightSuspend(f: (R) -> X): Either<L, X> =
+    private inline fun <L, R, X> Either<L, R>.mapRightSuspend(f: (R) -> X): Either<L, X> =
         when (this) {
             is Either.Left -> Either.left(a)
             is Either.Right -> Either.right(f(b))
