@@ -101,15 +101,13 @@ class DishRemoteViewsService : RemoteViewsService() {
                 .retrieveConfiguration(appWidgetId)
                 ?: return@runBlocking
 
-            val restaurant = repository.restaurantsAsync()
-                .await()
+            val restaurant = repository.restaurants()
                 .orNull()
                 ?.value
                 ?.firstOrNull { it -> it.id == restaurantId }
                 ?: return@runBlocking
             this@DishRemoteViewsFactory.restaurant = restaurant
-            dishes = repository.dishesAsync(restaurant, shownDate)
-                .await()
+            dishes = repository.dishes(restaurant, shownDate)
                 .orNull()
                 ?.value
                 ?.sortedWith(ctx.userType.dishComparator)

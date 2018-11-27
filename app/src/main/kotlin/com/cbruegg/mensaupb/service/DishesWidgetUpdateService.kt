@@ -53,8 +53,7 @@ class DishesWidgetUpdateService : JobService() {
 
         job = GlobalScope.launch(Dispatchers.Main) {
             val reschedule = run {
-                val restaurantsById = repository.restaurantsAsync()
-                    .await()
+                val restaurantsById = repository.restaurants()
                     .orNull()
                     ?.value
                     ?.associateBy { it.id }

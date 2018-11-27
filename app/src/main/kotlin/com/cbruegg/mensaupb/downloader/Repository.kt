@@ -9,9 +9,6 @@ import com.cbruegg.mensaupb.cache.ModelCache
 import com.cbruegg.mensaupb.cache.Stale
 import com.cbruegg.mensaupb.cache.toNonStale
 import com.cbruegg.mensaupb.util.AllOpen
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import java.util.Date
 import javax.inject.Inject
 
@@ -35,23 +32,21 @@ class Repository @Deprecated("Inject this.") constructor(context: Context) {
      *
      * @param onlyActive If true, only return restaurants marked as active.
      */
-    suspend fun restaurantsAsync(onlyActive: Boolean = true, acceptStale: Boolean = false):
-            Deferred<IOEither<Stale<List<DbRestaurant>>>> = GlobalScope.async {
-        val restaurants = tryStale(acceptStale, { modelCache.retrieveRestaurants(acceptStale).await() }) {
-            val restaurants = downloader.downloadRestaurantsAsync().await()
-            restaurants.mapRightSuspend { modelCache.cache(it).await() }
+    suspend fun restaurants(onlyActive: Boolean = true, acceptStale: Boolean = false): IOEither<Stale<List<DbRestaurant>>> {
+        val restaurants = tryStale(acceptStale, { modelCache.retrieveRestaurants(acceptStale) }) {
+            val restaurants = downloader.downloadRestaurants()
+            restaurants.mapRightSuspend { modelCache.cache(it) }
         }
-        restaurants.map { it.copy(value = it.value.filter { !onlyActive || it.isActive }) }
+        return restaurants.map { it.copy(value = it.value.filter { !onlyActive || it.isActive }) }
     }
 
     /**
      * Get a list of all dishes in a restaurant at the specified date. The list might be empty.
      */
-    suspend fun dishesAsync(restaurant: DbRestaurant, date: Date, acceptStale: Boolean = false):
-            Deferred<IOEither<Stale<List<DbDish>>>> = GlobalScope.async {
-        tryStale(acceptStale, { modelCache.retrieve(restaurant, date, acceptStale).await() }) {
-            val dishes = downloader.downloadDishesAsync(restaurant, date).await()
-            dishes.mapRightSuspend { modelCache.cache(restaurant, date, it).await() }
+    suspend fun dishes(restaurant: DbRestaurant, date: Date, acceptStale: Boolean = false): IOEither<Stale<List<DbDish>>> {
+        return tryStale(acceptStale, { modelCache.retrieve(restaurant, date, acceptStale) }) {
+            val dishes = downloader.downloadDishes(restaurant, date)
+            dishes.mapRightSuspend { modelCache.cache(restaurant, date, it) }
         }
     }
 

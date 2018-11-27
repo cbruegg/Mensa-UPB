@@ -46,8 +46,7 @@ class DishesViewModelController(
         }
 
         viewModel.isLoading.data = true
-        repository.dishesAsync(restaurant, date, acceptStale = true)
-            .await()
+        repository.dishes(restaurant, date, acceptStale = true)
             .fold({
                 viewModel.dishViewModels.data = emptyList()
                 viewModel.networkError.data = true

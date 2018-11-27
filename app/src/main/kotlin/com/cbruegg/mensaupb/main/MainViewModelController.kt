@@ -102,8 +102,7 @@ class MainViewModelController(
         }
 
         viewModel.isLoading.data = true
-        repository.restaurantsAsync(acceptStale = true)
-            .await()
+        repository.restaurants(acceptStale = true)
             .fold({
                 viewModel.restaurants.data = emptyList()
                 viewModel.networkError.data = true

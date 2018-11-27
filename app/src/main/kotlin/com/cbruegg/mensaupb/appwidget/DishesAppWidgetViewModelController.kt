@@ -31,8 +31,7 @@ class DishesAppWidgetViewModelController(
 
             viewModel.showProgress.data = true
             repository
-                .restaurantsAsync()
-                .await()
+                .restaurants()
                 .fold({
                     viewModel.networkError.data = true
                     it.printStackTrace()

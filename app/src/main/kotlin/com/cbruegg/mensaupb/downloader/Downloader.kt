@@ -12,9 +12,7 @@ import com.cbruegg.mensaupb.util.await
 import com.cbruegg.mensaupbservice.api.Dish
 import com.cbruegg.mensaupbservice.api.Restaurant
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
@@ -39,7 +37,7 @@ class Downloader @Inject constructor(private val httpClient: OkHttpClient) {
         return "$BASE_URL/dishes?apiId=$API_ID&date=${dateFormat.format(date)}&restaurantId=${restaurant.id}"
     }
 
-    fun downloadRestaurantsAsync(): Deferred<IOEither<List<Restaurant>>> = networkAsync {
+    suspend fun downloadRestaurants(): IOEither<List<Restaurant>> = networkAsync {
         val request = Request.Builder().url(RESTAURANT_URL).build()
         val response = httpClient.newCall(request).await()
         if (response.code() != 200) throw IOException("Server error!")
@@ -47,7 +45,7 @@ class Downloader @Inject constructor(private val httpClient: OkHttpClient) {
         parseRestaurantsFromApi(response.body()!!.source())
     }
 
-    fun downloadDishesAsync(restaurant: DbRestaurant, date: Date): Deferred<IOEither<List<Dish>>> = networkAsync {
+    suspend fun downloadDishes(restaurant: DbRestaurant, date: Date): IOEither<List<Dish>> = networkAsync {
         val request = Request.Builder().url(generateDishesUrl(restaurant, date)).build()
         val response = httpClient.newCall(request).await()
         if (response.code() != 200) throw IOException("Server error!")
@@ -58,8 +56,8 @@ class Downloader @Inject constructor(private val httpClient: OkHttpClient) {
     /**
      * Perform the action with the [dispatcher] and wrap it in [eitherTryIo].
      */
-    private fun <T : Any> networkAsync(dispatcher: CoroutineDispatcher = IOPool, f: suspend () -> T): Deferred<IOEither<T>> =
-        GlobalScope.async(dispatcher) {
+    private suspend fun <T : Any> networkAsync(dispatcher: CoroutineDispatcher = IOPool, f: suspend () -> T): IOEither<T> =
+        withContext(dispatcher) {
             eitherTryIo {
                 f()
             }

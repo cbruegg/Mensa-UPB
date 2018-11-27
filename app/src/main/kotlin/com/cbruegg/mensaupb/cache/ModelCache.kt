@@ -13,10 +13,9 @@ import com.cbruegg.mensaupbservice.api.Dish
 import com.cbruegg.mensaupbservice.api.Restaurant
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 import javax.inject.Inject
 
@@ -77,7 +76,7 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
     /**
      * Cache the list of restaurants and return the list of DB entries.
      */
-    fun cache(restaurants: List<Restaurant>): Deferred<List<DbRestaurant>> = GlobalScope.async(DbThread) {
+    suspend fun cache(restaurants: List<Restaurant>): List<DbRestaurant> = withContext(DbThread) {
         Log.d(TAG, "Caching new list of restaurants.")
         restaurants.map { (id, name, location, isActive) ->
             DbRestaurantEntity().apply {
@@ -103,7 +102,7 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
     /**
      * Retrieve the list of cached restaurants.
      */
-    fun retrieveRestaurants(acceptStale: Boolean = false): Deferred<Stale<List<DbRestaurant>>?> = GlobalScope.async(DbThread) {
+    suspend fun retrieveRestaurants(acceptStale: Boolean = false): Stale<List<DbRestaurant>>? = withContext(DbThread) {
         data {
             val threshold = if (acceptStale) oldestAllowedStaleCacheDate else oldestAllowedCacheDate
             val lastUpdate = select(DbRestaurantListCacheMetaEntity::class)
@@ -127,7 +126,7 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
      * Only the day, month and year of the date are used.
      * @return The original dish list
      */
-    fun cache(restaurant: DbRestaurant, date: Date, dishes: List<Dish>): Deferred<List<DbDish>> = GlobalScope.async(DbThread) {
+    suspend fun cache(restaurant: DbRestaurant, date: Date, dishes: List<Dish>): List<DbDish> = withContext(DbThread) {
         val dateAtMidnight = date.atMidnight
         val dbDishes = dishes.toDbDishes(restaurant)
         Log.d(TAG, "Storing dishes for ${restaurant.id} and date $dateAtMidnight")
@@ -158,7 +157,7 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
      * Only the day, month and year of the date are used.
      * If no data is found in the cache, this returns null.
      */
-    fun retrieve(restaurant: DbRestaurant, date: Date, acceptStale: Boolean = false): Deferred<Stale<List<DbDish>>?> = GlobalScope.async(DbThread) {
+    suspend fun retrieve(restaurant: DbRestaurant, date: Date, acceptStale: Boolean = false): Stale<List<DbDish>>? = withContext(DbThread) {
         val dateAtMidnight = date.atMidnight
         data {
             val threshold = if (acceptStale) oldestAllowedStaleCacheDate else oldestAllowedCacheDate

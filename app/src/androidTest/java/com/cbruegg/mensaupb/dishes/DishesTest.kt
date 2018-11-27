@@ -1,6 +1,5 @@
 package com.cbruegg.mensaupb.dishes
 
-import android.os.Parcel
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
 import com.cbruegg.mensaupb.cache.DbDish
@@ -10,8 +9,6 @@ import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.model.Badge
 import com.cbruegg.mensaupb.model.PriceType
 import com.cbruegg.mensaupb.model.UserType
-import com.cbruegg.mensaupb.nothing
-import com.cbruegg.mensaupb.serializeForSql
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
@@ -92,7 +89,7 @@ class DishesTest {
     @Test fun testPresenterSucc() = runBlocking {
         val date = now
         val downloader = mock(Repository::class.java)
-        given(downloader.dishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
+        given(downloader.dishes(sampleRestaurant, date)).willReturn(async(CommonPool) {
             Either.Right<IOException, List<DbDish>>(listOf(sampleDish)) // TODO Also test exception
         })
         val userType = UserType.STUDENT
@@ -107,7 +104,7 @@ class DishesTest {
 
         delay(200)
 
-        verify(downloader).dishesAsync(sampleRestaurant, date)
+        verify(downloader).dishes(sampleRestaurant, date)
         verify(mockView).setShowNoDishesMessage(false)
         verify(mockView, never()).showNetworkError(IOException())
         verify(mockView).showDishes(listOf(sampleDish).dishViewModelCreator(userType))
@@ -118,7 +115,7 @@ class DishesTest {
     @Test fun testPresenterShowArgDish() = runBlocking {
         val date = now
         val downloader = mock(Repository::class.java)
-        given(downloader.dishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
+        given(downloader.dishes(sampleRestaurant, date)).willReturn(async(CommonPool) {
             Either.Right<IOException, List<DbDish>>(listOf(sampleDish))
         })
         val userType = UserType.STUDENT
@@ -134,7 +131,7 @@ class DishesTest {
         delay(200)
 
         val dishViewModels = listOf(sampleDish).dishViewModelCreator(userType)
-        verify(downloader).dishesAsync(sampleRestaurant, date)
+        verify(downloader).dishes(sampleRestaurant, date)
         verify(mockView).setShowNoDishesMessage(false)
         verify(mockView, never()).showNetworkError(IOException())
         verify(mockView).showDishes(dishViewModels)
@@ -145,7 +142,7 @@ class DishesTest {
         val date = now
         val downloader = mock(Repository::class.java)
         val ex = IOException("ex")
-        given(downloader.dishesAsync(sampleRestaurant, date)).willReturn(async(CommonPool) {
+        given(downloader.dishes(sampleRestaurant, date)).willReturn(async(CommonPool) {
             Either.Left<IOException, List<DbDish>>(ex)
         })
         val userType = UserType.STUDENT
@@ -160,7 +157,7 @@ class DishesTest {
 
         delay(200)
 
-        verify(downloader).dishesAsync(sampleRestaurant, date)
+        verify(downloader).dishes(sampleRestaurant, date)
         verify(mockView, never()).setShowNoDishesMessage(false)
         verify(mockView).showNetworkError(ex)
         verify(mockView).showDishes(emptyList())
