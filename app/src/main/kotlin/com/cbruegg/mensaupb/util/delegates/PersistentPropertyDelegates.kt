@@ -13,12 +13,25 @@ abstract class SharedPreferencesPropertyDelegate<T>(
     protected val sharedPreferences by lazy { sharedPreferencesProvider() }
 }
 
-class StringSharedPreferencesPropertyDelegate<S : String?>(
+class StringSharedPreferencesPropertyDelegate<S : String?>
+private constructor(
     sharedPreferences: () -> SharedPreferences,
     key: String,
-    private val defaultValue: S
+    private val defaultValue: S,
+    private val sCaster: (String?) -> S
 ) : SharedPreferencesPropertyDelegate<S>(sharedPreferences, key) {
-    override fun getValue(thisRef: Any, property: KProperty<*>): S = sharedPreferences.getString(key, defaultValue) as S
+
+    companion object {
+        @JvmName("StringSharedPreferencesPropertyDelegate")
+        operator fun invoke(sharedPreferences: () -> SharedPreferences, key: String, defaultValue: String) =
+            StringSharedPreferencesPropertyDelegate(sharedPreferences, key, defaultValue, sCaster = { it!! })
+
+        @JvmName("NullableStringSharedPreferencesPropertyDelegate")
+        operator fun invoke(sharedPreferences: () -> SharedPreferences, key: String, defaultValue: String?) =
+            StringSharedPreferencesPropertyDelegate(sharedPreferences, key, defaultValue, sCaster = { it })
+    }
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): S = sCaster(sharedPreferences.getString(key, defaultValue))
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: S) {
         sharedPreferences.edit().putString(key, value).apply()

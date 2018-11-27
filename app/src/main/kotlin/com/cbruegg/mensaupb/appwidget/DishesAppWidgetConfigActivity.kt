@@ -23,7 +23,7 @@ import javax.inject.Inject
 class DishesAppWidgetConfigActivity : AppCompatActivity() {
 
     private val appWidgetId by lazy {
-        intent.extras.getInt(
+        intent!!.extras!!.getInt(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         )

@@ -40,5 +40,5 @@ val Context.userType: UserType
     get() = UserType.findById(
         PreferenceManager.getDefaultSharedPreferences(
             this
-        ).getString(PreferenceActivity.KEY_PREF_USER_TYPE, UserType.STUDENT.id)
+        ).getString(PreferenceActivity.KEY_PREF_USER_TYPE, UserType.STUDENT.id)!!
     )!!

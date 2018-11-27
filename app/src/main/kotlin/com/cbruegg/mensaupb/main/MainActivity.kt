@@ -166,7 +166,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var viewModelController: MainViewModelController
-    private var lastRestaurantId by StringSharedPreferencesPropertyDelegate<String?>(
+    private var lastRestaurantId by StringSharedPreferencesPropertyDelegate(
         sharedPreferences = { getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE) },
         key = PREFS_KEY_LAST_SELECTED_RESTAURANT,
         defaultValue = null

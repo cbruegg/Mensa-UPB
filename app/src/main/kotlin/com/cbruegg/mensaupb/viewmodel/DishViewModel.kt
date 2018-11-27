@@ -78,7 +78,7 @@ data class HeaderViewModel(val text: CharSequence, val showDivider: Boolean) : D
 
 private val NUMBER_FORMAT = DecimalFormat("0.00")
 
-private fun DbDish.toDishViewModel(userType: UserType, context: Context, position: Int): DishViewModel {
+private fun DbDish.toDishViewModel(userType: UserType, context: Context): DishViewModel {
     val userPrice = when (userType) {
         UserType.STUDENT -> studentPrice
         UserType.WORKER -> workerPrice
@@ -152,7 +152,7 @@ fun List<DbDish>.toDishViewModels(context: Context, userType: UserType): List<Di
         if (headerText != null) {
             result += HeaderViewModel(headerText, showDivider = position != 0)
         }
-        result += dish.toDishViewModel(userType, context, position)
+        result += dish.toDishViewModel(userType, context)
     }
 
     return result
