@@ -56,6 +56,8 @@ class DishRemoteViewsService : RemoteViewsService() {
         override fun getLoadingView(): RemoteViews? = null // Use default
 
         override fun getViewAt(position: Int): RemoteViews? {
+            if (position !in dishes.indices) return null // Android causes a race condition between updating and and getCount()
+
             val dish = dishes[position]
             val thumbnailVisibility = if (dish.thumbnailImageUrl.isNullOrEmpty()) View.GONE else View.VISIBLE
 
