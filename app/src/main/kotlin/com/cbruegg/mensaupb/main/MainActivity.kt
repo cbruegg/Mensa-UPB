@@ -16,6 +16,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.PreferenceActivity
@@ -192,7 +193,7 @@ class MainActivity : AppCompatActivity() {
             viewModelController.onRestaurantClick(restaurant, currentlyDisplayedDay)
         }
         restaurantList.adapter = restaurantAdapter
-        restaurantList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        restaurantList.layoutManager = LinearLayoutManager(this)
 
         viewModel.restaurants.observe(this) {
             setRestaurants(it)

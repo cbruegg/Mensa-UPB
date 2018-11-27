@@ -1,6 +1,7 @@
 package com.cbruegg.mensaupb
 
 import android.content.Context
+import androidx.fragment.app.Fragment
 import androidx.multidex.MultiDexApplication
 import installStetho
 
@@ -26,5 +27,5 @@ class MensaApplication : MultiDexApplication() {
 val Context.app: MensaApplication
     get() = applicationContext as MensaApplication
 
-val androidx.fragment.app.Fragment.app: MensaApplication
+val Fragment.app: MensaApplication
     get() = (activity ?: context!!).app

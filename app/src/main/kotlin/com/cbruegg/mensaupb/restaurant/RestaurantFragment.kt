@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager.widget.ViewPager
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
@@ -98,7 +99,7 @@ class RestaurantFragment
             pagerInfo.dates, requestedDishName, pagerIndex
         )
         dayPager.adapter = adapter
-        dayPager.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener() {
+        dayPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
                 viewModel.pagerInfo.value.position = pagerInfo.dates[position]
             }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
@@ -131,7 +132,7 @@ class DishesFragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         adapter.onClickListener = { dishViewModel, _ -> viewModelController.onDishClicked(dishViewModel) }
         dishList.adapter = adapter
-        dishList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        dishList.layoutManager = LinearLayoutManager(activity)
         dishList.addOnScrollListener(RecyclerViewPreloader(this, adapter, adapter, 5))
 
         super.onViewCreated(view, savedInstanceState)

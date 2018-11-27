@@ -5,15 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableList
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * An abstract RecyclerView-Adapter that listens for changes in the provided observable list.
  * It also features support for a lambda onClickListener.
  */
-abstract class ObservableListAdapter<DATA, VH : androidx.recyclerview.widget.RecyclerView.ViewHolder>(
+abstract class ObservableListAdapter<DATA, VH : RecyclerView.ViewHolder>(
     val list: ObservableArrayList<DATA> = ObservableArrayList(),
     var onClickListener: ((data: DATA, position: Int) -> Unit)? = null
-) : androidx.recyclerview.widget.RecyclerView.Adapter<VH>() {
+) : RecyclerView.Adapter<VH>() {
 
     init {
         list.addOnListChangedCallback(object : ObservableList.OnListChangedCallback<ObservableList<DATA>>() {
