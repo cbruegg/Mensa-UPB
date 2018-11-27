@@ -23,23 +23,27 @@ import com.firebase.jobdispatcher.JobParameters
 import com.firebase.jobdispatcher.JobService
 import com.firebase.jobdispatcher.RetryStrategy
 import com.firebase.jobdispatcher.Trigger
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 /**
  * A service that is responsible for updating
  * all dishes widgets.
  */
-class DishesWidgetUpdateService : JobService() {
+class DishesWidgetUpdateService : JobService(), CoroutineScope {
+
+    private lateinit var job: Job
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     override fun onStopJob(params: JobParameters): Boolean {
-        val job = job ?: return false
         val isActive = job.isActive
         job.cancel()
         return isActive
@@ -47,11 +51,12 @@ class DishesWidgetUpdateService : JobService() {
 
     override fun onStartJob(params: JobParameters): Boolean {
         app.appComponent.inject(this)
+        job = Job()
 
         val appWidgetIds = params.extras?.getIntArray(ARG_APPWIDGET_IDS) ?: throw IllegalArgumentException("Missing extras!")
         val configManager = DishesWidgetConfigurationManager(this@DishesWidgetUpdateService)
 
-        job = GlobalScope.launch(Dispatchers.Main) {
+        val job = launch {
             val reschedule = run {
                 val restaurantsById = repository.restaurants()
                     .orNull()
@@ -76,7 +81,7 @@ class DishesWidgetUpdateService : JobService() {
             jobFinished(params, reschedule)
         }
 
-        return job?.isActive == true
+        return job.isActive
     }
 
     /**
@@ -145,7 +150,6 @@ class DishesWidgetUpdateService : JobService() {
 
     }
 
-    private var job: Job? = null
     private val shownDate: Date
         get() = Date(System.currentTimeMillis() + DATE_OFFSET + INTERNAL_DATE_OFFSET)
 

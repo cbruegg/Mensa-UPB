@@ -8,8 +8,7 @@ import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.model.UserType
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -23,7 +22,7 @@ class DishesViewModelController(
     private val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishListViewModel>,
     private val dishNameToShowOnLoad: String?,
     private val viewModel: DishesViewModel
-) {
+) : CoroutineScope by viewModel {
 
     fun onDishClicked(dishListViewModel: DishListViewModel) {
         if (dishListViewModel is DishViewModel && dishListViewModel.hasBigImage) {
@@ -35,7 +34,7 @@ class DishesViewModelController(
         viewModel.showDialogFor.data = null
     }
 
-    fun reloadIfNeeded() = GlobalScope.launch(Dispatchers.Main) {
+    fun reloadIfNeeded() = launch {
         synchronized(viewModel) {
             val shouldReload = viewModel.lastLoadMeta < now - MAX_DISH_AGE_MS
             if (shouldReload) {

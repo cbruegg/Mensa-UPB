@@ -6,8 +6,7 @@ import com.cbruegg.mensaupb.extensions.minus
 import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.viewmodel.uiSorted
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -20,7 +19,7 @@ class MainViewModelController(
     private var requestedRestaurantId: String?,
     private var requestedDishName: String?,
     private var requestedSelectedDay: Date?
-) {
+) : CoroutineScope by viewModel {
 
     private val DEFAULT_RESTAURANT_NAME = "Mensa Academica"
 
@@ -88,7 +87,7 @@ class MainViewModelController(
      * or the network, reloading the fragments afterwards.
      * This is useful for reloading after receiving a new intent.
      */
-    private fun reloadIfNeeded() = GlobalScope.launch(Dispatchers.Main) {
+    private fun reloadIfNeeded() = launch {
         synchronized(viewModel) {
             val shouldReload = viewModel.lastLoadMeta < now - MAX_RESTAURANTS_AGE_MS ||
                     requestedDishName != null ||

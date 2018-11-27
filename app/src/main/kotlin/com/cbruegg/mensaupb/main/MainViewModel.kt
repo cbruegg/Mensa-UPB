@@ -1,8 +1,8 @@
 package com.cbruegg.mensaupb.main
 
-import androidx.lifecycle.ViewModel
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.util.MutableLiveData
+import com.cbruegg.mensaupb.viewmodel.BaseViewModel
 import java.util.Date
 
 data class RestaurantLoadSpec(
@@ -19,7 +19,7 @@ data class MainViewModel(
     val isLoading: MutableLiveData<Boolean>,
     val restaurantLoadSpec: MutableLiveData<RestaurantLoadSpec?>,
     var lastLoadMeta: Date = Date(0)
-) : ViewModel()
+) : BaseViewModel()
 
 fun initialMainViewModel() = MainViewModel(
     restaurants = MutableLiveData(emptyList()),

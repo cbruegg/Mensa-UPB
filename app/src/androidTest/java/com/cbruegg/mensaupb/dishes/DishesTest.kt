@@ -2,6 +2,7 @@ package com.cbruegg.mensaupb.dishes
 
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
+import arrow.core.Either
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
@@ -9,9 +10,12 @@ import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.model.Badge
 import com.cbruegg.mensaupb.model.PriceType
 import com.cbruegg.mensaupb.model.UserType
+import com.cbruegg.mensaupb.serializeForSql
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
+import com.cbruegg.mensaupbservice.api.Badge
+import com.cbruegg.mensaupbservice.api.PriceType
 import kotlinx.coroutines.CommonPool
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay

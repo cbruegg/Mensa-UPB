@@ -3,8 +3,7 @@ package com.cbruegg.mensaupb.appwidget
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.viewmodel.uiSorted
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.withLock
 
@@ -13,7 +12,7 @@ class DishesAppWidgetViewModelController(
     private val dishesWidgetConfigurationManager: DishesWidgetConfigurationManager,
     private val appWidgetId: Int,
     private val viewModel: DishesAppWidgetViewModel
-) {
+) : CoroutineScope by viewModel {
 
     private var restaurantList = emptyList<DbRestaurant>()
 
@@ -23,7 +22,7 @@ class DishesAppWidgetViewModelController(
         viewModel.closed.data = true
     }
 
-    fun load() = GlobalScope.launch(Dispatchers.Main) {
+    fun load() = launch {
         viewModel.loadingMutex.withLock {
             if (viewModel.restaurants.data.isNotEmpty() || viewModel.networkError.data) {
                 return@withLock

@@ -1,8 +1,8 @@
 package com.cbruegg.mensaupb.appwidget
 
-import androidx.lifecycle.ViewModel
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.util.MutableLiveData
+import com.cbruegg.mensaupb.viewmodel.BaseViewModel
 import kotlinx.coroutines.sync.Mutex
 
 data class DishesAppWidgetViewModel(
@@ -12,7 +12,7 @@ data class DishesAppWidgetViewModel(
     val showProgress: MutableLiveData<Boolean>,
     val closed: MutableLiveData<Boolean>,
     val loadingMutex: Mutex = Mutex()
-) : ViewModel()
+) : BaseViewModel()
 
 fun initialDishesAppWidgetViewModel() = DishesAppWidgetViewModel(
     networkError = MutableLiveData(false),
