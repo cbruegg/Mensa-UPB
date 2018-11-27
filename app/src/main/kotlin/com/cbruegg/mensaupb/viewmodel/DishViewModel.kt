@@ -1,10 +1,14 @@
 package com.cbruegg.mensaupb.viewmodel
 
 import android.content.Context
-import android.os.Build
+import android.graphics.Color
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.ForegroundColorSpan
+import android.util.TypedValue
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.cache.DbDish
-import com.cbruegg.mensaupb.compat.Html
 import com.cbruegg.mensaupb.extensions.capitalizeFirstChar
 import com.cbruegg.mensaupb.extensions.replace
 import com.cbruegg.mensaupb.model.UserType
@@ -68,7 +72,6 @@ data class DishViewModel(
         return result
     }
 
-
 }
 
 data class HeaderViewModel(val text: CharSequence, val showDivider: Boolean) : DishListViewModel()
@@ -82,19 +85,40 @@ private fun DbDish.toDishViewModel(userType: UserType, context: Context, positio
         UserType.GUEST -> guestPrice
     }
     val priceText = "${NUMBER_FORMAT.format(userPrice)} € ${if (priceType == PriceType.WEIGHTED) context.getString(R.string.per_100_gramm) else ""}"
-    val allergensText = "${context.getString(R.string.allergens)} ${allergens.replace("A1", context.getString(R.string.allergen_gluten_description)).joinToString()}"
     val badgesText = badges
         .joinTo(buffer = StringBuilder(), transform = { context.getString(it.descriptionStringId) })
         .toString()
         .capitalizeFirstChar()
-    val html = context.getString(R.string.row_dish_description, displayName(), priceText, badgesText)
-    val description = if (Build.VERSION.SDK_INT >= 24) {
-        Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY, null, null)
-    } else {
-        @Suppress("DEPRECATION")
-        Html.fromHtml(html)
-    }
+
+    val allergensText = "${context.getString(R.string.allergens)} ${allergens.replace("A1", context.getString(R.string.allergen_gluten_description)).joinToString()}"
+
+    val description = buildRowDishDescription(context, priceText, badgesText)
     return DishViewModel(this, priceText, allergensText, badgesText, displayName(), description.trim())
+}
+
+private fun DbDish.buildRowDishDescription(context: Context, priceText: String, badgesText: String): CharSequence {
+    val sp16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16f, context.resources.displayMetrics).toInt()
+    val sp15 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15f, context.resources.displayMetrics).toInt()
+    return SpannableStringBuilder()
+        .appendln(displayName(), ForegroundColorSpan(Color.BLACK), AbsoluteSizeSpan(sp16))
+        .appendln(priceText, AbsoluteSizeSpan(sp15))
+        .append(badgesText, AbsoluteSizeSpan(sp15))
+}
+
+private fun SpannableStringBuilder.append(line: String, vararg spans: Any): SpannableStringBuilder {
+    val oldLen = length
+    val newLen = oldLen + line.length
+    append(line)
+    for (span in spans) {
+        setSpan(span, oldLen, newLen, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+    }
+    return this
+}
+
+private fun SpannableStringBuilder.appendln(line: String, vararg spans: Any): SpannableStringBuilder {
+    append(line, *spans)
+    append('\n')
+    return this
 }
 
 private val Badge.descriptionStringId

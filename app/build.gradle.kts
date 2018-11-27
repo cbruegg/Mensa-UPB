@@ -103,8 +103,6 @@ dependencies {
     }
     kapt("com.github.bumptech.glide:compiler:$glideVersion")
 
-    implementation("org.ccil.cowan.tagsoup:tagsoup:1.2.1")
-
     val stethoVersion = "1.5.0"
     debugImplementation("com.facebook.stetho:stetho:$stethoVersion")
     debugImplementation("com.facebook.stetho:stetho-okhttp3:$stethoVersion")
