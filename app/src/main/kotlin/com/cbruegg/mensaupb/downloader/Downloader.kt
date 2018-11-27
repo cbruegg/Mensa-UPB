@@ -1,6 +1,7 @@
 package com.cbruegg.mensaupb.downloader
 
 import android.annotation.SuppressLint
+import arrow.core.Either
 import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.IOPool
 import com.cbruegg.mensaupb.cache.DbRestaurant
@@ -17,7 +18,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.funktionale.either.Either
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date

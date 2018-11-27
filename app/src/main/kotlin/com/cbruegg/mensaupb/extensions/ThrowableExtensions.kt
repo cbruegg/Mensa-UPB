@@ -1,6 +1,6 @@
 package com.cbruegg.mensaupb.extensions
 
-import org.funktionale.either.Either
+import arrow.core.Either
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter

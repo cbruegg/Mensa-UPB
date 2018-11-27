@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.RemoteViews
+import arrow.core.orNull
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
@@ -55,7 +56,7 @@ class DishesWidgetUpdateService : JobService() {
             val reschedule = withTimeout(TIMEOUT_MS) {
                 val restaurantsById = repository.restaurantsAsync()
                     .await()
-                    .component2()
+                    .orNull()
                     ?.value
                     ?.associateBy { it.id }
                     ?: return@withTimeout true
