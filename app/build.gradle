@@ -73,7 +73,7 @@ dependencies {
     implementation 'com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.1.0'
 
     def arrowVersion = "0.8.1"
-    compile "io.arrow-kt:arrow-core:$arrowVersion"
+    implementation "io.arrow-kt:arrow-core:$arrowVersion"
 
     def daggerVersion = "2.19"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
