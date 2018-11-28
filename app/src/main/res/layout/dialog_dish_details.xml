@@ -23,17 +23,16 @@
 
     <TextView
         android:id="@+id/dish_description"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
-        android:gravity="center_horizontal"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/dish_image_fullscreen"
         app:layout_constraintTop_toBottomOf="@+id/dish_image"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintTop_creator="1" />
@@ -56,4 +55,19 @@
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1"
         tools:visibility="invisible" />
+
+    <ImageButton
+        android:id="@+id/dish_image_fullscreen"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_fullscreen_black_24dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dish_image" />
 </androidx.constraintlayout.widget.ConstraintLayout>

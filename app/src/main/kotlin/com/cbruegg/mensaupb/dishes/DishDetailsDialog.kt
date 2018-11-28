@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
+import com.cbruegg.mensaupb.activity.PhotoActivity
 import com.cbruegg.mensaupb.util.OnlyScaleDownCenterInside
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 
@@ -42,6 +43,7 @@ fun showDishDetailsDialog(context: Context, dishViewModel: DishViewModel, onDism
     val imageView = dialogView.findViewById<ImageView>(R.id.dish_image)
     val descriptionView = dialogView.findViewById<TextView>(R.id.dish_description)
     val progressBar = dialogView.findViewById<ProgressBar>(R.id.dish_image_progressbar)
+    val fullscreen = dialogView.findViewById<View>(R.id.dish_image_fullscreen)
 
     val alertDialog = AlertDialog.Builder(context)
         .setView(dialogView)
@@ -69,6 +71,7 @@ fun showDishDetailsDialog(context: Context, dishViewModel: DishViewModel, onDism
                 progressBar.visibility = View.GONE
                 imageView.visibility = View.VISIBLE
                 descriptionView.visibility = View.VISIBLE
+                fullscreen.visibility = View.VISIBLE
                 return false
             }
         })
@@ -82,4 +85,14 @@ fun showDishDetailsDialog(context: Context, dishViewModel: DishViewModel, onDism
     }
     fullTextBuilder.append(dishViewModel.priceText)
     descriptionView.text = fullTextBuilder
+
+    val imageUrl = dishViewModel.dish.imageUrl
+    if (imageUrl != null) {
+        imageView.setOnClickListener {
+            context.startActivity(PhotoActivity.createStartIntent(context, imageUrl))
+        }
+        fullscreen.setOnClickListener {
+            context.startActivity(PhotoActivity.createStartIntent(context, imageUrl))
+        }
+    }
 }

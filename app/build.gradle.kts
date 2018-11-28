@@ -72,6 +72,9 @@ dependencies {
     implementation("androidx.multidex:multidex:2.0.0")
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
     implementation("com.squareup.okhttp3:okhttp:3.12.0")
+    implementation("androidx.core:core-ktx:1.0.1")
+    implementation("androidx.fragment:fragment-ktx:1.0.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0")
 
     implementation("com.firebase:firebase-jobdispatcher:0.8.5")
 
@@ -104,6 +107,8 @@ dependencies {
         setTransitive(false)
     }
     kapt("com.github.bumptech.glide:compiler:$glideVersion")
+
+    implementation("com.davemorrissey.labs:subsampling-scale-image-view:3.10.0")
 
     implementation("com.google.firebase:firebase-core:16.0.5")
     implementation("com.crashlytics.sdk.android:crashlytics:2.9.6")

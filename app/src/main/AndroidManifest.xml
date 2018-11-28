@@ -38,6 +38,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activity.PhotoActivity"
+            android:theme="@style/AppTheme.Transparent.NoTitleBar" />
+
         <receiver android:name=".provider.DishesAppWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -47,7 +51,9 @@
                 android:resource="@xml/dishes_app_widget_info" />
         </receiver>
 
-        <service android:name=".service.DishesWidgetUpdateService" android:exported="false">
+        <service
+            android:name=".service.DishesWidgetUpdateService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
