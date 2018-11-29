@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-private const val MIN_LOAD_TIME_MS = 500 // Prevents jank
+private const val MIN_LOAD_TIME_MS = 300L // Prevents jank
 
 class PhotoActivity : BaseActivity() {
 
@@ -38,13 +38,14 @@ class PhotoActivity : BaseActivity() {
             firstLoad = false
 
             launch {
-                val startTime = System.currentTimeMillis()
+                val delay = launch { delay(MIN_LOAD_TIME_MS) }
                 val file = GlideApp.with(context)
                     .asFile()
                     .load(imageUrl)
                     .submit()
                     .await()
-                delay(MIN_LOAD_TIME_MS - (System.currentTimeMillis() - startTime))
+                delay.join()
+
                 _image.data = file
             }
         }
@@ -80,6 +81,7 @@ class PhotoActivity : BaseActivity() {
         }
 
         activityPhotoRoot.setOnClickListener { finish() }
+        photoView.setOnClickListener { finish() }
     }
 
     private fun fadeInPhotoView() {
