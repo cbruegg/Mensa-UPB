@@ -5,12 +5,12 @@ There already exist a few Android apps for the restaurants of the University of 
 Please find screenshots and more information about the app's features in the [Play Store](https://play.google.com/store/apps/details?id=com.cbruegg.mensaupb).
 
 # Advantages of this project
-Mensa-UPB works with the official API of the Studierendenwerk, so it's unlikely to break anytime soon.
-I've also tried to make it use modern technologies, like Google's support libraries, Kotlin coroutines and many others. It's also written almost entirely in Kotlin, JetBrains relatively new language that's a more innovative alternative to Java, yet preserves Java-Interop as much as possible.
-In addition to that, the app uses the new data binding feature and targets the Nougat SDK.
+Mensa-UPB works with a proxy API that calls the official API of the Studierendenwerk, so it's unlikely to break anytime soon. On top of this, the proxy API allows for deploying hotfixes.
+I've also tried to make it use modern technologies, like Google's support libraries, Kotlin coroutines and many others. It's also written entirely in Kotlin, including the Gradle buildscript.
+Another goal of this app is to always target the latest version of Android.
 
 # Contributions
-Contributions are of course welcome, but unfortunately an API key is required for communicating with the official API. It has to be put into the api_id.properties file in the root directory of the project.
+Contributions are of course welcome, but unfortunately an API key provided by the Studierendenwerk is required for communicating with the official API. It has to be put into the `api_id.properties` file in the root directory of the project. Additionally, this app relies on Firebase Crashlytics for crash reporting and requires a `google-services.json`.
 
 # License
 
