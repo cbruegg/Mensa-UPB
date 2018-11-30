@@ -94,9 +94,7 @@ class DishesFragment
 
         viewModel.showDialogFor.observe(this) { dishViewModel ->
             if (dishViewModel != null) {
-                showDishDetailsDialog(context!!, dishViewModel) {
-                    viewModelController.onDetailsDialogDismissed()
-                }
+                context!!.showDishDetailsDialog(dishViewModel)
             }
         }
         viewModel.dishViewModels.observe(this) { dishListViewModels ->

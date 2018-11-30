@@ -39,7 +39,7 @@
         </activity>
 
         <activity
-            android:name=".activity.PhotoActivity"
+            android:name=".activity.DishDetailsActivity"
             android:theme="@style/AppTheme.Transparent.NoTitleBar" />
 
         <receiver android:name=".provider.DishesAppWidgetProvider">

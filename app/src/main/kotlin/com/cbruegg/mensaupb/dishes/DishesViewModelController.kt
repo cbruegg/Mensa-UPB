@@ -27,11 +27,8 @@ class DishesViewModelController(
     fun onDishClicked(dishListViewModel: DishListViewModel) {
         if (dishListViewModel is DishViewModel && dishListViewModel.hasBigImage) {
             viewModel.showDialogFor.data = dishListViewModel
+            viewModel.showDialogFor.data = null
         }
-    }
-
-    fun onDetailsDialogDismissed() {
-        viewModel.showDialogFor.data = null
     }
 
     fun reloadIfNeeded() = launch {
