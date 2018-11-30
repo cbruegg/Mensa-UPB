@@ -261,6 +261,10 @@ class MainActivity : AppCompatActivity() {
             studentenwerkOpeningHoursUri.showInCustomTab()
             true
         }
+        R.id.allergens_table -> {
+            openAllergensTable()
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -272,6 +276,14 @@ class MainActivity : AppCompatActivity() {
             .setToolbarColor(ContextCompat.getColor(this@MainActivity, R.color.primary))
             .build()
             .launchUrl(this@MainActivity, this)
+    }
+
+    private fun openAllergensTable() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.allergens_table)
+            .setMessage(R.string.allergens_table_content)
+            .setPositiveButton(R.string.close, null)
+            .show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

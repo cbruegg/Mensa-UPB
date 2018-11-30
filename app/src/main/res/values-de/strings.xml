@@ -26,4 +26,20 @@
     <string name="ok">OK</string>
     <string name="allergen_gluten_description">A1 (Gluten)</string>
     <string name="showing_stale_data">Aktualisierung fehlgeschlagen. Zeige alte Daten.</string>
+    <string name="allergens_table_content">"A1 = glutenhaltig
+A2 = Krebstiere und Krebstiererzeugnisse
+A3 = Eier und Eiererzeugnisse
+A4 = Fisch
+A5 = Erdnüsse und Erdnusserzeugnisse
+A6 = Soja und Sojaerzeugnisse
+A7 = Milch und Milcherzeugnisse (einschließlich Lactose)
+A8 = Schalenfrüchte sowie daraus hergest. Erzeugnisse
+A9 = Sellerie und Sellerieerzeugnisse
+A10 = Senf und Senferzeugnisse
+A11 = Sesamsamen und Sesamsamenerzeugnisse
+A12 = Schwefeldioxid und Sulfite
+A13 = Lupinen und Lupinenerzeugnisse
+A14 = Weichtiere und Weichtiererzeugnisse"</string>
+    <string name="allergens_table">Allergentabelle</string>
+    <string name="close">Schließen</string>
 </resources>

@@ -30,4 +30,20 @@
     <string name="ok">OK</string>
     <string name="allergen_gluten_description">A1 (Gluten)</string>
     <string name="showing_stale_data">Refresh failed. Showing old data.</string>
+    <string name="allergens_table_content">"A1 = Gluten
+A2 = Shellfish and products/foods containing shellfish
+A3 = Eggs and products/foods containing eggs
+A4 = Fish
+A5 = Peanuts and products/foods containing peanuts
+A6 = Soy and products/foods containing soy
+A7 = Milk and products/foods containing milk (including lactose)
+A8 = Nuts and products/foods containing nuts
+A9 = Celery and products/foods containing celery
+A10 = Mustard and products/foods containing mustard
+A11 = Sesame and products/foods containing sesame
+A12 = Sulfur und sulfite
+A13 = Lupine and products/foods containing lupine
+A14 = Mollusk and products/foods containing mollusk"</string>
+    <string name="allergens_table">Allergens</string>
+    <string name="close">Close</string>
 </resources>

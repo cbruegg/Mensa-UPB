@@ -18,4 +18,9 @@
         android:title="@string/studentenwerk_paderborn"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/allergens_table"
+        android:title="@string/allergens_table"
+        app:showAsAction="never" />
+
 </menu>
