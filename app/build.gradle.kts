@@ -55,7 +55,6 @@ android {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
     kotlinOptions {
-        jvmTarget = "1.8"
         freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
         allWarningsAsErrors = true
     }
