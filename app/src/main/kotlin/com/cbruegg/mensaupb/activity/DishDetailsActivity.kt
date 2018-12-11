@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.DrawableRes
 import androidx.annotation.UiThread
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
@@ -16,6 +17,7 @@ import com.cbruegg.mensaupb.util.LiveData
 import com.cbruegg.mensaupb.util.MutableLiveData
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
+import com.cbruegg.mensaupb.util.xmlDrawableToBitmap
 import com.cbruegg.mensaupb.viewmodel.BaseViewModel
 import com.davemorrissey.labs.subscaleview.ImageSource
 import kotlinx.android.synthetic.main.activity_dish_details.*
@@ -25,12 +27,13 @@ import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.concurrent.ExecutionException
 
 class DishDetailsActivity : BaseActivity() {
 
     private class ViewModel(private val context: Context, private val imageUrl: String?, text: String) : BaseViewModel() {
-        private val _image: MutableLiveData<File?> = MutableLiveData(null)
-        val image: LiveData<File?> = _image
+        private val _image: MutableLiveData<ImageSpec?> = MutableLiveData(null)
+        val image: LiveData<ImageSpec?> = _image
 
         val text: LiveData<String> = LiveData(text)
 
@@ -41,14 +44,17 @@ class DishDetailsActivity : BaseActivity() {
             if (imageUrl == null || loadingJob != null) return
 
             loadingJob = launch {
-                val file = GlideApp.with(context)
-                    .asFile()
-                    .load(imageUrl)
-                    .error(R.drawable.ic_error_outline_black_24dp)
-                    .submit()
-                    .await()
+                val file = try {
+                    GlideApp.with(context)
+                        .asFile()
+                        .load(imageUrl)
+                        .submit()
+                        .await()
+                } catch (e: ExecutionException) {
+                    null
+                }
 
-                _image.data = file
+                _image.data = file?.toImageSpec() ?: R.drawable.ic_error_outline_black_24dp.toImageSpec()
 
                 loadingJob = null
             }
@@ -79,11 +85,15 @@ class DishDetailsActivity : BaseActivity() {
         setContentView(R.layout.activity_dish_details)
 
         viewModel(::initialViewModel).apply {
-            image.observe(this@DishDetailsActivity) { imageFile ->
-                imageFile ?: return@observe
+            image.observe(this@DishDetailsActivity) { imageSpec ->
+                imageSpec ?: return@observe
 
+                val imageSource = when (imageSpec) {
+                    is ImageSpec.File -> ImageSource.uri(imageSpec.file.toUri())
+                    is ImageSpec.Drawable -> ImageSource.bitmap(xmlDrawableToBitmap(imageSpec.res))
+                }
+                photoView.setImage(imageSource)
                 photoViewLoading.isVisible = false
-                photoView.setImage(ImageSource.uri(imageFile.toUri()))
                 fadeInPhotoView()
             }
             text.observe(this@DishDetailsActivity) { text ->
@@ -116,3 +126,11 @@ class DishDetailsActivity : BaseActivity() {
     }
 
 }
+
+private sealed class ImageSpec {
+    data class File(val file: java.io.File) : ImageSpec()
+    data class Drawable(@DrawableRes val res: Int) : ImageSpec()
+}
+
+private fun File.toImageSpec() = ImageSpec.File(this)
+private fun @receiver:DrawableRes Int.toImageSpec() = ImageSpec.Drawable(this)
