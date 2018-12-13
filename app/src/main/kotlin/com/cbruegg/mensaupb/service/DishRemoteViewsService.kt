@@ -56,9 +56,10 @@ class DishRemoteViewsService : RemoteViewsService() {
         override fun getLoadingView(): RemoteViews? = null // Use default
 
         override fun getViewAt(position: Int): RemoteViews? {
-            if (position !in dishes.indices) return null // Android causes a race condition between updating and and getCount()
+            // Android causes a race condition between updating and and getCount()
+            // Returning null at least avoids an Exception - else nothing much we can do
+            val dish = dishes.getOrNullIfOutOfBounds(position) ?: return null
 
-            val dish = dishes[position]
             val thumbnailVisibility = if (dish.thumbnailImageUrl.isNullOrEmpty()) View.GONE else View.VISIBLE
 
             val dishIntent = Intent().apply {
@@ -96,7 +97,7 @@ class DishRemoteViewsService : RemoteViewsService() {
         override fun onCreate() {
         }
 
-        override fun getItemId(position: Int) = dishes[position].hashCode().toLong()
+        override fun getItemId(position: Int) = dishes.getOrNullIfOutOfBounds(position).hashCode().toLong()
 
         override fun onDataSetChanged() = runBlocking {
             val (restaurantId) = DishesWidgetConfigurationManager(ctx)
@@ -122,6 +123,8 @@ class DishRemoteViewsService : RemoteViewsService() {
 
         override fun onDestroy() {
         }
+
+        private fun <T : Any> List<T>.getOrNullIfOutOfBounds(pos: Int): T? = if (pos in indices) this[pos] else null
 
     }
 }
