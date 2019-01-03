@@ -36,6 +36,11 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            manifestPlaceholders["enableCrashReporting"] = "true"
+        }
+
+        getByName("debug") {
+            manifestPlaceholders["enableCrashReporting"] = "false"
         }
     }
     sourceSets {
