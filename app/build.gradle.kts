@@ -68,12 +68,12 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
 dependencies {
     implementation("androidx.appcompat:appcompat:1.0.2")
     implementation("androidx.recyclerview:recyclerview:1.0.0")
-    implementation("com.google.android.material:material:1.1.0-alpha01")
-    implementation("androidx.preference:preference:1.1.0-alpha01")
+    implementation("com.google.android.material:material:1.1.0-alpha02")
+    implementation("androidx.preference:preference:1.1.0-alpha02")
     implementation("androidx.browser:browser:1.0.0")
-    implementation("androidx.annotation:annotation:1.0.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.0-alpha2")
-    implementation("androidx.multidex:multidex:2.0.0")
+    implementation("androidx.annotation:annotation:1.0.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.0-alpha3")
+    implementation("androidx.multidex:multidex:2.0.1")
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
     implementation("com.squareup.okhttp3:okhttp:3.12.0")
     implementation("androidx.core:core-ktx:1.0.1")
@@ -114,8 +114,8 @@ dependencies {
 
     implementation("com.davemorrissey.labs:subsampling-scale-image-view:3.10.0")
 
-    implementation("com.google.firebase:firebase-core:16.0.5")
-    implementation("com.crashlytics.sdk.android:crashlytics:2.9.6")
+    implementation("com.google.firebase:firebase-core:16.0.6")
+    implementation("com.crashlytics.sdk.android:crashlytics:2.9.8")
 
     val stethoVersion = "1.5.0"
     debugImplementation("com.facebook.stetho:stetho:$stethoVersion")
@@ -128,9 +128,9 @@ dependencies {
 
     androidTestImplementation("org.jetbrains.kotlin:kotlin-test:${KotlinCompilerVersion.VERSION}")
     androidTestImplementation("junit:junit:4.12")
-    androidTestImplementation("androidx.test:runner:1.1.0")
-    androidTestImplementation("androidx.test:rules:1.1.0")
-    androidTestImplementation("androidx.annotation:annotation:1.0.0")
+    androidTestImplementation("androidx.test:runner:1.1.1")
+    androidTestImplementation("androidx.test:rules:1.1.1")
+    androidTestImplementation("androidx.annotation:annotation:1.0.1")
     androidTestImplementation("org.mockito:mockito-android:2.23.4")
 }
 
