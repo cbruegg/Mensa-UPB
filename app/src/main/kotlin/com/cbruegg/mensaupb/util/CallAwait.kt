@@ -14,18 +14,21 @@ import java.io.IOException
  * @return Result of request or throw exception
  */
 suspend fun Call.await(): Response = suspendCancellableCoroutine { continuation ->
-    val exceptionWithCapturedStack = CoroutineCallException()
+    val exceptionWithCapturedStack = SuspendingCallException()
 
     enqueue(object : Callback {
         override fun onResponse(call: Call, response: Response) {
-            continuation.tryAndCompleteResume(response)
+            exceptionWithCapturedStack.initCause(Exception())
+            continuation.tryAndCompleteResumeWithException(exceptionWithCapturedStack)
+
+//            continuation.tryAndCompleteResume(response)
         }
 
         override fun onFailure(call: Call, e: IOException) {
             if (continuation.isCancelled) return
 
-            (e.findRootCause() ?: e).initCause(exceptionWithCapturedStack)
-            continuation.tryAndCompleteResumeWithException(e)
+            exceptionWithCapturedStack.initCause(e)
+            continuation.tryAndCompleteResumeWithException(exceptionWithCapturedStack)
         }
     })
 
@@ -43,15 +46,14 @@ private fun <T> CancellableContinuation<T>.tryAndCompleteResume(value: T) = tryR
 @UseExperimental(InternalCoroutinesApi::class)
 private fun <T> CancellableContinuation<T>.tryAndCompleteResumeWithException(e: Exception) = tryResumeWithException(e)?.let { completeResume(it) }
 
-private fun Throwable.findRootCause(): Throwable? {
-    var cause = cause ?: return null
-    while (true) {
-        val nextCause = cause.cause
-        when (nextCause) {
-            null, cause -> return cause
-            else -> cause = nextCause
-        }
+private class SuspendingCallException : RuntimeException() {
+
+    override var message: String = "This ${SuspendingCallException::class.java.simpleName} " +
+            "has not been initialized yet"
+        private set
+
+    override fun initCause(cause: Throwable): Throwable {
+        message = "Received ${cause.javaClass.name} while executing suspending function here, stacktrace is found below."
+        return super.initCause(cause)
     }
 }
-
-private class CoroutineCallException : RuntimeException("Originally called here:")
