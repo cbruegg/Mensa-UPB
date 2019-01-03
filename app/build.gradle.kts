@@ -92,7 +92,7 @@ dependencies {
     implementation("com.google.dagger:dagger:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
 
-    val coroutineVersion = "1.0.1"
+    val coroutineVersion = "1.1.0"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion")
 

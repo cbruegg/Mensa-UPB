@@ -15,9 +15,7 @@ class MensaApplication : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        if (BuildConfig.DEBUG) {
-            System.setProperty("kotlinx.coroutines.debug", "")
-        }
+        System.setProperty(kotlinx.coroutines.DEBUG_PROPERTY_NAME, kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON)
 
         installStetho()
     }

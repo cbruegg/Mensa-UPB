@@ -14,8 +14,6 @@ import java.io.IOException
  * @return Result of request or throw exception
  */
 suspend fun Call.await(): Response = suspendCancellableCoroutine { continuation ->
-    val exceptionWithCapturedStack = SuspendingCallException()
-
     enqueue(object : Callback {
         override fun onResponse(call: Call, response: Response) {
             continuation.tryAndCompleteResume(response)
@@ -23,9 +21,7 @@ suspend fun Call.await(): Response = suspendCancellableCoroutine { continuation 
 
         override fun onFailure(call: Call, e: IOException) {
             if (continuation.isCancelled) return
-
-            exceptionWithCapturedStack.initCause(e)
-            continuation.tryAndCompleteResumeWithException(exceptionWithCapturedStack)
+            continuation.tryAndCompleteResumeWithException(e)
         }
     })
 
@@ -42,15 +38,3 @@ private fun <T> CancellableContinuation<T>.tryAndCompleteResume(value: T) = tryR
 
 @UseExperimental(InternalCoroutinesApi::class)
 private fun <T> CancellableContinuation<T>.tryAndCompleteResumeWithException(e: Exception) = tryResumeWithException(e)?.let { completeResume(it) }
-
-private class SuspendingCallException : RuntimeException() {
-
-    override var message: String = "This ${SuspendingCallException::class.java.simpleName} " +
-            "has not been initialized yet"
-        private set
-
-    override fun initCause(cause: Throwable): Throwable {
-        message = "Received ${cause.javaClass.name} while executing suspending function here, stacktrace is found below."
-        return super.initCause(cause)
-    }
-}
