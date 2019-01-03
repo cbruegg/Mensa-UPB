@@ -18,10 +18,7 @@ suspend fun Call.await(): Response = suspendCancellableCoroutine { continuation 
 
     enqueue(object : Callback {
         override fun onResponse(call: Call, response: Response) {
-            exceptionWithCapturedStack.initCause(Exception())
-            continuation.tryAndCompleteResumeWithException(exceptionWithCapturedStack)
-
-//            continuation.tryAndCompleteResume(response)
+            continuation.tryAndCompleteResume(response)
         }
 
         override fun onFailure(call: Call, e: IOException) {
