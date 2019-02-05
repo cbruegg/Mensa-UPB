@@ -14,8 +14,6 @@ import java.io.IOException
  * @return Result of request or throw exception
  */
 suspend fun Call.await(): Response = suspendCancellableCoroutine { continuation ->
-    val exceptionWithCapturedStack = CoroutineCallException()
-
     enqueue(object : Callback {
         override fun onResponse(call: Call, response: Response) {
             continuation.tryAndCompleteResume(response)
@@ -23,8 +21,6 @@ suspend fun Call.await(): Response = suspendCancellableCoroutine { continuation 
 
         override fun onFailure(call: Call, e: IOException) {
             if (continuation.isCancelled) return
-
-            (e.findRootCause() ?: e).initCause(exceptionWithCapturedStack)
             continuation.tryAndCompleteResumeWithException(e)
         }
     })
@@ -42,16 +38,3 @@ private fun <T> CancellableContinuation<T>.tryAndCompleteResume(value: T) = tryR
 
 @UseExperimental(InternalCoroutinesApi::class)
 private fun <T> CancellableContinuation<T>.tryAndCompleteResumeWithException(e: Exception) = tryResumeWithException(e)?.let { completeResume(it) }
-
-private fun Throwable.findRootCause(): Throwable? {
-    var cause = cause ?: return null
-    while (true) {
-        val nextCause = cause.cause
-        when (nextCause) {
-            null, cause -> return cause
-            else -> cause = nextCause
-        }
-    }
-}
-
-private class CoroutineCallException : RuntimeException("Originally called here:")
