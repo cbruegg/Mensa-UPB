@@ -3,6 +3,7 @@ package com.cbruegg.mensaupb
 import android.content.Context
 import com.cbruegg.mensaupb.cache.ModelCache
 import com.cbruegg.mensaupb.downloader.Repository
+import com.cbruegg.mensaupb.downloader.StudierendenWerkUrlRewriter
 import dagger.Module
 import dagger.Provides
 import installStetho
@@ -24,6 +25,7 @@ class NetModule {
     @Singleton
     fun provideOkHttp(): OkHttpClient = OkHttpClient.Builder()
         .callTimeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
+        .addInterceptor(StudierendenWerkUrlRewriter)
         .installStetho()
         .build()
 
