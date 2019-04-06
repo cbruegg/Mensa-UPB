@@ -27,6 +27,7 @@ android {
         val apiIdProps = Properties()
         apiIdProps.load(FileInputStream(rootProject.file("api_id.properties")))
         buildConfigField("String", "API_ID", "\"${apiIdProps["id"]}\"")
+        buildConfigField("String", "PRIVACY_POLICY_URL", "\"https://cbruegg.com/mensa-upb-privacy-policy/\"")
     }
     buildTypes {
         getByName("release") {

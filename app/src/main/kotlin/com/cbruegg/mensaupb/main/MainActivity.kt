@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.PreferenceActivity
@@ -263,6 +264,10 @@ class MainActivity : AppCompatActivity() {
         }
         R.id.allergens_table -> {
             openAllergensTable()
+            true
+        }
+        R.id.privacy_policy -> {
+            Uri.parse(BuildConfig.PRIVACY_POLICY_URL).showInCustomTab()
             true
         }
         else -> super.onOptionsItemSelected(item)
