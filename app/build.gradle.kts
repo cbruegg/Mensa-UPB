@@ -77,7 +77,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.0.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0")
 
-    implementation("com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.1.0")
+    implementation("com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.1.1")
 
     val arrowVersion = "0.8.1"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
