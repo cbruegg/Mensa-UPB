@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.app
@@ -133,7 +134,7 @@ class RestaurantFragment
          */
         private val dishName: String?,
         private val dishNamePositionInPager: Int?
-    ) : androidx.fragment.app.FragmentStatePagerAdapter(fm) {
+    ) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         @SuppressLint("SimpleDateFormat")
         private val dateFormatter = SimpleDateFormat(context.getString(R.string.dateTabFormat))

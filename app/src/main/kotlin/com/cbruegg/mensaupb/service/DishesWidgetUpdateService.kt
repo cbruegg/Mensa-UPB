@@ -6,8 +6,16 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import android.widget.RemoteViews
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.Data
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import arrow.core.orNull
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.app
@@ -17,72 +25,43 @@ import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.main.MainActivity
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Failure
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService.DishAppWidgetResult.Success
-import com.firebase.jobdispatcher.Constraint
-import com.firebase.jobdispatcher.FirebaseJobDispatcher
-import com.firebase.jobdispatcher.GooglePlayDriver
-import com.firebase.jobdispatcher.JobParameters
-import com.firebase.jobdispatcher.JobService
-import com.firebase.jobdispatcher.RetryStrategy
-import com.firebase.jobdispatcher.Trigger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 /**
  * A service that is responsible for updating
  * all dishes widgets.
  */
-class DishesWidgetUpdateService : JobService(), CoroutineScope {
+class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
 
-    private lateinit var job: Job
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
+    override suspend fun doWork(): Result {
+        applicationContext.app.appComponent.inject(this)
 
-    override fun onStopJob(params: JobParameters): Boolean {
-        val isActive = job.isActive
-        job.cancel()
-        return isActive
-    }
+        val appWidgetIds = inputData.getIntArray(ARG_APPWIDGET_IDS) ?: throw IllegalArgumentException("Missing input data!")
+        val configManager = DishesWidgetConfigurationManager(applicationContext)
 
-    override fun onStartJob(params: JobParameters): Boolean {
-        app.appComponent.inject(this)
-        job = Job()
+        val restaurantsById = repository.restaurants()
+            .orNull()
+            ?.value
+            ?.associateBy { it.id }
+            ?: return Result.retry()
 
-        val appWidgetIds = params.extras?.getIntArray(ARG_APPWIDGET_IDS) ?: throw IllegalArgumentException("Missing extras!")
-        val configManager = DishesWidgetConfigurationManager(this@DishesWidgetUpdateService)
+        appWidgetIds
+            .map { appWidgetId ->
+                val config = configManager.retrieveConfiguration(appWidgetId)
+                    ?: return@map null
+                val restaurant = restaurantsById[config.restaurantId]
+                    ?: return@map Failure(appWidgetId, Failure.Reason.RESTAURANT_NOT_FOUND)
 
-        val job = launch {
-            val reschedule = run {
-                val restaurantsById = repository.restaurants()
-                    .orNull()
-                    ?.value
-                    ?.associateBy { it.id }
-                    ?: return@run true
-
-                appWidgetIds
-                    .map { appWidgetId ->
-                        val config = configManager.retrieveConfiguration(appWidgetId)
-                            ?: return@map null
-                        val restaurant = restaurantsById[config.restaurantId]
-                            ?: return@map DishAppWidgetResult.Failure(appWidgetId, DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND)
-
-                        DishAppWidgetResult.Success(appWidgetId, restaurant)
-                    }
-                    .filterNotNull()
-                    .forEach { updateAppWidget(it) }
-
-                return@run false
+                Success(appWidgetId, restaurant)
             }
-            jobFinished(params, reschedule)
-        }
+            .filterNotNull()
+            .forEach { updateAppWidget(it) }
 
-        return job.isActive
+        return Result.success()
+
     }
 
     /**
@@ -126,27 +105,20 @@ class DishesWidgetUpdateService : JobService(), CoroutineScope {
         /**
          * Function for creating intent that start this service.
          */
-        private fun createStartExtras(vararg appWidgetIds: Int): Bundle =
-            Bundle().apply {
-                putIntArray(ARG_APPWIDGET_IDS, appWidgetIds)
-            }
+        private fun createStartExtras(vararg appWidgetIds: Int): Data =
+            workDataOf(ARG_APPWIDGET_IDS to appWidgetIds)
 
         /**
          * Schedule an update for the specified widgets within the next
          * few minutes.
          */
-        fun scheduleUpdate(context: Context, maxWaitTimeSeconds: Int, vararg appWidgetIds: Int) {
-            val dispatcher = FirebaseJobDispatcher(GooglePlayDriver(context))
-            val job = dispatcher.newJobBuilder()
-                .setService(DishesWidgetUpdateService::class.java)
-                .setTag("dishes-widget-update")
-                .setTrigger(Trigger.executionWindow(0, maxWaitTimeSeconds))
-                .setReplaceCurrent(true)
-                .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
-                .setConstraints(Constraint.ON_ANY_NETWORK)
-                .setExtras(DishesWidgetUpdateService.createStartExtras(*appWidgetIds))
+        fun scheduleUpdate(maxWaitTimeSeconds: Long, vararg appWidgetIds: Int) {
+            val workRequest = PeriodicWorkRequestBuilder<DishesWidgetUpdateService>(maxWaitTimeSeconds, TimeUnit.SECONDS)
+                .addTag("dishes-widget-update")
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                .setInputData(createStartExtras(*appWidgetIds))
                 .build()
-            dispatcher.mustSchedule(job)
+            WorkManager.getInstance().enqueueUniquePeriodicWork("dishes-widget-update", ExistingPeriodicWorkPolicy.REPLACE, workRequest)
         }
 
     }
@@ -165,34 +137,34 @@ class DishesWidgetUpdateService : JobService(), CoroutineScope {
     private fun updateAppWidget(appWidgetResult: DishAppWidgetResult) {
         val restaurant =
             when (appWidgetResult) {
-                is DishAppWidgetResult.Success -> {
+                is Success -> {
                     appWidgetResult.restaurant
                 }
-                is DishAppWidgetResult.Failure -> {
+                is Failure -> {
                     updateWithError(appWidgetResult)
                     return
                 }
             }
 
         val appWidgetId = appWidgetResult.appWidgetId
-        val appWidgetManager = AppWidgetManager.getInstance(this)
-        val restaurantIntent = MainActivity.createStartIntent(this, restaurant)
+        val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
+        val restaurantIntent = MainActivity.createStartIntent(applicationContext, restaurant)
         restaurantIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        val restaurantPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_RESTAURANT, restaurantIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val restaurantPendingIntent = PendingIntent.getActivity(applicationContext, REQUEST_CODE_RESTAURANT, restaurantIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
-        val dishRemoteViewsServiceIntent = Intent(this, DishRemoteViewsService::class.java).apply {
+        val dishRemoteViewsServiceIntent = Intent(applicationContext, DishRemoteViewsService::class.java).apply {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
         }
-        val mainActivityIntent = Intent(this, MainActivity::class.java).apply {
+        val mainActivityIntent = Intent(applicationContext, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             makeUnique(appWidgetId)
         }
-        val dishPendingIntent = PendingIntent.getActivity(this, REQUEST_CODE_DISH, mainActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val dishPendingIntent = PendingIntent.getActivity(applicationContext, REQUEST_CODE_DISH, mainActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         @SuppressLint("SimpleDateFormat")
         val day = SimpleDateFormat("EEE").format(shownDate)
-        val remoteViews = RemoteViews(packageName, R.layout.app_widget_dishes).apply {
+        val remoteViews = RemoteViews(applicationContext.packageName, R.layout.app_widget_dishes).apply {
             setOnClickPendingIntent(R.id.dishes_widget_restaurant_name, restaurantPendingIntent)
             setTextViewText(R.id.dishes_widget_restaurant_name, "${restaurant.name} ($day)")
             setRemoteAdapter(R.id.dishes_widget_list, dishRemoteViewsServiceIntent)
@@ -207,15 +179,15 @@ class DishesWidgetUpdateService : JobService(), CoroutineScope {
     /**
      * Set an error message in the remote view.
      */
-    private fun updateWithError(appWidgetResult: DishAppWidgetResult.Failure) {
+    private fun updateWithError(appWidgetResult: Failure) {
         val errorText = when (appWidgetResult.reason) {
-            DishAppWidgetResult.Failure.Reason.RESTAURANT_NOT_FOUND -> {
-                getString(R.string.dish_app_widget_error_restaurant_not_found)
+            Failure.Reason.RESTAURANT_NOT_FOUND -> {
+                applicationContext.getString(R.string.dish_app_widget_error_restaurant_not_found)
             }
         }
 
-        val appWidgetManager = AppWidgetManager.getInstance(this)
-        val remoteViews = RemoteViews(packageName, R.layout.app_widget_dishes)
+        val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
+        val remoteViews = RemoteViews(applicationContext.packageName, R.layout.app_widget_dishes)
         remoteViews.setTextViewText(R.id.dishes_widget_restaurant_name, errorText)
         appWidgetManager.updateAppWidget(appWidgetResult.appWidgetId, remoteViews)
     }

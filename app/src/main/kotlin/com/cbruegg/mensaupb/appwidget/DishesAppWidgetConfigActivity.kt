@@ -75,7 +75,7 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
 
         widgetConfigConfirm.setOnClickListener {
             viewModelController.onConfirmClicked(widgetConfigSpinner.selectedItemPosition)
-            DishesWidgetUpdateService.scheduleUpdate(this, 15, appWidgetId)
+            DishesWidgetUpdateService.scheduleUpdate(15, appWidgetId)
         }
         widgetConfigCancel.setOnClickListener { viewModelController.onCancel() }
 

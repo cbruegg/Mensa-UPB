@@ -13,12 +13,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion(28)
+    compileSdkVersion(29)
 
     defaultConfig {
         applicationId = "com.cbruegg.mensaupb"
-        minSdkVersion(16)
-        targetSdkVersion(28)
+        minSdkVersion(21)
+        targetSdkVersion(29)
         versionCode = 25
         versionName = "1.6.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -65,43 +65,41 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
 dependencies {
     implementation("androidx.appcompat:appcompat:1.0.2")
     implementation("androidx.recyclerview:recyclerview:1.0.0")
-    implementation("com.google.android.material:material:1.1.0-alpha02")
-    implementation("androidx.preference:preference:1.1.0-alpha02")
+    implementation("com.google.android.material:material:1.1.0-alpha07")
+    implementation("androidx.preference:preference:1.1.0-beta01")
     implementation("androidx.browser:browser:1.0.0")
-    implementation("androidx.annotation:annotation:1.0.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.0-alpha3")
+    implementation("androidx.annotation:annotation:1.1.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.0-beta1")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
-    implementation("com.squareup.okhttp3:okhttp:3.12.0")
-    implementation("androidx.core:core-ktx:1.0.1")
+    implementation("com.squareup.okhttp3:okhttp:3.14.2")
+    implementation("androidx.core:core-ktx:1.0.2")
     implementation("androidx.fragment:fragment-ktx:1.0.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0")
-
-    implementation("com.firebase:firebase-jobdispatcher:0.8.5")
 
     implementation("com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.1.0")
 
     val arrowVersion = "0.8.1"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
 
-    val daggerVersion = "2.19"
+    val daggerVersion = "2.23.1"
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
     implementation("com.google.dagger:dagger:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
 
-    val coroutineVersion = "1.1.0"
+    val coroutineVersion = "1.2.1"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.0")
 
-    val requeryVersion = "1.5.1"
+    val requeryVersion = "1.6.1"
     implementation("io.requery:requery:$requeryVersion")
     implementation("io.requery:requery-android:$requeryVersion")
     implementation("io.requery:requery-kotlin:$requeryVersion")
     kapt("io.requery:requery-processor:$requeryVersion")
 
-    val glideVersion = "4.8.0"
+    val glideVersion = "4.9.0"
     implementation("com.github.bumptech.glide:glide:$glideVersion")
     implementation("com.github.bumptech.glide:okhttp3-integration:$glideVersion")
     implementation("com.github.bumptech.glide:recyclerview-integration:$glideVersion") {
@@ -111,10 +109,9 @@ dependencies {
 
     implementation("com.davemorrissey.labs:subsampling-scale-image-view:3.10.0")
 
-    implementation("com.google.firebase:firebase-core:16.0.6")
-    implementation("com.crashlytics.sdk.android:crashlytics:2.9.8")
+    implementation("com.crashlytics.sdk.android:crashlytics:2.10.1")
 
-    val stethoVersion = "1.5.0"
+    val stethoVersion = "1.5.1"
     debugImplementation("com.facebook.stetho:stetho:$stethoVersion")
     debugImplementation("com.facebook.stetho:stetho-okhttp3:$stethoVersion")
 
@@ -123,12 +120,14 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-extensions:$aarchVersion")
     kapt("androidx.lifecycle:lifecycle-compiler:$aarchVersion")
 
+    implementation("androidx.work:work-runtime-ktx:2.0.1")
+
     androidTestImplementation("org.jetbrains.kotlin:kotlin-test:${KotlinCompilerVersion.VERSION}")
     androidTestImplementation("junit:junit:4.12")
-    androidTestImplementation("androidx.test:runner:1.1.1")
-    androidTestImplementation("androidx.test:rules:1.1.1")
-    androidTestImplementation("androidx.annotation:annotation:1.0.1")
-    androidTestImplementation("org.mockito:mockito-android:2.23.4")
+    androidTestImplementation("androidx.test:runner:1.2.0")
+    androidTestImplementation("androidx.test:rules:1.2.0")
+    androidTestImplementation("androidx.annotation:annotation:1.1.0")
+    androidTestImplementation("org.mockito:mockito-android:2.28.2")
 }
 
 buildscript {

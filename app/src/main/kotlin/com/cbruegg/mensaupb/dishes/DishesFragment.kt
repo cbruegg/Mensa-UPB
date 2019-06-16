@@ -122,6 +122,8 @@ class DishesFragment
 
     override fun onResume() {
         super.onResume()
+        delayedActions.forEach { it() }
+        delayedActions.clear()
         viewModelController.reloadIfNeeded()
     }
 
@@ -144,17 +146,11 @@ class DishesFragment
     private val delayedActions = mutableListOf<() -> Unit>()
 
     private fun delayUntilVisible(f: () -> Unit) {
-        if (userVisibleHint) {
+        if (isResumed) {
             f()
         } else {
             delayedActions += f
         }
-    }
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        delayedActions.forEach { it() }
-        delayedActions.clear()
     }
 
     override fun onDestroy() {
