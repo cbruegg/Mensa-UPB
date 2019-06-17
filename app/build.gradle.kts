@@ -76,6 +76,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.0.2")
     implementation("androidx.fragment:fragment-ktx:1.0.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0")
+    implementation("androidx.viewpager2:viewpager2:1.0.0-alpha05")
 
     implementation("com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.1.1")
 
