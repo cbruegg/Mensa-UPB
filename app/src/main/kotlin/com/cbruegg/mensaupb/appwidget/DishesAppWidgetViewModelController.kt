@@ -19,7 +19,7 @@ class DishesAppWidgetViewModelController(
     fun onConfirmClicked(restaurantItemIndex: Int) {
         val selectedRestaurant = restaurantList[restaurantItemIndex]
         dishesWidgetConfigurationManager.putConfiguration(appWidgetId, DishesWidgetConfiguration(selectedRestaurant.id))
-        viewModel.closed.data = true
+        viewModel.status.data = Status.Confirmed
     }
 
     fun load() = launch {
@@ -45,7 +45,7 @@ class DishesAppWidgetViewModelController(
     }
 
     fun onCancel() {
-        viewModel.closed.data = true
+        viewModel.status.data = Status.Canceled
     }
 
 }

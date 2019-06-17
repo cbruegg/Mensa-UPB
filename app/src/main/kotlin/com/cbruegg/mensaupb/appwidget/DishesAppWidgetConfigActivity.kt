@@ -1,5 +1,6 @@
 package com.cbruegg.mensaupb.appwidget
 
+import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
@@ -11,6 +12,7 @@ import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
+import com.cbruegg.mensaupb.util.exhaustive
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
 import kotlinx.android.synthetic.main.activity_app_widget_config.*
@@ -64,13 +66,23 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
         viewModel.showProgress.observe(this) {
             widgetConfigProgressBar.visibility = if (it) View.VISIBLE else View.INVISIBLE
         }
-        viewModel.closed.observe(this) {
-            if (it) {
-                if (!viewModel.networkError.data && viewModel.restaurants.data.isNotEmpty()) {
-                    setResult(RESULT_OK, Intent().apply { putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId) })
+        viewModel.status.observe(this) {
+            when (it) {
+                Status.Confirmed -> {
+                    if (!viewModel.networkError.data && viewModel.restaurants.data.isNotEmpty()) {
+                        setResult(RESULT_OK, Intent().apply { putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId) })
+                    } else {
+                        setResult(Activity.RESULT_CANCELED, Intent().apply { putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId) })
+                    }
+                    finish()
                 }
-                finish()
-            }
+                Status.Open -> {
+                }
+                Status.Canceled -> {
+                    setResult(Activity.RESULT_CANCELED, Intent().apply { putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId) })
+                    finish()
+                }
+            }.exhaustive
         }
 
         widgetConfigConfirm.setOnClickListener {
