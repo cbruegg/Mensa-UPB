@@ -73,6 +73,8 @@ dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
     implementation("com.squareup.okhttp3:okhttp:3.14.2")
+    implementation("com.squareup.retrofit2:retrofit:2.6.0")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.4.0")
     implementation("androidx.core:core-ktx:1.0.2")
     implementation("androidx.fragment:fragment-ktx:1.0.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0")
