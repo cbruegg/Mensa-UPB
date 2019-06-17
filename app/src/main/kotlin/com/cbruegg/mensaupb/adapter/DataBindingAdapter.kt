@@ -33,7 +33,9 @@ class DataBindingAdapter<DATA : Any>(
 
     override fun getPreloadRequestBuilder(item: DATA): RequestBuilder<*> = glide.load(imageUrlGetter(item))
 
-    override fun getPreloadItems(position: Int): List<DATA> = listOf(list[position])
+    override fun getPreloadItems(position: Int): List<DATA> =
+        // Fix race condition
+        if (position in list.indices) listOf(list[position]) else emptyList()
 
     override fun getPreloadSize(item: DATA, adapterPosition: Int, perItemPosition: Int): IntArray? =
         stolenSizeByViewType[getItemViewType(adapterPosition)]
