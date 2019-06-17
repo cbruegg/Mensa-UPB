@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.cbruegg.mensaupb"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.cbruegg.mensaupb">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -55,14 +55,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/dishes_app_widget_info" />
         </receiver>
-
-        <service
-            android:name=".service.DishesWidgetUpdateService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
 
         <service
             android:name=".service.DishRemoteViewsService"
