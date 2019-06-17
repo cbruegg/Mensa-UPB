@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/dish_widget_row"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dish_widget_row"
     android:layout_width="match_parent"
     android:layout_height="@dimen/row_dish_widget_image_size"
     android:orientation="horizontal"
@@ -27,6 +27,6 @@
         android:gravity="center_vertical"
         android:maxLines="2"
         android:padding="8dp"
-        android:textColor="@android:color/black"
+        android:textColor="?attr/colorOnBackground"
         android:textSize="15sp" />
 </LinearLayout>

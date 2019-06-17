@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.2dp"
             android:layout_marginTop="8dp"
-            android:background="@color/header_gray"
+            android:background="?attr/colorSecondary"
             android:visibility="@{headerViewModel.showDivider ? View.VISIBLE : View.GONE}" />
 
         <TextView
@@ -34,7 +34,7 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingStart="@dimen/activity_horizontal_margin"
             android:text="@{headerViewModel.text}"
-            android:textColor="@color/header_gray"
+            android:textColor="?attr/colorSecondary"
             android:textSize="14sp"
             android:textStyle="bold"
             tools:text="Essen"

@@ -99,8 +99,9 @@ private fun DbDish.toDishViewModel(userType: UserType, context: Context): DishVi
 private fun DbDish.buildRowDishDescription(context: Context, priceText: String, badgesText: String): CharSequence {
     val sp16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16f, context.resources.displayMetrics).toInt()
     val sp15 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15f, context.resources.displayMetrics).toInt()
+    val textColor = TypedValue().also { context.theme.resolveAttribute(R.attr.colorOnBackground, it, true) }.data
     return SpannableStringBuilder()
-        .appendln(displayName(), ForegroundColorSpan(Color.BLACK), AbsoluteSizeSpan(sp16))
+        .appendln(displayName(), ForegroundColorSpan(textColor), AbsoluteSizeSpan(sp16))
         .appendln(priceText, AbsoluteSizeSpan(sp15))
         .append(badgesText, AbsoluteSizeSpan(sp15))
 }

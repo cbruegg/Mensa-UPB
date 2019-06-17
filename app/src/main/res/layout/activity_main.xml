@@ -32,6 +32,6 @@
             android:layout_width="280dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="@android:color/white" />
+            android:background="?android:attr/colorBackground" />
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>
