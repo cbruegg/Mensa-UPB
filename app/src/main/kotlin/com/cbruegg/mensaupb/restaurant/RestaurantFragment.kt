@@ -1,41 +1,25 @@
 package com.cbruegg.mensaupb.restaurant
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader
-import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
-import com.cbruegg.mensaupb.activity.userType
-import com.cbruegg.mensaupb.adapter.DishListViewModelAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
-import com.cbruegg.mensaupb.dishes.DishesViewModelController
-import com.cbruegg.mensaupb.dishes.initialDishesViewModel
-import com.cbruegg.mensaupb.dishes.showDishDetailsDialog
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.getDate
 import com.cbruegg.mensaupb.extensions.midnight
 import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.extensions.putDate
-import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
-import com.cbruegg.mensaupb.viewmodel.DishListViewModel
-import com.cbruegg.mensaupb.viewmodel.toDishViewModels
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_restaurant.*
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -70,13 +54,16 @@ fun RestaurantFragment(
  * Fragment hosting a Pager of DishesFragments.
  * The factory method needs to be used.
  */
+@SuppressLint("SimpleDateFormat")
 class RestaurantFragment
-@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : androidx.fragment.app.Fragment() {
+@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : Fragment() {
 
     private lateinit var viewModel: RestaurantViewModel
     private lateinit var viewModelController: RestaurantViewModelController
 
     private lateinit var adapter: DishesPagerAdapter
+
+    private val dateFormatter by lazy { SimpleDateFormat(getString(R.string.dateTabFormat)) }
 
     @Inject
     lateinit var data: BlockingEntityStore<Persistable>
@@ -128,7 +115,7 @@ class RestaurantFragment
         })
         TabLayoutMediator(dayPagerTabs, dayPager) { tab, position ->
             dayPager.currentItem = tab.position
-            tab.text = adapter.getPageTitle(position)
+            tab.text = dateFormatter.format(adapter.dates[position])
         }.attach()
         dayPager.currentItem = pagerIndex
 
@@ -141,93 +128,5 @@ class RestaurantFragment
      */
     val pagerSelectedDate: Date
         get() = adapter.dates[dayPager.currentItem]
-
-    /**
-     * ViewPager adapter
-     */
-    private class DishesPagerAdapter(
-        private val context: Context,
-        private val restaurant: DbRestaurant,
-        val dates: List<Date>,
-        /**
-         * If set, look for a matching dish on the page
-         * specified by [dishNamePositionInPager] and display its image
-         */
-        private val dishName: String?,
-        private val dishNamePositionInPager: Int?,
-        private val repository: Repository
-    ) : RecyclerView.Adapter<DishesViewHolder>() {
-
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = DishesViewHolder(LayoutInflater.from(context).inflate(R.layout.fragment_dishes, parent, false))
-
-        override fun getItemCount() = dates.size
-
-        override fun onBindViewHolder(holder: DishesViewHolder, position: Int) {
-            val date = dates[position]
-            val dishName = if (position == dishNamePositionInPager) dishName else null
-
-            val viewModel = initialDishesViewModel()
-            val viewModelController = DishesViewModelController(
-                repository,
-                restaurant,
-                date,
-                context.userType,
-                { toDishViewModels(context, it) },
-                dishName,
-                viewModel
-            )
-
-            val adapter = DishListViewModelAdapter(GlideApp.with(context))
-            adapter.onClickListener = { dishViewModel, _ -> viewModelController.onDishClicked(dishViewModel) }
-            holder.dishList.adapter = adapter
-            holder.dishList.layoutManager = LinearLayoutManager(context)
-            holder.dishList.addOnScrollListener(RecyclerViewPreloader(context as Activity, adapter, adapter, 5))
-
-            // TODO Observe with lifecycle
-            viewModel.showDialogFor.observeForever { dishViewModel ->
-                if (dishViewModel != null) {
-                    context.showDishDetailsDialog(dishViewModel)
-                }
-            }
-            viewModel.dishViewModels.observeForever { dishListViewModels ->
-                adapter.list.setAll(dishListViewModels)
-                holder.noDishesMessage.visibility = noDishesMessageVisibility(dishListViewModels, viewModel.isLoading.data)
-            }
-            viewModel.isLoading.observeForever {
-                holder.dishProgressBar.visibility = if (it) View.VISIBLE else View.GONE
-                holder.noDishesMessage.visibility = noDishesMessageVisibility(viewModel.dishViewModels.data, it)
-            }
-            viewModel.isStale.observeForever { isStale ->
-                if (isStale) {
-                    Snackbar.make(holder.itemView, R.string.showing_stale_data, Snackbar.LENGTH_SHORT).show()
-                }
-            }
-            viewModel.networkError.observeForever {
-                holder.networkErrorMessage.visibility = if (it) View.VISIBLE else View.GONE
-            }
-
-            viewModelController.reloadIfNeeded()
-        }
-
-        private fun noDishesMessageVisibility(dishListViewModels: List<DishListViewModel>, isLoading: Boolean) =
-            if (!isLoading && dishListViewModels.isEmpty()) View.VISIBLE else View.GONE
-
-        @SuppressLint("SimpleDateFormat")
-        private val dateFormatter = SimpleDateFormat(context.getString(R.string.dateTabFormat))
-
-        fun getPageTitle(position: Int): String = dateFormatter.format(dates[position])
-    }
-
-    private class DishesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
-        override val containerView: View?
-            get() = itemView
-
-
-        val dishList: RecyclerView = itemView.findViewById(R.id.dishList)
-        val noDishesMessage: View = itemView.findViewById(R.id.noDishesMessage)
-        val dishProgressBar: ProgressBar = itemView.findViewById(R.id.dishProgressBar)
-        val networkErrorMessage: View = itemView.findViewById(R.id.networkErrorMessage)
-    }
 
 }
