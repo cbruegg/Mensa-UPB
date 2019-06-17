@@ -28,6 +28,7 @@ import javax.inject.Inject
 private const val ARG_RESTAURANT = "restaurant"
 private const val ARG_REQUESTED_PAGER_POSITION = "pager_position"
 private const val ARG_DISH_NAME = "dish_name"
+private const val ARG_BOTTOM_PADDING = "bottom_padding"
 
 /**
  * Construct a new instance of the RestaurantFragment.
@@ -38,6 +39,7 @@ private const val ARG_DISH_NAME = "dish_name"
 @Suppress("FunctionName")
 fun RestaurantFragment(
     restaurant: DbRestaurant,
+    bottomPadding: Int,
     pagerPosition: Date = midnight,
     dishName: String? = null
 ): RestaurantFragment {
@@ -46,6 +48,7 @@ fun RestaurantFragment(
         putString(ARG_RESTAURANT, restaurant.id)
         putDate(ARG_REQUESTED_PAGER_POSITION, pagerPosition)
         putString(ARG_DISH_NAME, dishName)
+        putInt(ARG_BOTTOM_PADDING, bottomPadding)
     }
     return fragment
 }
@@ -91,21 +94,23 @@ class RestaurantFragment
         val restaurantId = arguments.getString(ARG_RESTAURANT)
         val requestedDishName = arguments.getString(ARG_DISH_NAME)
         val restaurant = data.findByKey(DbRestaurant::class, restaurantId)!!
+        val bottomPadding = arguments.getInt(ARG_BOTTOM_PADDING)
 
         viewModel = viewModel { initialRestaurantViewModel(requestedPagerPosition, restaurant, requestedDishName) }
         viewModelController = RestaurantViewModelController(viewModel)
         viewModel.pagerInfo.observe(this) {
-            display(it, viewModel.requestedDishName)
+            display(it, viewModel.requestedDishName, bottomPadding)
             viewModel.requestedDishName = null // Request was fulfilled
         }
     }
 
-    private fun display(pagerInfo: PagerInfo, requestedDishName: String?) {
+    private fun display(pagerInfo: PagerInfo, requestedDishName: String?, bottomPadding: Int) {
         val pagerIndex = pagerInfo.dates.indexOf(pagerInfo.position) // May be -1
 
         adapter = DishesPagerAdapter(
             context!!, viewModel.restaurant,
-            pagerInfo.dates, requestedDishName, pagerIndex, repository
+            pagerInfo.dates, requestedDishName, pagerIndex, repository,
+            bottomPadding
         )
         dayPager.adapter = adapter
         dayPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {

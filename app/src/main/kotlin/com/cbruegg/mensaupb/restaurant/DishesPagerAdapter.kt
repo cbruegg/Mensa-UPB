@@ -23,6 +23,7 @@ import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import com.google.android.material.snackbar.Snackbar
 import java.util.Date
+import kotlin.math.max
 
 /**
  * ViewPager adapter
@@ -37,7 +38,8 @@ class DishesPagerAdapter(
      */
     private val dishName: String?,
     private val dishNamePositionInPager: Int?,
-    private val repository: Repository
+    private val repository: Repository,
+    private val bottomPadding: Int
 ) : LifecycleRecyclerAdapter<DishesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -67,6 +69,9 @@ class DishesPagerAdapter(
         holder.dishList.adapter = adapter
         holder.dishList.layoutManager = LinearLayoutManager(context)
         holder.dishList.addOnScrollListener(RecyclerViewPreloader(context as Activity, adapter, adapter, 5))
+        holder.dishList.also {
+            it.setPadding(it.paddingLeft, it.paddingTop, it.paddingRight, max(it.paddingBottom, bottomPadding))
+        }
 
         viewModel.showDialogFor.observe(holder) { dishViewModel ->
             if (dishViewModel != null) {

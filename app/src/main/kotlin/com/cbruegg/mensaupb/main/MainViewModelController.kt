@@ -23,6 +23,8 @@ class MainViewModelController(
     private var requestedSelectedDay: Date?
 ) : CoroutineScope by viewModel.viewModelScope {
 
+    private var requestedBottomPadding: Int? = null
+
     fun newRequest(requestedRestaurantId: String, requestedDishName: String?, requestedSelectedDay: Date?) {
         this.requestedRestaurantId = requestedRestaurantId
         this.requestedDishName = requestedDishName
@@ -32,12 +34,16 @@ class MainViewModelController(
     }
 
     fun onRestaurantClick(restaurant: DbRestaurant, currentlyDisplayedDate: Date?) {
+        val bottomPadding = requestedBottomPadding ?: viewModel.restaurantLoadSpec.data?.bottomPaddingForSystemWindows ?: 0
+        requestedBottomPadding = null
         viewModel.drawerShown.data = false
-        viewModel.restaurantLoadSpec.data = RestaurantLoadSpec(restaurant, requestedDay = currentlyDisplayedDate)
+        viewModel.restaurantLoadSpec.data = RestaurantLoadSpec(restaurant, bottomPadding, requestedDay = currentlyDisplayedDate)
     }
 
     private fun showDishesForRestaurant(restaurant: DbRestaurant) {
-        viewModel.restaurantLoadSpec.data = RestaurantLoadSpec(restaurant, requestedSelectedDay, requestedDishName)
+        val bottomPadding = requestedBottomPadding ?: viewModel.restaurantLoadSpec.data?.bottomPaddingForSystemWindows ?: 0
+        requestedBottomPadding = null
+        viewModel.restaurantLoadSpec.data = RestaurantLoadSpec(restaurant, bottomPadding, requestedSelectedDay, requestedDishName)
         requestedSelectedDay = null
         requestedDishName = null
     }
@@ -116,5 +122,14 @@ class MainViewModelController(
                 loadDefaultRestaurant(preparedList)
             }
         viewModel.isLoading.data = false
+    }
+
+    fun applyBottomPadding(bottom: Int) {
+        val currentLoadSpec = viewModel.restaurantLoadSpec.data
+        if (currentLoadSpec != null) {
+            viewModel.restaurantLoadSpec.data = currentLoadSpec.copy(bottomPaddingForSystemWindows = bottom)
+        } else {
+            requestedBottomPadding = bottom
+        }
     }
 }

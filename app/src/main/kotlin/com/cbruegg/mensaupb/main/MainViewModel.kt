@@ -7,6 +7,7 @@ import java.util.Date
 
 data class RestaurantLoadSpec(
     val restaurant: DbRestaurant,
+    val bottomPaddingForSystemWindows: Int,
     var requestedDay: Date? = null,
     var requestedDishName: String? = null
 )
