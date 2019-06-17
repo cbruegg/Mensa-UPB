@@ -180,7 +180,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         if (Build.VERSION.SDK_INT >= 29) {
-            drawerLayout.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE // or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            drawerLayout.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             contentContainer.setOnApplyWindowInsetsListener { _, windowInsets ->
                 val systemWindowInsets = windowInsets.systemWindowInsets
                 contentContainer.setPadding(systemWindowInsets.left, systemWindowInsets.top, systemWindowInsets.right, 0)

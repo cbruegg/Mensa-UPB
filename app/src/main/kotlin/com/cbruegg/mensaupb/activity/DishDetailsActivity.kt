@@ -2,6 +2,7 @@ package com.cbruegg.mensaupb.activity
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.DrawableRes
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.concurrent.ExecutionException
+import kotlin.math.max
 
 class DishDetailsActivity : BaseActivity() {
 
@@ -85,6 +87,17 @@ class DishDetailsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dish_details)
+
+        if (Build.VERSION.SDK_INT >= 29) {
+            activityPhotoRoot.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            activityPhotoRoot.setOnApplyWindowInsetsListener { _, windowInsets ->
+                dishText.also {
+                    it.setPadding(it.paddingLeft, it.paddingTop, it.paddingRight, max(windowInsets.systemWindowInsetBottom, it.paddingBottom))
+                }
+                // We deliberately ignore all but the bottom padding, as the photo may expand under the system windows
+                windowInsets.consumeSystemWindowInsets()
+            }
+        }
 
         viewModel = viewModel(::initialViewModel).apply {
             image.observe(this@DishDetailsActivity) { imageSpec ->
