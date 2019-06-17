@@ -1,5 +1,6 @@
 package com.cbruegg.mensaupb.main
 
+import androidx.lifecycle.viewModelScope
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.minus
@@ -20,7 +21,7 @@ class MainViewModelController(
     private var requestedRestaurantId: String?,
     private var requestedDishName: String?,
     private var requestedSelectedDay: Date?
-) : CoroutineScope by viewModel {
+) : CoroutineScope by viewModel.viewModelScope {
 
     fun newRequest(requestedRestaurantId: String, requestedDishName: String?, requestedSelectedDay: Date?) {
         this.requestedRestaurantId = requestedRestaurantId

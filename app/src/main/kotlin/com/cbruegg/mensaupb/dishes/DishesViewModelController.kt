@@ -1,5 +1,6 @@
 package com.cbruegg.mensaupb.dishes
 
+import androidx.lifecycle.viewModelScope
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
@@ -22,7 +23,7 @@ class DishesViewModelController(
     private val dishViewModelCreator: List<DbDish>.(UserType) -> List<DishListViewModel>,
     private val dishNameToShowOnLoad: String?,
     private val viewModel: DishesViewModel
-) : CoroutineScope by viewModel {
+) : CoroutineScope by viewModel.viewModelScope {
 
     fun onDishClicked(dishListViewModel: DishListViewModel) {
         if (dishListViewModel is DishViewModel && dishListViewModel.hasBigImage) {

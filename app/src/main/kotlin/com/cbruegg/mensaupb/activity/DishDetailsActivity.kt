@@ -10,6 +10,7 @@ import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.request.FutureTarget
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
@@ -18,7 +19,6 @@ import com.cbruegg.mensaupb.util.MutableLiveData
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
 import com.cbruegg.mensaupb.util.xmlDrawableToBitmap
-import com.cbruegg.mensaupb.viewmodel.BaseViewModel
 import com.davemorrissey.labs.subscaleview.ImageSource
 import kotlinx.android.synthetic.main.activity_dish_details.*
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +31,7 @@ import java.util.concurrent.ExecutionException
 
 class DishDetailsActivity : BaseActivity() {
 
-    private class ViewModel(private val context: Context, private val imageUrl: String?, text: String) : BaseViewModel() {
+    private class ViewModel(private val context: Context, private val imageUrl: String?, text: String) : androidx.lifecycle.ViewModel() {
         private val _image: MutableLiveData<ImageSpec?> = MutableLiveData(null)
         val image: LiveData<ImageSpec?> = _image
 
@@ -43,7 +43,7 @@ class DishDetailsActivity : BaseActivity() {
         fun load() {
             if (imageUrl == null || loadingJob != null) return
 
-            loadingJob = launch {
+            loadingJob = viewModelScope.launch {
                 val file = try {
                     GlideApp.with(context)
                         .asFile()
@@ -72,6 +72,8 @@ class DishDetailsActivity : BaseActivity() {
         }
     }
 
+    private lateinit var viewModel: ViewModel
+
     private fun initialViewModel() = (intent?.extras ?: error("Use createStartIntent")).run {
         ViewModel(
             applicationContext,
@@ -84,7 +86,7 @@ class DishDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dish_details)
 
-        viewModel(::initialViewModel).apply {
+        viewModel = viewModel(::initialViewModel).apply {
             image.observe(this@DishDetailsActivity) { imageSpec ->
                 imageSpec ?: return@observe
 
@@ -117,7 +119,7 @@ class DishDetailsActivity : BaseActivity() {
 
     private fun fadeInPhotoView() {
         photoView.alpha = 0f
-        launch {
+        viewModel.viewModelScope.launch {
             while (!photoView.isImageLoaded) {
                 awaitFrame()
             }

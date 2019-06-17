@@ -1,7 +1,7 @@
 package com.cbruegg.mensaupb.dishes
 
+import androidx.lifecycle.ViewModel
 import com.cbruegg.mensaupb.util.MutableLiveData
-import com.cbruegg.mensaupb.viewmodel.BaseViewModel
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.DishViewModel
 import java.util.Date
@@ -13,7 +13,7 @@ data class DishesViewModel(
     val isStale: MutableLiveData<Boolean>,
     val showDialogFor: MutableLiveData<DishViewModel?>,
     var lastLoadMeta: Date = Date(0)
-) : BaseViewModel()
+) : ViewModel()
 
 fun initialDishesViewModel() = DishesViewModel(
     isLoading = MutableLiveData(true),

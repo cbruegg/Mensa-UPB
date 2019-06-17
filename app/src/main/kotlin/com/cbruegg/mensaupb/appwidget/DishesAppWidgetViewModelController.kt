@@ -1,5 +1,6 @@
 package com.cbruegg.mensaupb.appwidget
 
+import androidx.lifecycle.viewModelScope
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.viewmodel.uiSorted
@@ -12,7 +13,7 @@ class DishesAppWidgetViewModelController(
     private val dishesWidgetConfigurationManager: DishesWidgetConfigurationManager,
     private val appWidgetId: Int,
     private val viewModel: DishesAppWidgetViewModel
-) : CoroutineScope by viewModel {
+) : CoroutineScope by viewModel.viewModelScope {
 
     private var restaurantList = emptyList<DbRestaurant>()
 

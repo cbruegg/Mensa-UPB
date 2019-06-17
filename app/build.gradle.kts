@@ -116,9 +116,10 @@ dependencies {
     debugImplementation("com.facebook.stetho:stetho:$stethoVersion")
     debugImplementation("com.facebook.stetho:stetho-okhttp3:$stethoVersion")
 
-    val aarchVersion = "2.0.0"
+    val aarchVersion = "2.1.0-beta01"
     implementation("androidx.lifecycle:lifecycle-runtime:$aarchVersion")
     implementation("androidx.lifecycle:lifecycle-extensions:$aarchVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$aarchVersion")
     kapt("androidx.lifecycle:lifecycle-compiler:$aarchVersion")
 
     implementation("androidx.work:work-runtime-ktx:2.0.1")
