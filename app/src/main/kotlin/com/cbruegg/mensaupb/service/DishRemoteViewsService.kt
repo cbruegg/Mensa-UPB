@@ -114,7 +114,7 @@ class DishRemoteViewsService : RemoteViewsService() {
                 .orNull()
                 ?.value
                 ?.sortedWith(ctx.userType.dishComparator)
-                    ?: return@runBlocking
+                ?: return@runBlocking
         }
 
         override fun hasStableIds() = true
