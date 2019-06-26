@@ -31,9 +31,11 @@ private const val BASE_URL = "https://mensaupb.cbruegg.com"
 typealias IOEither<T> = Either<IOException, T>
 
 private interface MensaService {
+    @Throws(IOException::class)
     @GET("restaurants")
     suspend fun restaurants(): RestaurantsServiceResult
 
+    @Throws(IOException::class)
     @GET("dishes")
     suspend fun dishes(@Query("date") date: String, @Query("restaurantId") restaurantId: String): DishesServiceResult
 }
