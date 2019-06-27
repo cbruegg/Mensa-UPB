@@ -1,6 +1,7 @@
 package com.cbruegg.mensaupb.extensions
 
 import arrow.core.Either
+import retrofit2.HttpException
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -21,4 +22,6 @@ inline fun <T : Any> eitherTryIo(f: () -> T): Either<IOException, T> =
         Either.Right(f())
     } catch (e: IOException) {
         Either.Left(e)
+    } catch(e: HttpException) {
+        Either.Left(IOException(e))
     }
