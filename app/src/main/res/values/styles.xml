@@ -12,6 +12,14 @@
         <item name="colorSecondary">@color/primary_dark</item>
         <!--   theme UI controls like checkboxes and text fields -->
         <item name="colorAccent">@color/accent</item>
+
+        <item name="android:itemTextAppearance">@style/PopupMenuTextAppearance</item>
+    </style>
+
+    <!-- In dark mode, the menu item text remains black (on black) otherwise -->
+    <!-- See https://stackoverflow.com/questions/54613443/how-to-change-toolbar-text-color-from-materialcomponents-daynight-theme -->
+    <style name="PopupMenuTextAppearance" parent="TextAppearance.AppCompat.Menu">
+        <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
 
     <style name="AppTheme.Transparent.NoTitleBar" parent="AppTheme">
