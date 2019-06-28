@@ -70,7 +70,7 @@ dependencies {
     implementation("androidx.preference:preference:1.1.0-beta01")
     implementation("androidx.browser:browser:1.0.0")
     implementation("androidx.annotation:annotation:1.1.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.0-beta1")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.0-beta2")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
     implementation("com.squareup.okhttp3:okhttp:3.14.2")
