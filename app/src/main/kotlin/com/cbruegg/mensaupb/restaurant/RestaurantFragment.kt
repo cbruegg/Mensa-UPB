@@ -64,7 +64,7 @@ class RestaurantFragment
     private lateinit var viewModel: RestaurantViewModel
     private lateinit var viewModelController: RestaurantViewModelController
 
-    private lateinit var adapter: DishesPagerAdapter
+    private var adapter: DishesPagerAdapter? = null
 
     private val dateFormatter by lazy { SimpleDateFormat(getString(R.string.dateTabFormat)) }
 
@@ -107,11 +107,12 @@ class RestaurantFragment
     private fun display(pagerInfo: PagerInfo, requestedDishName: String?, bottomPadding: Int) {
         val pagerIndex = pagerInfo.dates.indexOf(pagerInfo.position) // May be -1
 
-        adapter = DishesPagerAdapter(
+        val adapter = DishesPagerAdapter(
             context!!, viewModel.restaurant,
             pagerInfo.dates, requestedDishName, pagerIndex, repository,
             bottomPadding
         )
+        this.adapter = adapter
         dayPager.adapter = adapter
         dayPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -131,7 +132,7 @@ class RestaurantFragment
      * Get the date of the fragment
      * currently selected in the ViewPager.
      */
-    val pagerSelectedDate: Date
-        get() = adapter.dates[dayPager.currentItem]
+    val pagerSelectedDate: Date?
+        get() = adapter?.dates?.get(dayPager.currentItem)
 
 }
