@@ -2,9 +2,6 @@ package com.cbruegg.mensaupb.restaurant
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.cbruegg.mensaupb.R
@@ -59,7 +56,7 @@ fun RestaurantFragment(
  */
 @SuppressLint("SimpleDateFormat")
 class RestaurantFragment
-@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : Fragment() {
+@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : Fragment(R.layout.fragment_restaurant) {
 
     private lateinit var viewModel: RestaurantViewModel
     private lateinit var viewModelController: RestaurantViewModelController
@@ -73,8 +70,6 @@ class RestaurantFragment
 
     @Inject
     lateinit var repository: Repository
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.fragment_restaurant, container, false)
 
     override fun onResume() {
         super.onResume()
