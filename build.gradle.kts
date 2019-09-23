@@ -20,7 +20,7 @@ buildscript {
 
     dependencies {
         classpath("com.github.ben-manes:gradle-versions-plugin:0.25.0")
-        classpath("com.android.tools.build:gradle:3.4.2")
+        classpath("com.android.tools.build:gradle:3.6.0-alpha12")
         classpath(kotlin("gradle-plugin", "1.3.50"))
         classpath("com.google.gms:google-services:4.3.2")
         classpath("io.fabric.tools:gradle:1.31.1")

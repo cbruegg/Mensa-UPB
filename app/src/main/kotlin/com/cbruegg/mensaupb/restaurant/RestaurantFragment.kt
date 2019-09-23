@@ -2,11 +2,15 @@ package com.cbruegg.mensaupb.restaurant
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbRestaurant
+import com.cbruegg.mensaupb.databinding.FragmentRestaurantBinding
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.getDate
 import com.cbruegg.mensaupb.extensions.midnight
@@ -17,7 +21,6 @@ import com.cbruegg.mensaupb.util.viewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
-import kotlinx.android.synthetic.main.fragment_restaurant.*
 import java.text.SimpleDateFormat
 import java.util.Date
 import javax.inject.Inject
@@ -56,7 +59,7 @@ fun RestaurantFragment(
  */
 @SuppressLint("SimpleDateFormat")
 class RestaurantFragment
-@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : Fragment(R.layout.fragment_restaurant) {
+@Deprecated(message = "Use method with arguments.", level = DeprecationLevel.WARNING) constructor() : Fragment() {
 
     private lateinit var viewModel: RestaurantViewModel
     private lateinit var viewModelController: RestaurantViewModelController
@@ -71,6 +74,8 @@ class RestaurantFragment
     @Inject
     lateinit var repository: Repository
 
+    private lateinit var binding: FragmentRestaurantBinding
+
     override fun onResume() {
         super.onResume()
         viewModelController.reloadIfNeeded()
@@ -79,6 +84,11 @@ class RestaurantFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         app.appComponent.inject(this)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentRestaurantBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -108,17 +118,17 @@ class RestaurantFragment
             bottomPadding
         )
         this.adapter = adapter
-        dayPager.adapter = adapter
-        dayPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding.dayPager.adapter = adapter
+        binding.dayPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 viewModel.pagerInfo.value.position = pagerInfo.dates[position]
             }
         })
-        TabLayoutMediator(dayPagerTabs, dayPager) { tab, position ->
-            dayPager.currentItem = tab.position
+        TabLayoutMediator(binding.dayPagerTabs, binding.dayPager) { tab, position ->
+            binding.dayPager.currentItem = tab.position
             tab.text = dateFormatter.format(adapter.dates[position])
         }.attach()
-        dayPager.currentItem = pagerIndex
+        binding.dayPager.currentItem = pagerIndex
 
         viewModel.lastLoadMeta = LastLoadMeta(pagerInfo.dates, whenLoaded = now)
     }
@@ -128,6 +138,6 @@ class RestaurantFragment
      * currently selected in the ViewPager.
      */
     val pagerSelectedDate: Date?
-        get() = adapter?.dates?.get(dayPager.currentItem)
+        get() = adapter?.dates?.get(binding.dayPager.currentItem)
 
 }

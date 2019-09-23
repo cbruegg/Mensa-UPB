@@ -16,13 +16,13 @@ import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.request.FutureTarget
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
+import com.cbruegg.mensaupb.databinding.ActivityDishDetailsBinding
 import com.cbruegg.mensaupb.util.LiveData
 import com.cbruegg.mensaupb.util.MutableLiveData
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
 import com.cbruegg.mensaupb.util.xmlDrawableToBitmap
 import com.davemorrissey.labs.subscaleview.ImageSource
-import kotlinx.android.synthetic.main.activity_dish_details.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.android.awaitFrame
@@ -32,7 +32,7 @@ import java.io.File
 import java.util.concurrent.ExecutionException
 import kotlin.math.max
 
-class DishDetailsActivity : AppCompatActivity(R.layout.activity_dish_details) {
+class DishDetailsActivity : AppCompatActivity() {
 
     private class ViewModel(private val context: Context, private val imageUrl: String?, text: String) : androidx.lifecycle.ViewModel() {
         private val _image: MutableLiveData<ImageSpec?> = MutableLiveData(null)
@@ -76,6 +76,7 @@ class DishDetailsActivity : AppCompatActivity(R.layout.activity_dish_details) {
     }
 
     private lateinit var viewModel: ViewModel
+    private lateinit var binding: ActivityDishDetailsBinding
 
     private fun initialViewModel() = (intent?.extras ?: error("Use createStartIntent")).run {
         ViewModel(
@@ -87,11 +88,13 @@ class DishDetailsActivity : AppCompatActivity(R.layout.activity_dish_details) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityDishDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (Build.VERSION.SDK_INT >= 29) {
-            activityPhotoRoot.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            activityPhotoRoot.setOnApplyWindowInsetsListener { _, windowInsets ->
-                dishText.also {
+            binding.activityPhotoRoot.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            binding.activityPhotoRoot.setOnApplyWindowInsetsListener { _, windowInsets ->
+                binding.dishText.also {
                     it.setPadding(it.paddingLeft, it.paddingTop, it.paddingRight, max(windowInsets.systemWindowInsetBottom, it.paddingBottom))
                 }
                 // We deliberately ignore all but the bottom padding, as the photo may expand under the system windows
@@ -107,36 +110,36 @@ class DishDetailsActivity : AppCompatActivity(R.layout.activity_dish_details) {
                     is ImageSpec.File -> ImageSource.uri(imageSpec.file.toUri())
                     is ImageSpec.Drawable -> ImageSource.bitmap(xmlDrawableToBitmap(imageSpec.res))
                 }
-                photoView.setImage(imageSource)
-                photoViewLoading.isVisible = false
+                binding.photoView.setImage(imageSource)
+                binding.photoViewLoading.isVisible = false
                 fadeInPhotoView()
             }
             text.observe(this@DishDetailsActivity) { text ->
-                dishText.text = text
+                binding.dishText.text = text
             }
 
-            photoViewLoading.isVisible = true
+            binding.photoViewLoading.isVisible = true
             load()
         }
 
-        activityPhotoRoot.setOnClickListener { finish() }
-        photoView.setOnClickListener { finish() }
+        binding.activityPhotoRoot.setOnClickListener { finish() }
+        binding.photoView.setOnClickListener { finish() }
 
-        dishText.visibility = View.INVISIBLE
-        dishText.doOnLayout {
-            dishText.visibility = View.VISIBLE
-            dishText.translationY = dishText.height.toFloat()
-            dishText.animate().setDuration(150).translationY(0f)
+        binding.dishText.visibility = View.INVISIBLE
+        binding.dishText.doOnLayout {
+            binding.dishText.visibility = View.VISIBLE
+            binding.dishText.translationY = binding.dishText.height.toFloat()
+            binding.dishText.animate().setDuration(150).translationY(0f)
         }
     }
 
     private fun fadeInPhotoView() {
-        photoView.alpha = 0f
+        binding.photoView.alpha = 0f
         viewModel.viewModelScope.launch {
-            while (!photoView.isImageLoaded) {
+            while (!binding.photoView.isImageLoaded) {
                 awaitFrame()
             }
-            photoView.animate().setDuration(300).alpha(1f)
+            binding.photoView.animate().setDuration(300).alpha(1f)
         }
     }
 

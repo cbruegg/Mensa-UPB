@@ -26,6 +26,7 @@ import com.cbruegg.mensaupb.adapter.RestaurantAdapter
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
+import com.cbruegg.mensaupb.databinding.ActivityMainBinding
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.getDate
 import com.cbruegg.mensaupb.extensions.getDateExtra
@@ -40,14 +41,13 @@ import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
-import kotlinx.android.synthetic.main.activity_main.*
 import java.util.Date
 import javax.inject.Inject
 
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
  */
-class MainActivity : AppCompatActivity(R.layout.activity_main) {
+class MainActivity : AppCompatActivity() {
 
     companion object {
 
@@ -112,9 +112,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     lateinit var oneOff: OneOff
 
     private var isLoading: Boolean
-        get() = mainProgressBar.visibility == View.VISIBLE
+        get() = binding.mainProgressBar.visibility == View.VISIBLE
         set(value) {
-            mainProgressBar.visibility = if (value) View.VISIBLE else View.GONE
+            binding.mainProgressBar.visibility = if (value) View.VISIBLE else View.GONE
         }
 
     private val currentlyDisplayedDay: Date?
@@ -137,9 +137,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private fun setDrawerStatus(visible: Boolean) {
         if (visible) {
-            drawerLayout.openDrawer(GravityCompat.START)
+            binding.drawerLayout.openDrawer(GravityCompat.START)
         } else {
-            drawerLayout.closeDrawer(GravityCompat.START)
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
         }
     }
 
@@ -168,6 +168,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var viewModelController: MainViewModelController
+    private lateinit var binding: ActivityMainBinding
     private var lastRestaurantId by StringSharedPreferencesPropertyDelegate(
         sharedPreferences = { getSharedPreferences(prefsFileName, Context.MODE_PRIVATE) },
         key = prefsKeyLastSelectedRestaurant,
@@ -176,14 +177,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
         if (Build.VERSION.SDK_INT >= 29) {
-            drawerLayout.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            contentContainer.setOnApplyWindowInsetsListener { _, windowInsets ->
+            binding.drawerLayout.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            binding.contentContainer.setOnApplyWindowInsetsListener { _, windowInsets ->
                 val systemWindowInsets = windowInsets.systemWindowInsets
-                contentContainer.setPadding(systemWindowInsets.left, systemWindowInsets.top, systemWindowInsets.right, 0)
-                restaurantList.setPadding(systemWindowInsets.left, systemWindowInsets.top, systemWindowInsets.right, systemWindowInsets.bottom)
+                binding.contentContainer.setPadding(systemWindowInsets.left, systemWindowInsets.top, systemWindowInsets.right, 0)
+                binding.restaurantList.setPadding(systemWindowInsets.left, systemWindowInsets.top, systemWindowInsets.right, systemWindowInsets.bottom)
                 viewModelController.applyBottomPadding(systemWindowInsets.bottom)
 
                 windowInsets.consumeSystemWindowInsets()
@@ -205,8 +208,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         restaurantAdapter.onClickListener = { restaurant, _ ->
             viewModelController.onRestaurantClick(restaurant, currentlyDisplayedDay)
         }
-        restaurantList.adapter = restaurantAdapter
-        restaurantList.layoutManager = LinearLayoutManager(this)
+        binding.restaurantList.adapter = restaurantAdapter
+        binding.restaurantList.layoutManager = LinearLayoutManager(this)
 
         viewModel.restaurants.observe(this) {
             setRestaurants(it)
@@ -258,7 +261,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         android.R.id.home -> {
-            drawerLayout.toggleDrawer(GravityCompat.START)
+            binding.drawerLayout.toggleDrawer(GravityCompat.START)
             true
         }
         R.id.settings -> {

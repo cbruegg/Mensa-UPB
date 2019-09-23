@@ -10,19 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.adapter.RestaurantSpinnerAdapter
 import com.cbruegg.mensaupb.app
+import com.cbruegg.mensaupb.databinding.ActivityAppWidgetConfigBinding
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import com.cbruegg.mensaupb.util.exhaustive
 import com.cbruegg.mensaupb.util.observe
 import com.cbruegg.mensaupb.util.viewModel
-import kotlinx.android.synthetic.main.activity_app_widget_config.*
 import javax.inject.Inject
 
 /**
  * Activity used for configuring an app widget. It must
  * be supplied an an AppWidgetId using [AppWidgetManager.EXTRA_APPWIDGET_ID].
  */
-class DishesAppWidgetConfigActivity : AppCompatActivity(R.layout.activity_app_widget_config) {
+class DishesAppWidgetConfigActivity : AppCompatActivity() {
 
     private val appWidgetId by lazy {
         intent!!.extras!!.getInt(
@@ -35,6 +35,7 @@ class DishesAppWidgetConfigActivity : AppCompatActivity(R.layout.activity_app_wi
     lateinit var repository: Repository
     private lateinit var viewModel: DishesAppWidgetViewModel
     private lateinit var viewModelController: DishesAppWidgetViewModelController
+    private lateinit var binding: ActivityAppWidgetConfigBinding
 
     private fun createController(viewModel: DishesAppWidgetViewModel) = DishesAppWidgetViewModelController(
         repository,
@@ -45,6 +46,9 @@ class DishesAppWidgetConfigActivity : AppCompatActivity(R.layout.activity_app_wi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAppWidgetConfigBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         app.appComponent.inject(this)
         setResult(RESULT_CANCELED)
 
@@ -57,13 +61,13 @@ class DishesAppWidgetConfigActivity : AppCompatActivity(R.layout.activity_app_wi
             }
         }
         viewModel.restaurants.observe(this) {
-            widgetConfigSpinner.adapter = RestaurantSpinnerAdapter(this, it)
+            binding.widgetConfigSpinner.adapter = RestaurantSpinnerAdapter(this, it)
         }
         viewModel.confirmButtonStatus.observe(this) {
-            widgetConfigConfirm.isEnabled = it
+            binding.widgetConfigConfirm.isEnabled = it
         }
         viewModel.showProgress.observe(this) {
-            widgetConfigProgressBar.visibility = if (it) View.VISIBLE else View.INVISIBLE
+            binding.widgetConfigProgressBar.visibility = if (it) View.VISIBLE else View.INVISIBLE
         }
         viewModel.status.observe(this) {
             when (it) {
@@ -84,11 +88,11 @@ class DishesAppWidgetConfigActivity : AppCompatActivity(R.layout.activity_app_wi
             }.exhaustive
         }
 
-        widgetConfigConfirm.setOnClickListener {
-            viewModelController.onConfirmClicked(widgetConfigSpinner.selectedItemPosition)
+        binding.widgetConfigConfirm.setOnClickListener {
+            viewModelController.onConfirmClicked(binding.widgetConfigSpinner.selectedItemPosition)
             DishesWidgetUpdateService.scheduleUpdate(15, this, appWidgetId)
         }
-        widgetConfigCancel.setOnClickListener { viewModelController.onCancel() }
+        binding.widgetConfigCancel.setOnClickListener { viewModelController.onCancel() }
 
         viewModelController.load()
     }
