@@ -112,13 +112,13 @@ class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) :
          * Schedule an update for the specified widgets within the next
          * few minutes.
          */
-        fun scheduleUpdate(maxWaitTimeSeconds: Long, vararg appWidgetIds: Int) {
+        fun scheduleUpdate(maxWaitTimeSeconds: Long, context: Context, vararg appWidgetIds: Int) {
             val workRequest = PeriodicWorkRequestBuilder<DishesWidgetUpdateService>(maxWaitTimeSeconds, TimeUnit.SECONDS)
                 .addTag("dishes-widget-update")
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                 .setInputData(createStartExtras(*appWidgetIds))
                 .build()
-            WorkManager.getInstance().enqueueUniquePeriodicWork("dishes-widget-update", ExistingPeriodicWorkPolicy.REPLACE, workRequest)
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork("dishes-widget-update", ExistingPeriodicWorkPolicy.REPLACE, workRequest)
         }
 
     }

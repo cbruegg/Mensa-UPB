@@ -16,7 +16,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.protobuf.ProtoBuf
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.http.GET
@@ -45,7 +45,7 @@ class Downloader @Inject constructor(originalHttpClient: OkHttpClient) {
 
     private val httpClient = originalHttpClient.newBuilder()
         .addInterceptor {
-            val newUrl = it.request().url().newBuilder().addQueryParameter("apiId", BuildConfig.API_ID).build()
+            val newUrl = it.request().url.newBuilder().addQueryParameter("apiId", BuildConfig.API_ID).build()
             it.proceed(it.request().newBuilder().url(newUrl).build())
         }
         .build()
@@ -53,7 +53,7 @@ class Downloader @Inject constructor(originalHttpClient: OkHttpClient) {
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .client(httpClient)
-        .addConverterFactory(ProtoBuf.asStringFormat().asConverterFactory(MediaType.get("application/octet-stream")))
+        .addConverterFactory(ProtoBuf.asStringFormat().asConverterFactory("application/octet-stream".toMediaType()))
         .build()
 
     private val service = retrofit.create(MensaService::class.java)

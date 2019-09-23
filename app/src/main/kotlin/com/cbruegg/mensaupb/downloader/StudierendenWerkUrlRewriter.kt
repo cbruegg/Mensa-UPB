@@ -9,8 +9,8 @@ object StudierendenWerkUrlRewriter : Interceptor {
     private val tag = StudierendenWerkUrlRewriter::class.java.simpleName
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val url = chain.request().url()
-        return if (!url.isHttps && url.host() == "www.studentenwerk-pb.de") {
+        val url = chain.request().url
+        return if (!url.isHttps && url.host == "www.studentenwerk-pb.de") {
             val newUrl = url.newBuilder()
                 .scheme("https")
                 .host("www.studierendenwerk-pb.de")
