@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.UiThread
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
@@ -31,7 +32,7 @@ import java.io.File
 import java.util.concurrent.ExecutionException
 import kotlin.math.max
 
-class DishDetailsActivity : BaseActivity() {
+class DishDetailsActivity : AppCompatActivity(R.layout.activity_dish_details) {
 
     private class ViewModel(private val context: Context, private val imageUrl: String?, text: String) : androidx.lifecycle.ViewModel() {
         private val _image: MutableLiveData<ImageSpec?> = MutableLiveData(null)
@@ -86,7 +87,6 @@ class DishDetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dish_details)
 
         if (Build.VERSION.SDK_INT >= 29) {
             activityPhotoRoot.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE

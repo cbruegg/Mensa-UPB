@@ -22,7 +22,7 @@ import javax.inject.Inject
  * Activity used for configuring an app widget. It must
  * be supplied an an AppWidgetId using [AppWidgetManager.EXTRA_APPWIDGET_ID].
  */
-class DishesAppWidgetConfigActivity : AppCompatActivity() {
+class DishesAppWidgetConfigActivity : AppCompatActivity(R.layout.activity_app_widget_config) {
 
     private val appWidgetId by lazy {
         intent!!.extras!!.getInt(
@@ -46,7 +46,6 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         app.appComponent.inject(this)
-        setContentView(R.layout.activity_app_widget_config)
         setResult(RESULT_CANCELED)
 
         viewModel = viewModel(::initialDishesAppWidgetViewModel)

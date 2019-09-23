@@ -47,7 +47,7 @@ import javax.inject.Inject
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     companion object {
 
@@ -177,7 +177,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
-        setContentView(R.layout.activity_main)
 
         if (Build.VERSION.SDK_INT >= 29) {
             drawerLayout.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
