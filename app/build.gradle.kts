@@ -5,7 +5,7 @@ import java.util.Properties
 
 apply(plugin = "kotlin-allopen")
 apply(plugin = "kotlinx-serialization")
-apply(plugin = "io.fabric")
+apply(plugin = "com.google.firebase.crashlytics")
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -118,7 +118,7 @@ dependencies {
 
     implementation("com.davemorrissey.labs:subsampling-scale-image-view:3.10.0")
 
-    implementation("com.crashlytics.sdk.android:crashlytics:2.10.1")
+    implementation("com.google.firebase:firebase-crashlytics:17.3.0")
 
     val stethoVersion = "1.5.1"
     debugImplementation("com.facebook.stetho:stetho:$stethoVersion")
