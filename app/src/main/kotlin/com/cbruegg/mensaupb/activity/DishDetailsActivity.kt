@@ -19,7 +19,7 @@ import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.databinding.ActivityDishDetailsBinding
 import com.cbruegg.mensaupb.util.LiveData
 import com.cbruegg.mensaupb.util.MutableLiveData
-import com.cbruegg.mensaupb.util.observe
+import com.cbruegg.mensaupb.util.observeNullSafe
 import com.cbruegg.mensaupb.util.viewModel
 import com.cbruegg.mensaupb.util.xmlDrawableToBitmap
 import com.davemorrissey.labs.subscaleview.ImageSource
@@ -103,8 +103,8 @@ class DishDetailsActivity : AppCompatActivity() {
         }
 
         viewModel = viewModel(::initialViewModel).apply {
-            image.observe(this@DishDetailsActivity) { imageSpec ->
-                imageSpec ?: return@observe
+            image.observeNullSafe(this@DishDetailsActivity) { imageSpec ->
+                imageSpec ?: return@observeNullSafe
 
                 val imageSource = when (imageSpec) {
                     is ImageSpec.File -> ImageSource.uri(imageSpec.file.toUri())
@@ -114,7 +114,7 @@ class DishDetailsActivity : AppCompatActivity() {
                 binding.photoViewLoading.isVisible = false
                 fadeInPhotoView()
             }
-            text.observe(this@DishDetailsActivity) { text ->
+            text.observeNullSafe(this@DishDetailsActivity) { text ->
                 binding.dishText.text = text
             }
 

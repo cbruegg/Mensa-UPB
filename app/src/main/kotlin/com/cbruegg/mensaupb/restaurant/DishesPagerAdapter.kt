@@ -18,7 +18,7 @@ import com.cbruegg.mensaupb.dishes.showDishDetailsDialog
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.extensions.setAll
 import com.cbruegg.mensaupb.util.lifecycle.LifecycleRecyclerAdapter
-import com.cbruegg.mensaupb.util.observe
+import com.cbruegg.mensaupb.util.observeNullSafe
 import com.cbruegg.mensaupb.viewmodel.DishListViewModel
 import com.cbruegg.mensaupb.viewmodel.toDishViewModels
 import com.google.android.material.snackbar.Snackbar
@@ -73,25 +73,25 @@ class DishesPagerAdapter(
             it.setPadding(it.paddingLeft, it.paddingTop, it.paddingRight, max(it.paddingBottom, bottomPadding))
         }
 
-        viewModel.showDialogFor.observe(holder) { dishViewModel ->
+        viewModel.showDialogFor.observeNullSafe(holder) { dishViewModel ->
             if (dishViewModel != null) {
                 context.showDishDetailsDialog(dishViewModel)
             }
         }
-        viewModel.dishViewModels.observe(holder) { dishListViewModels ->
+        viewModel.dishViewModels.observeNullSafe(holder) { dishListViewModels ->
             adapter.list.setAll(dishListViewModels)
             holder.noDishesMessage.visibility = noDishesMessageVisibility(dishListViewModels, viewModel.isLoading.data)
         }
-        viewModel.isLoading.observe(holder) {
+        viewModel.isLoading.observeNullSafe(holder) {
             holder.dishProgressBar.visibility = if (it) View.VISIBLE else View.GONE
             holder.noDishesMessage.visibility = noDishesMessageVisibility(viewModel.dishViewModels.data, it)
         }
-        viewModel.isStale.observe(holder) { isStale ->
+        viewModel.isStale.observeNullSafe(holder) { isStale ->
             if (isStale) {
                 Snackbar.make(holder.itemView, R.string.showing_stale_data, Snackbar.LENGTH_SHORT).show()
             }
         }
-        viewModel.networkError.observe(holder) {
+        viewModel.networkError.observeNullSafe(holder) {
             holder.networkErrorMessage.visibility = if (it) View.VISIBLE else View.GONE
         }
 

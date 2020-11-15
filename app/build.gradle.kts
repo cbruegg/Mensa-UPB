@@ -62,8 +62,7 @@ android {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
     kotlinOptions {
-        freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
-        // allWarningsAsErrors = true
+        allWarningsAsErrors = true
         jvmTarget ="1.8"
     }
 }
@@ -77,7 +76,6 @@ dependencies {
     implementation("androidx.annotation:annotation:1.1.0")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
     implementation("com.squareup.okhttp3:okhttp:4.5.0")
     implementation("com.squareup.retrofit2:retrofit:2.6.1")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.4.0")

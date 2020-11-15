@@ -11,7 +11,7 @@ open class LiveData<T> protected constructor(initialValue: T, private val tCaste
         operator fun <T : Any> invoke(initialValue: T) = LiveData(initialValue, tCaster = { it!! })
 
         @JvmName("NullableLiveData")
-        operator fun <T : Any?> invoke(initialValue: T) = LiveData(initialValue, tCaster = { it })
+        operator fun <T : Any?> invoke(initialValue: T) = LiveData<T?>(initialValue, tCaster = { it })
     }
 
     open val data: T
@@ -31,7 +31,7 @@ class MutableLiveData<T> private constructor(initialValue: T, tCaster: (T?) -> T
         operator fun <T : Any> invoke(initialValue: T) = MutableLiveData(initialValue, tCaster = { it!! })
 
         @JvmName("NullableMutableLiveData")
-        operator fun <T : Any?> invoke(initialValue: T) = MutableLiveData(initialValue, tCaster = { it })
+        operator fun <T : Any?> invoke(initialValue: T) = MutableLiveData<T?>(initialValue, tCaster = { it })
     }
 
     override var data: T
@@ -41,10 +41,6 @@ class MutableLiveData<T> private constructor(initialValue: T, tCaster: (T?) -> T
         }
 }
 
-inline fun <reified T> observer(crossinline f: ((T) -> Unit)): Observer<T> = Observer {
+inline fun <reified T> LiveData<T>.observeNullSafe(lifecycleOwner: LifecycleOwner, crossinline f: (T) -> Unit) = observe(lifecycleOwner, {
     f(it as T)
-}
-
-inline fun <reified T> LiveData<T>.observe(lifecycleOwner: LifecycleOwner, crossinline f: (T) -> Unit) = observe(lifecycleOwner, observer {
-    f(it)
 })

@@ -39,7 +39,7 @@ import com.cbruegg.mensaupb.provider.DishesAppWidgetProvider
 import com.cbruegg.mensaupb.restaurant.RestaurantFragment
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
-import com.cbruegg.mensaupb.util.observe
+import com.cbruegg.mensaupb.util.observeNullSafe
 import com.cbruegg.mensaupb.util.viewModel
 import java.util.Date
 import javax.inject.Inject
@@ -211,27 +211,27 @@ class MainActivity : AppCompatActivity() {
         binding.restaurantList.adapter = restaurantAdapter
         binding.restaurantList.layoutManager = LinearLayoutManager(this)
 
-        viewModel.restaurants.observe(this) {
+        viewModel.restaurants.observeNullSafe(this) {
             setRestaurants(it)
         }
-        viewModel.networkError.observe(this) {
+        viewModel.networkError.observeNullSafe(this) {
             if (it) {
                 showNetworkError()
             }
         }
-        viewModel.drawerShown.observe(this) {
+        viewModel.drawerShown.observeNullSafe(this) {
             setDrawerStatus(it)
         }
-        viewModel.showAppWidgetAd.observe(this) {
+        viewModel.showAppWidgetAd.observeNullSafe(this) {
             if (it) {
                 showAppWidgetAd { viewModel.showAppWidgetAd.data = false }
             }
         }
-        viewModel.isLoading.observe(this) {
+        viewModel.isLoading.observeNullSafe(this) {
             isLoading = it
         }
-        viewModel.restaurantLoadSpec.observe(this) {
-            it ?: return@observe
+        viewModel.restaurantLoadSpec.observeNullSafe(this) {
+            it ?: return@observeNullSafe
 
             lastRestaurantId = it.restaurant.id
             showDishesForRestaurant(it.restaurant, it.requestedDay, it.requestedDishName, it.bottomPaddingForSystemWindows)

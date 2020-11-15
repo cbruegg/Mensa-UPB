@@ -16,7 +16,7 @@ import com.cbruegg.mensaupb.extensions.getDate
 import com.cbruegg.mensaupb.extensions.midnight
 import com.cbruegg.mensaupb.extensions.now
 import com.cbruegg.mensaupb.extensions.putDate
-import com.cbruegg.mensaupb.util.observe
+import com.cbruegg.mensaupb.util.observeNullSafe
 import com.cbruegg.mensaupb.util.viewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import io.requery.Persistable
@@ -103,7 +103,7 @@ class RestaurantFragment
 
         viewModel = viewModel { initialRestaurantViewModel(requestedPagerPosition, restaurant, requestedDishName) }
         viewModelController = RestaurantViewModelController(viewModel)
-        viewModel.pagerInfo.observe(this) {
+        viewModel.pagerInfo.observeNullSafe(this) {
             display(it, viewModel.requestedDishName, bottomPadding)
             viewModel.requestedDishName = null // Request was fulfilled
         }

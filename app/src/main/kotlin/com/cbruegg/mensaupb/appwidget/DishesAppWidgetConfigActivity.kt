@@ -14,7 +14,7 @@ import com.cbruegg.mensaupb.databinding.ActivityAppWidgetConfigBinding
 import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.service.DishesWidgetUpdateService
 import com.cbruegg.mensaupb.util.exhaustive
-import com.cbruegg.mensaupb.util.observe
+import com.cbruegg.mensaupb.util.observeNullSafe
 import com.cbruegg.mensaupb.util.viewModel
 import javax.inject.Inject
 
@@ -55,21 +55,21 @@ class DishesAppWidgetConfigActivity : AppCompatActivity() {
         viewModel = viewModel(::initialDishesAppWidgetViewModel)
         viewModelController = createController(viewModel)
 
-        viewModel.networkError.observe(this) {
+        viewModel.networkError.observeNullSafe(this) {
             if (it) {
                 showNetworkError()
             }
         }
-        viewModel.restaurants.observe(this) {
+        viewModel.restaurants.observeNullSafe(this) {
             binding.widgetConfigSpinner.adapter = RestaurantSpinnerAdapter(this, it)
         }
-        viewModel.confirmButtonStatus.observe(this) {
+        viewModel.confirmButtonStatus.observeNullSafe(this) {
             binding.widgetConfigConfirm.isEnabled = it
         }
-        viewModel.showProgress.observe(this) {
+        viewModel.showProgress.observeNullSafe(this) {
             binding.widgetConfigProgressBar.visibility = if (it) View.VISIBLE else View.INVISIBLE
         }
-        viewModel.status.observe(this) {
+        viewModel.status.observeNullSafe(this) {
             when (it) {
                 Status.Confirmed -> {
                     if (!viewModel.networkError.data && viewModel.restaurants.data.isNotEmpty()) {
