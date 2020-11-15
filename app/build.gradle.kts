@@ -4,11 +4,11 @@ import java.io.FileInputStream
 import java.util.Properties
 
 apply(plugin = "kotlin-allopen")
-apply(plugin = "kotlinx-serialization")
 apply(plugin = "com.google.firebase.crashlytics")
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    kotlin("plugin.serialization") version "1.4.10"
     id("kotlin-kapt")
 }
 
@@ -97,8 +97,6 @@ dependencies {
     val coroutineVersion = "1.3.1"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.13.0")
 
     val requeryVersion = "1.6.1"
     implementation("io.requery:requery:$requeryVersion")
