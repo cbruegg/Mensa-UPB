@@ -45,12 +45,9 @@ android {
         getByName("main").java.srcDirs("src/main/kotlin")
     }
 
-    dataBinding {
-        isEnabled = true
-    }
-
-    viewBinding {
-        isEnabled = true
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
     }
 
     compileOptions {
