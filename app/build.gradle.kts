@@ -83,7 +83,7 @@ dependencies {
 
     implementation("com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.1.1")
 
-    val arrowVersion = "0.8.1"
+    val arrowVersion = "0.11.0"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
 
     val daggerVersion = "2.29.1"
