@@ -1,18 +1,17 @@
 package com.cbruegg.mensaupb.util
 
-import kotlinx.serialization.BinaryFormat
-import kotlinx.serialization.DeserializationStrategy
-import kotlinx.serialization.SerializationStrategy
-import kotlinx.serialization.StringFormat
-import kotlinx.serialization.dumps
-import kotlinx.serialization.loads
+import kotlinx.serialization.*
+import kotlinx.serialization.modules.SerializersModule
 
+@ExperimentalSerializationApi
 fun BinaryFormat.asStringFormat(): StringFormat = object : StringFormat {
-    override val context get() = this@asStringFormat.context
 
-    override fun <T> parse(deserializer: DeserializationStrategy<T>, string: String) =
-        this@asStringFormat.loads(deserializer, string)
+    override val serializersModule: SerializersModule
+        get() = this@asStringFormat.serializersModule
 
-    override fun <T> stringify(serializer: SerializationStrategy<T>, obj: T) =
-        this@asStringFormat.dumps(serializer, obj)
+    override fun <T> decodeFromString(deserializer: DeserializationStrategy<T>, string: String) =
+            this@asStringFormat.decodeFromHexString(deserializer, string)
+
+    override fun <T> encodeToString(serializer: SerializationStrategy<T>, value: T) =
+            this@asStringFormat.encodeToHexString(serializer, value)
 }

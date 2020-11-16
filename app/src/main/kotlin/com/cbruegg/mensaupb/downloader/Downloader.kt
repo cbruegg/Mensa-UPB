@@ -15,6 +15,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.protobuf.ProtoBuf
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -44,17 +45,18 @@ private interface MensaService {
 class Downloader @Inject constructor(originalHttpClient: OkHttpClient) {
 
     private val httpClient = originalHttpClient.newBuilder()
-        .addInterceptor {
-            val newUrl = it.request().url.newBuilder().addQueryParameter("apiId", BuildConfig.API_ID).build()
-            it.proceed(it.request().newBuilder().url(newUrl).build())
-        }
-        .build()
+            .addInterceptor {
+                val newUrl = it.request().url.newBuilder().addQueryParameter("apiId", BuildConfig.API_ID).build()
+                it.proceed(it.request().newBuilder().url(newUrl).build())
+            }
+            .build()
 
+    @OptIn(ExperimentalSerializationApi::class)
     private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(httpClient)
-        .addConverterFactory(ProtoBuf.asStringFormat().asConverterFactory("application/octet-stream".toMediaType()))
-        .build()
+            .baseUrl(BASE_URL)
+            .client(httpClient)
+            .addConverterFactory(ProtoBuf.asStringFormat().asConverterFactory("application/octet-stream".toMediaType()))
+            .build()
 
     private val service = retrofit.create(MensaService::class.java)
 
@@ -70,10 +72,10 @@ class Downloader @Inject constructor(originalHttpClient: OkHttpClient) {
      * Perform the action with the [dispatcher] and wrap it in [eitherTryIo].
      */
     private suspend fun <T : Any> networkAsync(dispatcher: CoroutineDispatcher = Dispatchers.IO, f: suspend () -> T): IOEither<T> =
-        withContext(dispatcher) {
-            eitherTryIo {
-                f()
+            withContext(dispatcher) {
+                eitherTryIo {
+                    f()
+                }
             }
-        }
 
 }

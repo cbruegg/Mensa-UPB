@@ -59,6 +59,7 @@ android {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
     kotlinOptions {
+        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
         allWarningsAsErrors = true
         jvmTarget ="1.8"
     }
@@ -74,17 +75,19 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.squareup.okhttp3:okhttp:4.5.0")
-    implementation("com.squareup.retrofit2:retrofit:2.6.1")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.4.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
     implementation("androidx.core:core-ktx:1.3.2")
     implementation("androidx.fragment:fragment-ktx:1.2.5")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
 
-    implementation("com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.1.1")
+    implementation("com.cbruegg.mensaupbservice-common:mensaupbservice-common:1.1.2")
 
     val arrowVersion = "0.11.0"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.0.1")
 
     val daggerVersion = "2.29.1"
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
