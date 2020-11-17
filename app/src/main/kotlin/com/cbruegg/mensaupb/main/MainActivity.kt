@@ -28,20 +28,14 @@ import com.cbruegg.mensaupb.cache.DbDish
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.databinding.ActivityMainBinding
 import com.cbruegg.mensaupb.downloader.Repository
-import com.cbruegg.mensaupb.extensions.getDate
-import com.cbruegg.mensaupb.extensions.getDateExtra
-import com.cbruegg.mensaupb.extensions.midnight
-import com.cbruegg.mensaupb.extensions.putDate
-import com.cbruegg.mensaupb.extensions.putDateExtra
-import com.cbruegg.mensaupb.extensions.setAll
-import com.cbruegg.mensaupb.extensions.toggleDrawer
+import com.cbruegg.mensaupb.extensions.*
 import com.cbruegg.mensaupb.provider.DishesAppWidgetProvider
 import com.cbruegg.mensaupb.restaurant.RestaurantFragment
 import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
 import com.cbruegg.mensaupb.util.observeNullSafe
 import com.cbruegg.mensaupb.util.viewModel
-import java.util.Date
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -181,7 +175,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
 
-        if (Build.VERSION.SDK_INT >= 29) {
+        // Enable the dish list to expand below the system bar, possible starting on API level 29.
+        // On API level 30, these methods were deprecated again. Because anyway most devices
+        // now use gesture navigation by default, there is no system bar anymore so we don't
+        // need this on API level 30 and up.
+        if (Build.VERSION.SDK_INT == 29) @Suppress("DEPRECATION") {
             binding.drawerLayout.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             binding.contentContainer.setOnApplyWindowInsetsListener { _, windowInsets ->
                 val systemWindowInsets = windowInsets.systemWindowInsets

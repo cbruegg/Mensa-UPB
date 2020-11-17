@@ -17,11 +17,7 @@ import com.bumptech.glide.request.FutureTarget
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.databinding.ActivityDishDetailsBinding
-import com.cbruegg.mensaupb.util.LiveData
-import com.cbruegg.mensaupb.util.MutableLiveData
-import com.cbruegg.mensaupb.util.observeNullSafe
-import com.cbruegg.mensaupb.util.viewModel
-import com.cbruegg.mensaupb.util.xmlDrawableToBitmap
+import com.cbruegg.mensaupb.util.*
 import com.davemorrissey.labs.subscaleview.ImageSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -49,15 +45,16 @@ class DishDetailsActivity : AppCompatActivity() {
             loadingJob = viewModelScope.launch {
                 val file = try {
                     GlideApp.with(context)
-                        .asFile()
-                        .load(imageUrl)
-                        .submit()
-                        .await()
+                            .asFile()
+                            .load(imageUrl)
+                            .submit()
+                            .await()
                 } catch (e: ExecutionException) {
                     null
                 }
 
-                _image.data = file?.toImageSpec() ?: R.drawable.ic_error_outline_black_24dp.toImageSpec()
+                _image.data = file?.toImageSpec()
+                        ?: R.drawable.ic_error_outline_black_24dp.toImageSpec()
 
                 loadingJob = null
             }
@@ -80,9 +77,9 @@ class DishDetailsActivity : AppCompatActivity() {
 
     private fun initialViewModel() = (intent?.extras ?: error("Use createStartIntent")).run {
         ViewModel(
-            applicationContext,
-            getString(ARG_IMAGE_URL),
-            getString(ARG_TEXT) ?: error("Use createStartIntent")
+                applicationContext,
+                getString(ARG_IMAGE_URL),
+                getString(ARG_TEXT) ?: error("Use createStartIntent")
         )
     }
 
@@ -91,7 +88,11 @@ class DishDetailsActivity : AppCompatActivity() {
         binding = ActivityDishDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (Build.VERSION.SDK_INT >= 29) {
+        // Enable zoom to expand below the system bar, possible starting on API level 29.
+        // On API level 30, these methods were deprecated again. Because anyway most devices
+        // now use gesture navigation by default, there is no system bar anymore so we don't
+        // need this on API level 30 and up.
+        if (Build.VERSION.SDK_INT == 29) @Suppress("DEPRECATION") {
             binding.activityPhotoRoot.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             binding.activityPhotoRoot.setOnApplyWindowInsetsListener { _, windowInsets ->
                 binding.dishText.also {
