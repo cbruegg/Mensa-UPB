@@ -76,6 +76,7 @@ dependencies {
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.squareup.okhttp3:okhttp:4.5.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
     implementation("androidx.core:core-ktx:1.3.2")
     implementation("androidx.fragment:fragment-ktx:1.2.5")
@@ -127,6 +128,11 @@ dependencies {
     kapt("androidx.lifecycle:lifecycle-compiler:$aarchVersion")
 
     implementation("androidx.work:work-runtime-ktx:2.4.0")
+
+    val moshiVersion = "1.8.0"
+    implementation("com.squareup.moshi:moshi-parent:$moshiVersion")
+    implementation("com.squareup.moshi:moshi-adapters:$moshiVersion")
+    implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
 
     androidTestImplementation("org.jetbrains.kotlin:kotlin-test:${KotlinCompilerVersion.VERSION}")
     androidTestImplementation("junit:junit:4.12")
