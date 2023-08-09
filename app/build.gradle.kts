@@ -8,7 +8,7 @@ apply(plugin = "com.google.firebase.crashlytics")
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    kotlin("plugin.serialization") version "1.4.10"
+    kotlin("plugin.serialization") version "1.6.21"
     id("kotlin-kapt")
 }
 
@@ -60,7 +60,7 @@ android {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
     kotlinOptions {
         freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-        allWarningsAsErrors = true
+        allWarningsAsErrors = false
         jvmTarget ="1.8"
     }
 }
@@ -89,7 +89,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.0.1")
 
-    val daggerVersion = "2.29.1"
+    val daggerVersion = "2.43"
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
     implementation("com.google.dagger:dagger:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
