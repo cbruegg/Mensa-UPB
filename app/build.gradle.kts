@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -13,12 +12,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = 31
 
     defaultConfig {
         applicationId = "com.cbruegg.mensaupb"
-        minSdkVersion(21)
-        targetSdkVersion(30)
+        minSdk = 21
+        targetSdk = 31
         versionCode = 35
         versionName = "1.6.16"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
