@@ -77,7 +77,7 @@ class MainViewModelController(
     private fun loadDefaultRestaurant(preparedList: List<DbRestaurant>) {
         val restaurant = preparedList.firstOrNull { it.id == requestedRestaurantId }
             ?: preparedList.firstOrNull { it.id == viewModel.restaurantLoadSpec.data?.restaurant?.id }
-            ?: preparedList.firstOrNull { it.name.toLowerCase() == DEFAULT_RESTAURANT_NAME.toLowerCase() }
+            ?: preparedList.firstOrNull { it.name.equals(DEFAULT_RESTAURANT_NAME, ignoreCase = true) }
             ?: preparedList.firstOrNull()
         restaurant?.let { showDishesForRestaurant(it) }
         // Clear fulfilled request

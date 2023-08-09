@@ -12,7 +12,7 @@ plugins {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.cbruegg.mensaupb"
@@ -98,7 +98,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutineVersion")
 
-    val requeryVersion = "1.6.1"
+    val requeryVersion = "1.6.0"
     implementation("io.requery:requery:$requeryVersion")
     implementation("io.requery:requery-android:$requeryVersion")
     implementation("io.requery:requery-kotlin:$requeryVersion")
@@ -126,7 +126,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$aarchVersion")
     kapt("androidx.lifecycle:lifecycle-compiler:$aarchVersion")
 
-    implementation("androidx.work:work-runtime-ktx:2.4.0")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
 
     val moshiVersion = "1.8.0"
     implementation("com.squareup.moshi:moshi-parent:$moshiVersion")
@@ -144,8 +144,6 @@ dependencies {
 buildscript {
     val kotlinVersion = project.extra["kotlinVersion"]
     repositories {
-        jcenter()
-        maven("https://kotlin.bintray.com/kotlinx")
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
@@ -155,8 +153,6 @@ buildscript {
 }
 repositories {
     google()
-    jcenter()
-    maven("https://kotlin.bintray.com/kotlinx")
     maven("https://dl.bintray.com/cbruegg/cbruegg")
 }
 apply(plugin = "com.google.gms.google-services")

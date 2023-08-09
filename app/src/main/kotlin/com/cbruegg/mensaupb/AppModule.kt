@@ -1,9 +1,9 @@
 package com.cbruegg.mensaupb
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import com.cbruegg.mensaupb.cache.Models
 import com.cbruegg.mensaupb.util.OneOff
 import dagger.Module
 import dagger.Provides
@@ -34,6 +34,7 @@ class AppModule(private val app: MensaApplication) {
     @Singleton
     fun provideData(): BlockingEntityStore<Persistable> {
         val source = object : DatabaseSource(app, Models.DEFAULT, 14) {
+            @SuppressLint("Range")
             override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
                 if (oldVersion == 13 && newVersion > 13) {
                     // Clear removed cache

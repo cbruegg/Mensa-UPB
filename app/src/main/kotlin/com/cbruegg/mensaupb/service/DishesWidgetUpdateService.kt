@@ -16,7 +16,6 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import arrow.core.orNull
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.app
 import com.cbruegg.mensaupb.appwidget.DishesWidgetConfigurationManager
@@ -118,7 +117,7 @@ class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) :
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                 .setInputData(createStartExtras(*appWidgetIds))
                 .build()
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork("dishes-widget-update", ExistingPeriodicWorkPolicy.REPLACE, workRequest)
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork("dishes-widget-update", ExistingPeriodicWorkPolicy.UPDATE, workRequest)
         }
 
     }
@@ -150,7 +149,8 @@ class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) :
         val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
         val restaurantIntent = MainActivity.createStartIntent(applicationContext, restaurant)
         restaurantIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        val restaurantPendingIntent = PendingIntent.getActivity(applicationContext, REQUEST_CODE_RESTAURANT, restaurantIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val restaurantPendingIntent = PendingIntent.getActivity(applicationContext, REQUEST_CODE_RESTAURANT, restaurantIntent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val dishRemoteViewsServiceIntent = Intent(applicationContext, DishRemoteViewsService::class.java).apply {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
@@ -160,7 +160,8 @@ class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) :
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             makeUnique(appWidgetId)
         }
-        val dishPendingIntent = PendingIntent.getActivity(applicationContext, REQUEST_CODE_DISH, mainActivityIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val dishPendingIntent = PendingIntent.getActivity(applicationContext, REQUEST_CODE_DISH, mainActivityIntent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         @SuppressLint("SimpleDateFormat")
         val day = SimpleDateFormat("EEE").format(shownDate)
