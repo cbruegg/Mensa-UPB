@@ -11,7 +11,6 @@ import com.cbruegg.mensaupbservice.api.Restaurant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.ExperimentalSerializationApi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -46,7 +45,6 @@ class Downloader @Inject constructor(originalHttpClient: OkHttpClient) {
             }
             .build()
 
-    @OptIn(ExperimentalSerializationApi::class)
     private val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(httpClient)

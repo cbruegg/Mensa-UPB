@@ -7,7 +7,6 @@ apply(plugin = "com.google.firebase.crashlytics")
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    kotlin("plugin.serialization") version "1.6.21"
     id("kotlin-kapt")
 }
 
@@ -76,7 +75,6 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.5.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
     implementation("androidx.core:core-ktx:1.3.2")
     implementation("androidx.fragment:fragment-ktx:1.2.5")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
@@ -86,8 +84,6 @@ dependencies {
 
     val arrowVersion = "0.11.0"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.0.1")
 
     val daggerVersion = "2.43"
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
@@ -148,7 +144,6 @@ buildscript {
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
-        classpath("org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion")
     }
 }
 repositories {
