@@ -150,7 +150,7 @@ class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) :
         val restaurantIntent = MainActivity.createStartIntent(applicationContext, restaurant)
         restaurantIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         val restaurantPendingIntent = PendingIntent.getActivity(applicationContext, REQUEST_CODE_RESTAURANT, restaurantIntent,
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE)
 
         val dishRemoteViewsServiceIntent = Intent(applicationContext, DishRemoteViewsService::class.java).apply {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
@@ -161,7 +161,7 @@ class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) :
             makeUnique(appWidgetId)
         }
         val dishPendingIntent = PendingIntent.getActivity(applicationContext, REQUEST_CODE_DISH, mainActivityIntent,
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE)
 
         @SuppressLint("SimpleDateFormat")
         val day = SimpleDateFormat("EEE").format(shownDate)
