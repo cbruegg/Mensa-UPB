@@ -11,12 +11,12 @@ plugins {
 }
 
 android {
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.cbruegg.mensaupb"
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 38
         versionName = "1.6.19"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -52,6 +52,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    namespace = "com.cbruegg.mensaupb"
 
 }
 
@@ -85,7 +86,7 @@ dependencies {
     val arrowVersion = "0.11.0"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
 
-    val daggerVersion = "2.43"
+    val daggerVersion = "2.51.1"
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
     implementation("com.google.dagger:dagger:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
@@ -110,7 +111,7 @@ dependencies {
 
     implementation("com.davemorrissey.labs:subsampling-scale-image-view:3.10.0")
 
-    implementation("com.google.firebase:firebase-crashlytics:17.3.0")
+    implementation("com.google.firebase:firebase-crashlytics:19.0.3")
 
     val stethoVersion = "1.5.1"
     debugImplementation("com.facebook.stetho:stetho:$stethoVersion")
@@ -122,7 +123,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$aarchVersion")
     kapt("androidx.lifecycle:lifecycle-compiler:$aarchVersion")
 
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("androidx.work:work-runtime:2.9.0")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
     val moshiVersion = "1.8.0"
     implementation("com.squareup.moshi:moshi-parent:$moshiVersion")

@@ -12,6 +12,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -28,10 +30,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * A service that is responsible for updating
- * all dishes widgets.
+ * all dishes wuidgets.
  */
 class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
 
@@ -112,12 +115,23 @@ class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) :
          * few minutes.
          */
         fun scheduleUpdate(maxWaitTimeSeconds: Long, context: Context, vararg appWidgetIds: Int) {
+            val inputData = createStartExtras(*appWidgetIds)
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
             val workRequest = PeriodicWorkRequestBuilder<DishesWidgetUpdateService>(maxWaitTimeSeconds, TimeUnit.SECONDS)
                 .addTag("dishes-widget-update")
-                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
-                .setInputData(createStartExtras(*appWidgetIds))
+                .setConstraints(constraints)
+                .setInputData(inputData)
                 .build()
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork("dishes-widget-update", ExistingPeriodicWorkPolicy.UPDATE, workRequest)
+            val workManager = WorkManager.getInstance(context)
+            workManager.beginWith(
+                OneTimeWorkRequestBuilder<DishesWidgetUpdateService>()
+                    .setConstraints(constraints)
+                    .setInputData(inputData)
+                    .build()
+            ).enqueue()
+            workManager.enqueueUniquePeriodicWork("dishes-widget-update", ExistingPeriodicWorkPolicy.UPDATE, workRequest)
         }
 
     }

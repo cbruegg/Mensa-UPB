@@ -23,14 +23,14 @@ abstract class LifecycleViewHolder(itemView: View) : RecyclerView.ViewHolder(ite
     }
 
     fun clear() {
-        if (lifecycleRegistry.currentState == Lifecycle.State.INITIALIZED) {
-            // Otherwise setting the state to destroyed immediately will throw
-            lifecycleRegistry.currentState = Lifecycle.State.CREATED
-        }
-        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
-        lifecycleRegistry = createLifecycleRegistry()
+//        if (lifecycleRegistry.currentState == Lifecycle.State.INITIALIZED) {
+//            // Otherwise setting the state to destroyed immediately will throw
+//            lifecycleRegistry.currentState = Lifecycle.State.CREATED
+//        }
+//        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+//        lifecycleRegistry = createLifecycleRegistry()
     }
 
-    override fun getLifecycle(): Lifecycle = lifecycleRegistry
+    override var lifecycle: Lifecycle = lifecycleRegistry
 
 }

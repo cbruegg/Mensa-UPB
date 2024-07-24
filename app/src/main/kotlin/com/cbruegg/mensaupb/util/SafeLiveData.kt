@@ -41,6 +41,6 @@ class MutableLiveData<T> private constructor(initialValue: T, tCaster: (T?) -> T
         }
 }
 
-inline fun <reified T> LiveData<T>.observeNullSafe(lifecycleOwner: LifecycleOwner, crossinline f: (T) -> Unit) = observe(lifecycleOwner, {
+inline fun <reified T> LiveData<T>.observeNullSafe(lifecycleOwner: LifecycleOwner, crossinline f: (T) -> Unit) = observe(lifecycleOwner) {
     f(it as T)
-})
+}
