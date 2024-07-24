@@ -26,7 +26,7 @@ android {
         apiIdProps.load(FileInputStream(rootProject.file("api_id.properties")))
         val apiId = apiIdProps["id"] ?: error("API ID is missing!")
         buildConfigField("String", "API_ID", "\"$apiId\"")
-        buildConfigField("String", "PRIVACY_POLICY_URL", "\"https://cbruegg.com/mensa-upb-privacy-policy/\"")
+        buildConfigField("String", "PRIVACY_POLICY_URL", "\"https://cbruegg.com/mensa-upb-privacy-policy\"")
     }
     buildTypes {
         getByName("release") {
