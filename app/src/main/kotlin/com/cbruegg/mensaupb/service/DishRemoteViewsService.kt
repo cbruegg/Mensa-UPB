@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
-import arrow.core.orNull
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
 import com.cbruegg.mensaupb.activity.userType
@@ -105,13 +104,13 @@ class DishRemoteViewsService : RemoteViewsService() {
                 ?: return@runBlocking
 
             val restaurant = repository.restaurants()
-                .orNull()
+                .getOrNull()
                 ?.value
                 ?.firstOrNull { it -> it.id == restaurantId }
                 ?: return@runBlocking
             this@DishRemoteViewsFactory.restaurant = restaurant
             dishes = repository.dishes(restaurant, shownDate)
-                .orNull()
+                .getOrNull()
                 ?.value
                 ?.sortedWith(ctx.userType.dishComparator)
                 ?: return@runBlocking

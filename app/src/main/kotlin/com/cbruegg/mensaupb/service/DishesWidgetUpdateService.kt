@@ -31,6 +31,7 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
+import androidx.core.net.toUri
 
 /**
  * A service that is responsible for updating
@@ -45,7 +46,7 @@ class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) :
         val configManager = DishesWidgetConfigurationManager(applicationContext)
 
         val restaurantsById = repository.restaurants()
-            .orNull()
+            .getOrNull()
             ?.value
             ?.associateBy { it.id }
             ?: return Result.retry()
@@ -168,7 +169,7 @@ class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) :
 
         val dishRemoteViewsServiceIntent = Intent(applicationContext, DishRemoteViewsService::class.java).apply {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+            data = toUri(Intent.URI_INTENT_SCHEME).toUri()
         }
         val mainActivityIntent = Intent(applicationContext, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -216,5 +217,5 @@ class DishesWidgetUpdateService(appContext: Context, params: WorkerParameters) :
  * See also http://stackoverflow.com/questions/4011178/multiple-instances-of-widget-only-updating-last-widget.
  */
 private fun Intent.makeUnique(id: Int) {
-    data = Uri.withAppendedPath(Uri.parse("madandroid://widget/id/"), id.toString())
+    data = Uri.withAppendedPath("madandroid://widget/id/".toUri(), id.toString())
 }
