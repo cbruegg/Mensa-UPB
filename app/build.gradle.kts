@@ -16,7 +16,7 @@ android {
     defaultConfig {
         applicationId = "com.cbruegg.mensaupb"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 40
         versionName = "1.6.21"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

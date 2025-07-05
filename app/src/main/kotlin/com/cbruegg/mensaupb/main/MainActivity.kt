@@ -37,6 +37,10 @@ import com.cbruegg.mensaupb.util.observeNullSafe
 import com.cbruegg.mensaupb.util.viewModel
 import java.util.*
 import javax.inject.Inject
+import androidx.core.net.toUri
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
@@ -85,8 +89,9 @@ class MainActivity : AppCompatActivity() {
 
     private val prefsFileName = "main_activity_prefs"
     private val prefsKeyLastSelectedRestaurant = "last_selected_restaurant"
-    private val studentenwerkUri = Uri.parse("http://www.studierendenwerk-pb.de/gastronomie/")
-    private val studentenwerkOpeningHoursUri = Uri.parse("http://www.studierendenwerk-pb.de/gastronomie/oeffnungszeiten")
+    private val studentenwerkUri = "http://www.studierendenwerk-pb.de/gastronomie/".toUri()
+    private val studentenwerkOpeningHoursUri =
+        "http://www.studierendenwerk-pb.de/gastronomie/oeffnungszeiten".toUri()
     private val requestCodePrefererences = 1
     private val keyCurrentlyDisplayedDay = "currently_displayed_day"
 
@@ -188,6 +193,22 @@ class MainActivity : AppCompatActivity() {
                 viewModelController.applyBottomPadding(systemWindowInsets.bottom)
 
                 windowInsets.consumeSystemWindowInsets()
+            }
+        } else {
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+                val bars = insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars()
+                            or WindowInsetsCompat.Type.displayCutout()
+                )
+                for (view in listOf(binding.contentContainer, binding.restaurantListContainer)) {
+                    view.updatePadding(
+                        left = bars.left,
+                        top = bars.top,
+                        right = bars.right,
+                        bottom = bars.bottom
+                    )
+                }
+                WindowInsetsCompat.CONSUMED
             }
         }
 

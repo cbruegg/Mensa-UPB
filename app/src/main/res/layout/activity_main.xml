@@ -28,11 +28,16 @@
                 tools:context=".MainActivity" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/restaurantList"
+        <FrameLayout
+            android:id="@+id/restaurantListContainer"
             android:layout_width="280dp"
             android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="?android:attr/colorBackground" />
+            android:layout_gravity="start">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/restaurantList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?android:attr/colorBackground" />
+        </FrameLayout>
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.cbruegg.mensaupb.R
@@ -88,6 +91,19 @@ class RestaurantFragment
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentRestaurantBinding.inflate(inflater, container, false)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updatePadding(
+                left = bars.left,
+                top = bars.top,
+                right = bars.right,
+                bottom = bars.bottom,
+            )
+            WindowInsetsCompat.CONSUMED
+        }
         return binding.root
     }
 
@@ -113,7 +129,7 @@ class RestaurantFragment
         val pagerIndex = pagerInfo.dates.indexOf(pagerInfo.position) // May be -1
 
         val adapter = DishesPagerAdapter(
-            context!!, viewModel.restaurant,
+            requireContext(), viewModel.restaurant,
             pagerInfo.dates, requestedDishName, pagerIndex, repository,
             bottomPadding
         )
