@@ -130,13 +130,6 @@ dependencies {
     implementation("com.squareup.moshi:moshi-parent:$moshiVersion")
     implementation("com.squareup.moshi:moshi-adapters:$moshiVersion")
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
-
-    androidTestImplementation("org.jetbrains.kotlin:kotlin-test:${KotlinCompilerVersion.VERSION}")
-    androidTestImplementation("junit:junit:4.12")
-    androidTestImplementation("androidx.test:runner:1.3.0")
-    androidTestImplementation("androidx.test:rules:1.3.0")
-    androidTestImplementation("androidx.annotation:annotation:1.1.0")
-    androidTestImplementation("org.mockito:mockito-android:2.28.2")
 }
 
 buildscript {
