@@ -3,7 +3,7 @@ package com.cbruegg.mensaupb.util
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-private class ThreadLocalDelegate<out T>(init: () -> T) : ReadOnlyProperty<Any, T> {
+private class ThreadLocalDelegate<T>(init: () -> T) : ReadOnlyProperty<Any, T> {
 
     private val local = object : ThreadLocal<T>() {
         override fun initialValue() = init()

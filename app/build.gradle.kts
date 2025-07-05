@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -57,10 +57,9 @@ android {
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).all {
-    kotlinOptions {
-        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
-        allWarningsAsErrors = false
-        jvmTarget ="1.8"
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_1_8
+        optIn.add("kotlin.RequiresOptIn")
     }
 }
 
@@ -86,7 +85,7 @@ dependencies {
     val arrowVersion = "0.11.0"
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
 
-    val daggerVersion = "2.51.1"
+    val daggerVersion = "2.56.2"
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
     implementation("com.google.dagger:dagger:$daggerVersion")
     compileOnly("javax.annotation:jsr250-api:1.0")
