@@ -6,7 +6,6 @@ import com.cbruegg.mensaupb.downloader.Repository
 import com.cbruegg.mensaupb.downloader.StudierendenWerkUrlRewriter
 import dagger.Module
 import dagger.Provides
-import installStetho
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -26,7 +25,6 @@ class NetModule {
     fun provideOkHttp(): OkHttpClient = OkHttpClient.Builder()
         .callTimeout(TIMEOUT_MS, TimeUnit.MILLISECONDS)
         .addInterceptor(StudierendenWerkUrlRewriter)
-        .installStetho()
         .build()
 
     @Provides

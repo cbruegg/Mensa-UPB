@@ -113,10 +113,6 @@ dependencies {
 
     implementation("com.google.firebase:firebase-crashlytics:19.0.3")
 
-    val stethoVersion = "1.5.1"
-    debugImplementation("com.facebook.stetho:stetho:$stethoVersion")
-    debugImplementation("com.facebook.stetho:stetho-okhttp3:$stethoVersion")
-
     val aarchVersion = "2.2.0"
     implementation("androidx.lifecycle:lifecycle-runtime:$aarchVersion")
     implementation("androidx.lifecycle:lifecycle-extensions:$aarchVersion")

@@ -3,7 +3,6 @@ package com.cbruegg.mensaupb
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.multidex.MultiDexApplication
-import installStetho
 
 class MensaApplication : MultiDexApplication() {
 
@@ -16,8 +15,6 @@ class MensaApplication : MultiDexApplication() {
         super.onCreate()
 
         System.setProperty(kotlinx.coroutines.DEBUG_PROPERTY_NAME, kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON)
-
-        installStetho()
     }
 
 }
