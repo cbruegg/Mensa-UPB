@@ -41,6 +41,7 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.core.view.isVisible
 
 /**
  * The main activity of the app. It's responsible for keeping the restaurant drawer updated and hosts fragments.
@@ -111,7 +112,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var oneOff: OneOff
 
     private var isLoading: Boolean
-        get() = binding.mainProgressBar.visibility == View.VISIBLE
+        get() = binding.mainProgressBar.isVisible
         set(value) {
             binding.mainProgressBar.visibility = if (value) View.VISIBLE else View.GONE
         }
@@ -169,7 +170,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModelController: MainViewModelController
     private lateinit var binding: ActivityMainBinding
     private var lastRestaurantId by StringSharedPreferencesPropertyDelegate(
-        sharedPreferences = { getSharedPreferences(prefsFileName, Context.MODE_PRIVATE) },
+        sharedPreferences = { getSharedPreferences(prefsFileName, MODE_PRIVATE) },
         key = prefsKeyLastSelectedRestaurant,
         defaultValue = null
     )
@@ -360,16 +361,14 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         this.intent = intent
-        if (intent != null) {
-            val requestedRestaurantId = intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID)
-            val requestedDishName = intent.getStringExtra(ARG_REQUESTED_DISH_NAME)
-            val requestedSelectedDay = intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
-            if (requestedRestaurantId != null && (requestedDishName != null || requestedSelectedDay != null)) {
-                viewModelController.newRequest(requestedRestaurantId, requestedDishName, requestedSelectedDay)
-            }
+        val requestedRestaurantId = intent.getStringExtra(ARG_REQUESTED_RESTAURANT_ID)
+        val requestedDishName = intent.getStringExtra(ARG_REQUESTED_DISH_NAME)
+        val requestedSelectedDay = intent.getDateExtra(ARG_REQUESTED_SELECTED_DAY)
+        if (requestedRestaurantId != null && (requestedDishName != null || requestedSelectedDay != null)) {
+            viewModelController.newRequest(requestedRestaurantId, requestedDishName, requestedSelectedDay)
         }
     }
 
