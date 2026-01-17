@@ -15,7 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.request.FutureTarget
 import com.cbruegg.mensaupb.GlideApp
 import com.cbruegg.mensaupb.R
@@ -23,7 +23,6 @@ import com.cbruegg.mensaupb.databinding.ActivityDishDetailsBinding
 import com.cbruegg.mensaupb.util.*
 import com.davemorrissey.labs.subscaleview.ImageSource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,58 +31,17 @@ import java.util.concurrent.ExecutionException
 
 class DishDetailsActivity : AppCompatActivity() {
 
-    private class ViewModel(private val context: Context, private val imageUrl: String?, text: String) : androidx.lifecycle.ViewModel() {
-        private val _image: MutableLiveData<ImageSpec?> = MutableLiveData(null)
-        val image: LiveData<ImageSpec?> = _image
-
-        val text: LiveData<String> = LiveData(text)
-
-        private var loadingJob: Job? = null
-
-        @UiThread
-        fun load() {
-            if (imageUrl == null || loadingJob != null) return
-
-            loadingJob = viewModelScope.launch {
-                val file = try {
-                    GlideApp.with(context)
-                            .asFile()
-                            .load(imageUrl)
-                            .submit()
-                            .await()
-                } catch (_: ExecutionException) {
-                    null
-                }
-
-                _image.data = file?.toImageSpec()
-                        ?: R.drawable.ic_error_outline_black_24dp.toImageSpec()
-
-                loadingJob = null
-            }
-        }
-
-        private suspend fun <T> FutureTarget<T>.await(): T = withContext(Dispatchers.IO) { get() }
-    }
-
     companion object {
         private const val ARG_IMAGE_URL = "image_url"
         private const val ARG_TEXT = "text"
 
-        fun createStartIntent(context: Context, imageUrl: String?, text: String) = Intent(context, DishDetailsActivity::class.java).apply {
-            replaceExtras(bundleOf(ARG_IMAGE_URL to imageUrl, ARG_TEXT to text))
-        }
+        fun createStartIntent(context: Context, imageUrl: String?, text: String) =
+            Intent(context, DishDetailsActivity::class.java).apply {
+                replaceExtras(bundleOf(ARG_IMAGE_URL to imageUrl, ARG_TEXT to text))
+            }
     }
 
-    private lateinit var viewModel: ViewModel
     private lateinit var binding: ActivityDishDetailsBinding
-
-    private fun initialViewModel() = (intent?.extras ?: error("Use createStartIntent")).run {
-        ViewModel(
-                applicationContext,
-                getString(ARG_IMAGE_URL),
-                getString(ARG_TEXT) ?: error("Use createStartIntent")
-        )
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,25 +62,13 @@ class DishDetailsActivity : AppCompatActivity() {
         }
         ViewCompat.requestApplyInsets(binding.activityPhotoRoot)
 
-        viewModel = viewModel(::initialViewModel).apply {
-            image.observeNullSafe(this@DishDetailsActivity) { imageSpec ->
-                imageSpec ?: return@observeNullSafe
+        val extras = intent?.extras ?: error("Use createStartIntent")
+        val imageUrl = extras.getString(ARG_IMAGE_URL)
+        val text = extras.getString(ARG_TEXT) ?: error("Use createStartIntent")
 
-                val imageSource = when (imageSpec) {
-                    is ImageSpec.File -> ImageSource.uri(imageSpec.file.toUri())
-                    is ImageSpec.Drawable -> ImageSource.bitmap(xmlDrawableToBitmap(imageSpec.res))
-                }
-                binding.photoView.setImage(imageSource)
-                binding.photoViewLoading.isVisible = false
-                fadeInPhotoView()
-            }
-            text.observeNullSafe(this@DishDetailsActivity) { text ->
-                binding.dishText.text = text
-            }
-
-            binding.photoViewLoading.isVisible = true
-            load()
-        }
+        binding.dishText.text = text
+        binding.photoViewLoading.isVisible = true
+        loadImage(imageUrl)
 
         binding.activityPhotoRoot.setOnClickListener { finish() }
         binding.photoView.setOnClickListener { finish() }
@@ -135,15 +81,52 @@ class DishDetailsActivity : AppCompatActivity() {
         }
     }
 
+    @UiThread
+    private fun loadImage(imageUrl: String?) {
+        if (imageUrl == null) {
+            showImageSpec(R.drawable.ic_error_outline_black_24dp.toImageSpec())
+            return
+        }
+
+        binding.photoViewLoading.isVisible = true
+        lifecycleScope.launch {
+            val file = try {
+                GlideApp.with(this@DishDetailsActivity)
+                    .asFile()
+                    .load(imageUrl)
+                    .submit()
+                    .await()
+            } catch (_: ExecutionException) {
+                null
+            }
+
+            showImageSpec(
+                file?.toImageSpec() ?: R.drawable.ic_error_outline_black_24dp.toImageSpec()
+            )
+        }
+    }
+
+    private fun showImageSpec(imageSpec: ImageSpec) {
+        val imageSource = when (imageSpec) {
+            is ImageSpec.File -> ImageSource.uri(imageSpec.file.toUri())
+            is ImageSpec.Drawable -> ImageSource.bitmap(xmlDrawableToBitmap(imageSpec.res))
+        }
+        binding.photoView.setImage(imageSource)
+        binding.photoViewLoading.isVisible = false
+        fadeInPhotoView()
+    }
+
     private fun fadeInPhotoView() {
         binding.photoView.alpha = 0f
-        viewModel.viewModelScope.launch {
+        lifecycleScope.launch {
             while (!binding.photoView.isImageLoaded) {
                 awaitFrame()
             }
             binding.photoView.animate().setDuration(300).alpha(1f)
         }
     }
+
+    private suspend fun <T> FutureTarget<T>.await(): T = withContext(Dispatchers.IO) { get() }
 
 }
 
