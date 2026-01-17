@@ -2,7 +2,6 @@ package com.cbruegg.mensaupb.activity
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.DrawableRes
@@ -10,8 +9,12 @@ import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.request.FutureTarget
 import com.cbruegg.mensaupb.GlideApp
@@ -26,7 +29,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.concurrent.ExecutionException
-import kotlin.math.max
 
 class DishDetailsActivity : AppCompatActivity() {
 
@@ -49,7 +51,7 @@ class DishDetailsActivity : AppCompatActivity() {
                             .load(imageUrl)
                             .submit()
                             .await()
-                } catch (e: ExecutionException) {
+                } catch (_: ExecutionException) {
                     null
                 }
 
@@ -88,20 +90,19 @@ class DishDetailsActivity : AppCompatActivity() {
         binding = ActivityDishDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Enable zoom to expand below the system bar, possible starting on API level 29.
-        // On API level 30, these methods were deprecated again. Because anyway most devices
-        // now use gesture navigation by default, there is no system bar anymore so we don't
-        // need this on API level 30 and up.
-        if (Build.VERSION.SDK_INT == 29) @Suppress("DEPRECATION") {
-            binding.activityPhotoRoot.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            binding.activityPhotoRoot.setOnApplyWindowInsetsListener { _, windowInsets ->
-                binding.dishText.also {
-                    it.setPadding(it.paddingLeft, it.paddingTop, it.paddingRight, max(windowInsets.systemWindowInsetBottom, it.paddingBottom))
-                }
-                // We deliberately ignore all but the bottom padding, as the photo may expand under the system windows
-                windowInsets.consumeSystemWindowInsets()
-            }
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val baseDishTextPaddingBottom = binding.dishText.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(binding.activityPhotoRoot) { _, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            binding.dishText.updatePadding(
+                bottom = baseDishTextPaddingBottom + bars.bottom
+            )
+            // We deliberately ignore all but the bottom padding, as the photo may expand under the system windows.
+            WindowInsetsCompat.CONSUMED
         }
+        ViewCompat.requestApplyInsets(binding.activityPhotoRoot)
 
         viewModel = viewModel(::initialViewModel).apply {
             image.observeNullSafe(this@DishDetailsActivity) { imageSpec ->
