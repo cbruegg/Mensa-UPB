@@ -73,6 +73,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.squareup.okhttp3:okhttp:5.0.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0")
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-moshi:3.0.0")
     implementation("androidx.core:core-ktx:1.16.0")

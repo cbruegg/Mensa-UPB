@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
@@ -39,6 +40,7 @@ private interface MensaService {
 class Downloader @Inject constructor(originalHttpClient: OkHttpClient) {
 
     private val httpClient = originalHttpClient.newBuilder()
+            .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC })
             .addInterceptor {
                 val newUrl = it.request().url.newBuilder().addQueryParameter("id", BuildConfig.API_ID).build()
                 it.proceed(it.request().newBuilder().url(newUrl).build())
