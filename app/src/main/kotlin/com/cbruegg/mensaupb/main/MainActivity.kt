@@ -35,11 +35,9 @@ import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
 import com.cbruegg.mensaupb.util.observeNullSafe
 import com.cbruegg.mensaupb.util.viewModel
-import com.google.android.material.color.MaterialColors
 import java.util.*
 import javax.inject.Inject
 import androidx.core.net.toUri
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -285,11 +283,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        val onPrimary = MaterialColors.getColor(binding.mainToolbar, com.google.android.material.R.attr.colorOnPrimary)
-        binding.mainToolbar.overflowIcon =
-            AppCompatResources.getDrawable(this, R.drawable.abc_ic_menu_overflow_material)
-                ?.mutate()
-                ?.apply { setTint(onPrimary) }
         return true
     }
 

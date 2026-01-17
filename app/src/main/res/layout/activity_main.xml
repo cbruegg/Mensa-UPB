@@ -19,6 +19,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
+                app:menuIconTint="?attr/colorOnPrimary"
                 app:navigationIconTint="?attr/colorOnPrimary"
                 app:titleTextColor="?attr/colorOnPrimary" />
 
