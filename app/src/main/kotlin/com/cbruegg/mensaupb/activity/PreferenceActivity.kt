@@ -3,7 +3,6 @@ package com.cbruegg.mensaupb.activity
 import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -12,8 +11,8 @@ import androidx.core.view.updatePadding
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.cbruegg.mensaupb.R
+import com.cbruegg.mensaupb.databinding.ActivityPreferenceBinding
 import com.cbruegg.mensaupb.model.UserType
-import com.google.android.material.appbar.MaterialToolbar
 
 /**
  * Activity managing the user preferences.
@@ -24,39 +23,38 @@ class PreferenceActivity : AppCompatActivity() {
         const val KEY_PREF_USER_TYPE = "user_type_preference"
     }
 
+    private lateinit var binding: ActivityPreferenceBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContentView(R.layout.activity_preference)
+        binding = ActivityPreferenceBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val toolbar = findViewById<MaterialToolbar>(R.id.preference_toolbar)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.preferenceToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-
-        val root = findViewById<View>(R.id.preference_root)
-        val container = findViewById<View>(R.id.preference_container)
-        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val systemBars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
             )
-            toolbar.updatePadding(
+            binding.preferenceToolbar.updatePadding(
                 left = systemBars.left,
                 top = systemBars.top,
                 right = systemBars.right
             )
-            container.updatePadding(
+            binding.preferenceContainer.updatePadding(
                 left = systemBars.left,
                 right = systemBars.right,
                 bottom = systemBars.bottom
             )
             WindowInsetsCompat.CONSUMED
         }
-        ViewCompat.requestApplyInsets(root)
+        ViewCompat.requestApplyInsets(binding.root)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.preference_container, PreferenceFragment())
+                .replace(binding.preferenceContainer.id, PreferenceFragment())
                 .commit()
         }
     }
