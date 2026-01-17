@@ -22,6 +22,10 @@
         <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
 
+    <style name="ToolbarThemeOverlay" parent="ThemeOverlay.MaterialComponents.ActionBar">
+        <item name="colorControlNormal">?attr/colorOnPrimary</item>
+    </style>
+
     <style name="AppTheme.Transparent.NoTitleBar" parent="AppTheme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
