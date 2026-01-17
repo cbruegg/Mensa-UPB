@@ -35,9 +35,11 @@ import com.cbruegg.mensaupb.util.OneOff
 import com.cbruegg.mensaupb.util.delegates.StringSharedPreferencesPropertyDelegate
 import com.cbruegg.mensaupb.util.observeNullSafe
 import com.cbruegg.mensaupb.util.viewModel
+import com.google.android.material.color.MaterialColors
 import java.util.*
 import javax.inject.Inject
 import androidx.core.net.toUri
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -179,6 +181,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+        setSupportActionBar(binding.mainToolbar)
 
         // Enable the dish list to expand below the system bar, possible starting on API level 29.
         // On API level 30, these methods were deprecated again. Because anyway most devices
@@ -188,7 +191,8 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             binding.contentContainer.setOnApplyWindowInsetsListener { _, windowInsets ->
                 val systemWindowInsets = windowInsets.systemWindowInsets
-                binding.contentContainer.setPadding(systemWindowInsets.left, systemWindowInsets.top, systemWindowInsets.right, 0)
+                binding.mainToolbar.setPadding(systemWindowInsets.left, systemWindowInsets.top, systemWindowInsets.right, 0)
+                binding.contentContainer.setPadding(systemWindowInsets.left, 0, systemWindowInsets.right, 0)
                 binding.restaurantList.setPadding(systemWindowInsets.left, systemWindowInsets.top, systemWindowInsets.right, systemWindowInsets.bottom)
                 viewModelController.applyBottomPadding(systemWindowInsets.bottom)
 
@@ -200,14 +204,20 @@ class MainActivity : AppCompatActivity() {
                     WindowInsetsCompat.Type.systemBars()
                             or WindowInsetsCompat.Type.displayCutout()
                 )
-                for (view in listOf(binding.contentContainer, binding.restaurantListContainer)) {
-                    view.updatePadding(
-                        left = bars.left,
-                        top = bars.top,
-                        right = bars.right,
-                        bottom = bars.bottom
-                    )
-                }
+                binding.mainToolbar.updatePadding(
+                    left = bars.left,
+                    top = bars.top,
+                    right = bars.right
+                )
+                binding.contentContainer.updatePadding(
+                    left = bars.left,
+                    right = bars.right
+                )
+                binding.restaurantListContainer.updatePadding(
+                    left = bars.left,
+                    right = bars.right,
+                    bottom = bars.bottom
+                )
                 WindowInsetsCompat.CONSUMED
             }
         }
@@ -275,6 +285,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+        val onPrimary = MaterialColors.getColor(binding.mainToolbar, com.google.android.material.R.attr.colorOnPrimary)
+        binding.mainToolbar.overflowIcon =
+            AppCompatResources.getDrawable(this, R.drawable.abc_ic_menu_overflow_material)
+                ?.mutate()
+                ?.apply { setTint(onPrimary) }
         return true
     }
 
@@ -301,7 +316,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
         R.id.privacy_policy -> {
-            Uri.parse(BuildConfig.PRIVACY_POLICY_URL).showInCustomTab()
+            BuildConfig.PRIVACY_POLICY_URL.toUri().showInCustomTab()
             true
         }
         else -> super.onOptionsItemSelected(item)
