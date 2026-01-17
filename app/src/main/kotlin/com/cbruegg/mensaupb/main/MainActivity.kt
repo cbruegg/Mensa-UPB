@@ -40,7 +40,9 @@ import javax.inject.Inject
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.core.view.updatePaddingRelative
 import androidx.core.view.isVisible
 
 /**
@@ -181,6 +183,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         setSupportActionBar(binding.mainToolbar)
+        val headerBasePaddingStart = binding.restaurantListHeader.paddingStart
+        val headerBasePaddingEnd = binding.restaurantListHeader.paddingEnd
 
         // Enable the dish list to expand below the system bar, possible starting on API level 29.
         // On API level 30, these methods were deprecated again. Because anyway most devices
@@ -192,7 +196,17 @@ class MainActivity : AppCompatActivity() {
                 val systemWindowInsets = windowInsets.systemWindowInsets
                 binding.mainToolbar.setPadding(systemWindowInsets.left, systemWindowInsets.top, systemWindowInsets.right, 0)
                 binding.contentContainer.setPadding(systemWindowInsets.left, 0, systemWindowInsets.right, 0)
-                binding.restaurantList.setPadding(systemWindowInsets.left, systemWindowInsets.top, systemWindowInsets.right, systemWindowInsets.bottom)
+                binding.restaurantListStatusBarSpacer.updateLayoutParams {
+                    height = systemWindowInsets.top
+                }
+                binding.restaurantListHeader.updatePaddingRelative(
+                    start = headerBasePaddingStart + systemWindowInsets.left,
+                    end = headerBasePaddingEnd + systemWindowInsets.right
+                )
+                binding.restaurantList.updatePadding(
+                    left = systemWindowInsets.left,
+                    right = systemWindowInsets.right
+                )
                 viewModelController.applyBottomPadding(systemWindowInsets.bottom)
 
                 windowInsets.consumeSystemWindowInsets()
@@ -212,10 +226,16 @@ class MainActivity : AppCompatActivity() {
                     left = bars.left,
                     right = bars.right
                 )
-                binding.restaurantListContainer.updatePadding(
+                binding.restaurantListStatusBarSpacer.updateLayoutParams {
+                    height = bars.top
+                }
+                binding.restaurantListHeader.updatePaddingRelative(
+                    start = headerBasePaddingStart + bars.left,
+                    end = headerBasePaddingEnd + bars.right
+                )
+                binding.restaurantList.updatePadding(
                     left = bars.left,
-                    right = bars.right,
-                    bottom = bars.bottom
+                    right = bars.right
                 )
                 WindowInsetsCompat.CONSUMED
             }
