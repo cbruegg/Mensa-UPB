@@ -22,17 +22,17 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import javax.inject.Inject
 
-private const val BASE_URL = "https://www.studierendenwerk-pb.de/"
+private const val BASE_URL = "https://api.stwpb.net/data/"
 
 typealias IOEither<T> = Either<IOException, T>
 
 private interface MensaService {
     @Throws(IOException::class)
-    @GET("fileadmin/shareddata/access2.php?getrestaurants=1")
+    @GET("access2.php?getrestaurants=1")
     suspend fun restaurants(): Map<String, Map<String, *>>
 
     @Throws(IOException::class)
-    @GET("fileadmin/shareddata/access2.php")
+    @GET("access2.php")
     suspend fun dishes(@Query("date") date: String, @Query("restaurant") restaurantId: String): List<JsonDish>
 }
 
