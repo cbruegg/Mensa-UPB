@@ -44,6 +44,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_top_corners_bg_white"
         android:clickable="true"
+        android:clipToPadding="false"
+        android:elevation="10dp"
         android:fillViewport="true"
         android:focusable="true"
         app:layout_constrainedHeight="true"
