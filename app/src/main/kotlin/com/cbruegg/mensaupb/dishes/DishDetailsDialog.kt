@@ -22,10 +22,9 @@ fun Context.showDishDetailsDialog(dishViewModel: DishViewModel) {
                 .takeIf { dishViewModel.containsAllergens }
                 ?.substringAfter(": ")
                 ?.trim(),
-            nutritionalValuesText = dishViewModel.nutritionalValuesText
+            nutritionalValuesText = dishViewModel.dish.nutritionalValuesText
                 ?.takeIf { dishViewModel.hasNutritionalValues }
-                ?.substringAfter('\n', dishViewModel.nutritionalValuesText.orEmpty())
-                ?.replace(", ", "\n")
+                ?.trim()
         )
     )
 }
