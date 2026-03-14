@@ -35,7 +35,7 @@ class DishDetailsActivity : AppCompatActivity() {
         private const val ARG_IMAGE_URL = "image_url"
         private const val ARG_TEXT = "text"
 
-        fun createStartIntent(context: Context, imageUrl: String?, text: String) =
+        fun createStartIntent(context: Context, imageUrl: String?, text: CharSequence) =
             Intent(context, DishDetailsActivity::class.java).apply {
                 replaceExtras(bundleOf(ARG_IMAGE_URL to imageUrl, ARG_TEXT to text))
             }
@@ -64,7 +64,7 @@ class DishDetailsActivity : AppCompatActivity() {
 
         val extras = intent?.extras ?: error("Use createStartIntent")
         val imageUrl = extras.getString(ARG_IMAGE_URL)
-        val text = extras.getString(ARG_TEXT) ?: error("Use createStartIntent")
+        val text = extras.getCharSequence(ARG_TEXT) ?: error("Use createStartIntent")
 
         binding.dishText.text = text
         binding.photoViewLoading.isVisible = true
