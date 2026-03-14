@@ -26,13 +26,12 @@ data class DishViewModel(
     val priceText: String,
     val allergensText: String,
     val badgesText: String?,
-    val nutritionalValuesText: String?,
     val name: String,
     val description: CharSequence
 ) : DishListViewModel() {
     val hasBadges = dish.badges.isNotEmpty()
     val containsAllergens = dish.allergens.isNotEmpty()
-    val hasNutritionalValues = !nutritionalValuesText.isNullOrBlank()
+    val hasNutritionalValues = !dish.nutritionalValuesText.isNullOrBlank()
     val hasThumbnail = !dish.thumbnailImageUrl.isNullOrEmpty()
     val hasBigImage = !dish.imageUrl.isNullOrEmpty()
 
@@ -50,7 +49,6 @@ data class DishViewModel(
         if (priceText != other.priceText) return false
         if (allergensText != other.allergensText) return false
         if (badgesText != other.badgesText) return false
-        if (nutritionalValuesText != other.nutritionalValuesText) return false
         if (name != other.name) return false
         if (description.toString() != other.description.toString()) return false
         if (hasBadges != other.hasBadges) return false
@@ -67,7 +65,6 @@ data class DishViewModel(
         result = 31 * result + priceText.hashCode()
         result = 31 * result + allergensText.hashCode()
         result = 31 * result + (badgesText?.hashCode() ?: 0)
-        result = 31 * result + (nutritionalValuesText?.hashCode() ?: 0)
         result = 31 * result + name.hashCode()
         result = 31 * result + description.toString().hashCode()
         result = 31 * result + hasBadges.hashCode()
@@ -97,13 +94,9 @@ private fun DbDish.toDishViewModel(userType: UserType, context: Context): DishVi
         .capitalizeFirstChar()
 
     val allergensText = "${context.getString(R.string.allergens)} ${allergens.replace("A1", context.getString(R.string.allergen_gluten_description)).joinToString()}"
-    val nutritionalValuesText = nutritionalValuesText
-        ?.split(", ")
-        ?.joinToString(separator = "\n")
-        ?.let { "${context.getString(R.string.nutritional_values)}\n$it" }
 
     val description = buildRowDishDescription(context, priceText, badgesText)
-    return DishViewModel(this, priceText, allergensText, badgesText, nutritionalValuesText, displayName(), description.trim())
+    return DishViewModel(this, priceText, allergensText, badgesText, displayName(), description.trim())
 }
 
 private fun DbDish.buildRowDishDescription(context: Context, priceText: String, badgesText: String): CharSequence {
