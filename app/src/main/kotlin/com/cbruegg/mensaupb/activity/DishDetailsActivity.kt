@@ -99,13 +99,14 @@ class DishDetailsActivity : AppCompatActivity() {
         loadImage(imageUrl)
 
         binding.activityPhotoRoot.setOnClickListener { finish() }
+        binding.dishTextScroll.setOnClickListener { }
         binding.photoView.setOnClickListener { finish() }
 
-        binding.dishText.visibility = View.INVISIBLE
-        binding.dishText.doOnLayout {
-            binding.dishText.visibility = View.VISIBLE
-            binding.dishText.translationY = binding.dishText.height.toFloat()
-            binding.dishText.animate().setDuration(150).translationY(0f)
+        binding.dishTextScroll.visibility = View.INVISIBLE
+        binding.dishTextScroll.doOnLayout {
+            binding.dishTextScroll.visibility = View.VISIBLE
+            binding.dishTextScroll.translationY = binding.dishTextScroll.height.toFloat()
+            binding.dishTextScroll.animate().setDuration(150).translationY(0f)
         }
     }
 

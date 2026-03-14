@@ -6,11 +6,18 @@
     android:layout_height="match_parent"
     android:background="#55000000">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/dishTextMaxTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6667" />
+
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/photoView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/dishText"
+        app:layout_constraintBottom_toTopOf="@+id/dishTextScroll"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,25 +33,37 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/dishText"
+        app:layout_constraintBottom_toTopOf="@+id/dishTextScroll"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/dishText"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/dishTextScroll"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_top_corners_bg_white"
-        android:gravity="start"
-        android:lineSpacingExtra="6dp"
-        android:minLines="3"
-        android:paddingStart="20dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="16dp"
-        android:textAlignment="viewStart"
+        android:clickable="true"
+        android:fillViewport="true"
+        android:focusable="true"
+        app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/dishTextMaxTop"
+        app:layout_constraintVertical_bias="1">
+
+        <TextView
+            android:id="@+id/dishText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:lineSpacingExtra="6dp"
+            android:minLines="3"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="16dp"
+            android:textAlignment="viewStart" />
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
