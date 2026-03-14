@@ -79,6 +79,9 @@ class DishDetailsActivity : AppCompatActivity() {
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
             )
+            val availableHeight = binding.activityPhotoRoot.height.takeIf { it > 0 }
+                ?: resources.displayMetrics.heightPixels
+            binding.dishTextScroll.maxHeightPx = ((availableHeight - bars.top - bars.bottom) / 3f).toInt()
             binding.dishText.updatePadding(
                 bottom = baseDishTextPaddingBottom + bars.bottom
             )
@@ -98,14 +101,13 @@ class DishDetailsActivity : AppCompatActivity() {
         binding.photoViewLoading.isVisible = true
         loadImage(imageUrl)
 
-        binding.activityPhotoRoot.setOnClickListener { finish() }
         binding.photoView.setOnClickListener { finish() }
 
-        binding.dishText.visibility = View.INVISIBLE
-        binding.dishText.doOnLayout {
-            binding.dishText.visibility = View.VISIBLE
-            binding.dishText.translationY = binding.dishText.height.toFloat()
-            binding.dishText.animate().setDuration(150).translationY(0f)
+        binding.dishTextScroll.visibility = View.INVISIBLE
+        binding.dishTextScroll.doOnLayout {
+            binding.dishTextScroll.visibility = View.VISIBLE
+            binding.dishTextScroll.translationY = binding.dishTextScroll.height.toFloat()
+            binding.dishTextScroll.animate().setDuration(150).translationY(0f)
         }
     }
 
