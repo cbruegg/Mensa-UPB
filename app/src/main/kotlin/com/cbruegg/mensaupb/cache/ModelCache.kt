@@ -2,6 +2,8 @@ package com.cbruegg.mensaupb.cache
 
 import android.content.Context
 import android.util.Log
+import com.cbruegg.mensaupb.api.JsonDish
+import com.cbruegg.mensaupb.api.Restaurant
 import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.DbThread
 import com.cbruegg.mensaupb.app
@@ -9,8 +11,6 @@ import com.cbruegg.mensaupb.extensions.TAG
 import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.extensions.minus
 import com.cbruegg.mensaupb.extensions.now
-import com.cbruegg.mensaupbservice.api.Dish
-import com.cbruegg.mensaupbservice.api.Restaurant
 import io.requery.Persistable
 import io.requery.kotlin.BlockingEntityStore
 import kotlinx.coroutines.GlobalScope
@@ -126,7 +126,7 @@ class ModelCache @Deprecated("Inject this.") constructor(context: Context) {
      * Only the day, month and year of the date are used.
      * @return The original dish list
      */
-    suspend fun cache(restaurant: DbRestaurant, date: Date, dishes: List<Dish>): List<DbDish> = withContext(DbThread) {
+    suspend fun cache(restaurant: DbRestaurant, date: Date, dishes: List<JsonDish>): List<DbDish> = withContext(DbThread) {
         val dateAtMidnight = date.atMidnight
         val dbDishes = dishes.toDbDishes(restaurant)
         Log.d(TAG, "Storing dishes for ${restaurant.id} and date $dateAtMidnight")

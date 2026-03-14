@@ -4,6 +4,7 @@
     <string name="dateTabFormat">EEE\', den \'dd\'.\'</string>
     <string name="per_100_gramm">pro 100g</string>
     <string name="allergens">Allergene:</string>
+    <string name="nutritional_values">Nährwerte:</string>
     <string name="vegan">vegan</string>
     <string name="vegetarian">vegetarisch</string>
     <string name="nonfat">fettfrei</string>

@@ -33,7 +33,7 @@ class AppModule(private val app: MensaApplication) {
     @Provides
     @Singleton
     fun provideData(): BlockingEntityStore<Persistable> {
-        val source = object : DatabaseSource(app, Models.DEFAULT, 14) {
+        val source = object : DatabaseSource(app, Models.DEFAULT, 15) {
             @SuppressLint("Range")
             override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
                 if (oldVersion == 13 && newVersion > 13) {
@@ -53,6 +53,10 @@ class AppModule(private val app: MensaApplication) {
                         }
                     }
                     db.execSQL("DROP TABLE $forcedCacheTable")
+                }
+
+                if (oldVersion < 15) {
+                    db.execSQL("ALTER TABLE dishes ADD COLUMN nutritionalValuesText TEXT")
                 }
 
                 super.onUpgrade(db, oldVersion, newVersion)

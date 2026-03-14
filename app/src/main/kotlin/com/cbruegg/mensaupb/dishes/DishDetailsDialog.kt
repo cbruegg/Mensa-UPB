@@ -18,6 +18,9 @@ fun Context.showDishDetailsDialog(dishViewModel: DishViewModel) {
         if (dishViewModel.hasBadges) {
             append(dishViewModel.badgesText).append("\n")
         }
+        if (dishViewModel.hasNutritionalValues) {
+            append(dishViewModel.nutritionalValuesText).append("\n")
+        }
         append(dishViewModel.priceText)
     }
 

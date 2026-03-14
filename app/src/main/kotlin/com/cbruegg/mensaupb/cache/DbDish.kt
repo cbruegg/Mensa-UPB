@@ -4,9 +4,9 @@ import com.cbruegg.mensaupb.deserializeFromSql
 import com.cbruegg.mensaupb.extensions.atMidnight
 import com.cbruegg.mensaupb.serializeForSql
 import com.cbruegg.mensaupb.util.LanguageStringSelector
-import com.cbruegg.mensaupbservice.api.Badge
-import com.cbruegg.mensaupbservice.api.Dish
-import com.cbruegg.mensaupbservice.api.PriceType
+import com.cbruegg.mensaupb.api.Badge
+import com.cbruegg.mensaupb.api.JsonDish
+import com.cbruegg.mensaupb.api.PriceType
 import io.requery.CascadeAction
 import io.requery.Column
 import io.requery.Entity
@@ -89,6 +89,9 @@ abstract class DbDish : Persistable {
     @get:Column(name = "thumbnailImageUrl")
     abstract val thumbnailImageUrl: String?
 
+    @get:Column(name = "nutritionalValuesText")
+    abstract val nutritionalValuesText: String?
+
     @get:Column(name = "restaurant")
     @get:ManyToOne(cascade = [CascadeAction.DELETE])
     abstract val restaurant: DbRestaurant
@@ -124,7 +127,7 @@ abstract class DbDish : Persistable {
 
 }
 
-fun Iterable<Dish>.toDbDishes(restaurant: DbRestaurant) = map { dish ->
+fun Iterable<JsonDish>.toDbDishes(restaurant: DbRestaurant) = map { dish ->
     DbDishEntity().apply {
         require(restaurant.id == dish.restaurantId) { "dish.restaurantId must equal restaurant parameter." }
 
@@ -148,5 +151,6 @@ fun Iterable<Dish>.toDbDishes(restaurant: DbRestaurant) = map { dish ->
         setPriceType(dish.priceType)
         setImageUrl(dish.imageUrl)
         setThumbnailImageUrl(dish.thumbnailImageUrl)
+        setNutritionalValuesText(dish.nutritionalValues?.all?.takeUnless { it.isBlank() })
     }
 }

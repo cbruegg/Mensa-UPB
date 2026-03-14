@@ -6,8 +6,8 @@ import com.cbruegg.mensaupb.BuildConfig
 import com.cbruegg.mensaupb.cache.DbRestaurant
 import com.cbruegg.mensaupb.extensions.eitherTryIo
 import com.cbruegg.mensaupb.util.threadLocal
-import com.cbruegg.mensaupbservice.api.Dish
-import com.cbruegg.mensaupbservice.api.Restaurant
+import com.cbruegg.mensaupb.api.JsonDish
+import com.cbruegg.mensaupb.api.Restaurant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -59,8 +59,10 @@ class Downloader @Inject constructor(originalHttpClient: OkHttpClient) {
 
     suspend fun downloadRestaurants(): IOEither<List<Restaurant>> = networkAsync { service.restaurants().mapToRestaurants() }
 
-    suspend fun downloadDishes(restaurant: DbRestaurant, date: Date): IOEither<List<Dish>> = networkAsync {
-        service.dishes(dateFormat.format(date), restaurant.id).mapToDishes()
+    suspend fun downloadDishes(restaurant: DbRestaurant, date: Date): IOEither<List<JsonDish>> = networkAsync {
+        service.dishes(dateFormat.format(date), restaurant.id).filterNot {
+            it.restaurantId == "mensa-academica-paderborn" && it.category.isEmpty()
+        }
     }
 
     /**
