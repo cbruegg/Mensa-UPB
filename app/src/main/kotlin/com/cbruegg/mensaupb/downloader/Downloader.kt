@@ -61,6 +61,8 @@ class Downloader @Inject constructor(originalHttpClient: OkHttpClient) {
 
     suspend fun downloadDishes(restaurant: DbRestaurant, date: Date): IOEither<List<JsonDish>> = networkAsync {
         service.dishes(dateFormat.format(date), restaurant.id).filterNot {
+            // API bug: Dishes with "" as the category in Mensa Academica are from the day before
+            // and must be filtered out.
             it.restaurantId == "mensa-academica-paderborn" && it.category.isEmpty()
         }
     }
