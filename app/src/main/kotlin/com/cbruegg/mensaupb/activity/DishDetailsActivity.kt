@@ -2,7 +2,14 @@ package com.cbruegg.mensaupb.activity
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
+import android.util.TypedValue
 import android.view.View
 import androidx.annotation.DrawableRes
 import androidx.annotation.UiThread
@@ -33,11 +40,29 @@ class DishDetailsActivity : AppCompatActivity() {
 
     companion object {
         private const val ARG_IMAGE_URL = "image_url"
-        private const val ARG_TEXT = "text"
+        private const val ARG_PRICE_TEXT = "price_text"
+        private const val ARG_BADGES_TEXT = "badges_text"
+        private const val ARG_ALLERGENS_TEXT = "allergens_text"
+        private const val ARG_NUTRITIONAL_VALUES_TEXT = "nutritional_values_text"
 
-        fun createStartIntent(context: Context, imageUrl: String?, text: CharSequence) =
+        fun createStartIntent(
+            context: Context,
+            imageUrl: String?,
+            priceText: String,
+            badgesText: String?,
+            allergensText: String?,
+            nutritionalValuesText: String?
+        ) =
             Intent(context, DishDetailsActivity::class.java).apply {
-                replaceExtras(bundleOf(ARG_IMAGE_URL to imageUrl, ARG_TEXT to text))
+                replaceExtras(
+                    bundleOf(
+                        ARG_IMAGE_URL to imageUrl,
+                        ARG_PRICE_TEXT to priceText,
+                        ARG_BADGES_TEXT to badgesText,
+                        ARG_ALLERGENS_TEXT to allergensText,
+                        ARG_NUTRITIONAL_VALUES_TEXT to nutritionalValuesText
+                    )
+                )
             }
     }
 
@@ -64,9 +89,12 @@ class DishDetailsActivity : AppCompatActivity() {
 
         val extras = intent?.extras ?: error("Use createStartIntent")
         val imageUrl = extras.getString(ARG_IMAGE_URL)
-        val text = extras.getCharSequence(ARG_TEXT) ?: error("Use createStartIntent")
+        val priceText = extras.getString(ARG_PRICE_TEXT) ?: error("Use createStartIntent")
+        val badgesText = extras.getString(ARG_BADGES_TEXT)
+        val allergensText = extras.getString(ARG_ALLERGENS_TEXT)
+        val nutritionalValuesText = extras.getString(ARG_NUTRITIONAL_VALUES_TEXT)
 
-        binding.dishText.text = text
+        binding.dishText.text = buildDishDetailsText(priceText, badgesText, allergensText, nutritionalValuesText)
         binding.photoViewLoading.isVisible = true
         loadImage(imageUrl)
 
@@ -126,6 +154,27 @@ class DishDetailsActivity : AppCompatActivity() {
         }
     }
 
+    private fun buildDishDetailsText(
+        priceText: String,
+        badgesText: String?,
+        allergensText: String?,
+        nutritionalValuesText: String?
+    ): CharSequence {
+        val sectionLabelColor = TypedValue().also {
+            theme.resolveAttribute(R.attr.colorPrimary, it, true)
+        }.data
+        val secondaryTextColor = TypedValue().also {
+            theme.resolveAttribute(R.attr.colorOnBackground, it, true)
+        }.data
+
+        return SpannableStringBuilder().apply {
+            appendSection(getString(R.string.price_section_title), priceText, sectionLabelColor, secondaryTextColor)
+            appendSection(getString(R.string.badges_section_title), badgesText.orEmpty(), sectionLabelColor, secondaryTextColor)
+            appendSection(getString(R.string.allergens_section_title), allergensText.orEmpty(), sectionLabelColor, secondaryTextColor)
+            appendSection(getString(R.string.nutritional_values), nutritionalValuesText.orEmpty(), sectionLabelColor, secondaryTextColor)
+        }.trimEnd()
+    }
+
     private suspend fun <T> FutureTarget<T>.await(): T = withContext(Dispatchers.IO) { get() }
 
 }
@@ -137,3 +186,25 @@ private sealed class ImageSpec {
 
 private fun File.toImageSpec() = ImageSpec.File(this)
 private fun @receiver:DrawableRes Int.toImageSpec() = ImageSpec.Drawable(this)
+
+private fun SpannableStringBuilder.appendSection(
+    label: String,
+    value: String,
+    labelColor: Int,
+    valueColor: Int
+): SpannableStringBuilder {
+    if (value.isBlank()) return this
+    if (isNotEmpty()) append("\n\n")
+
+    appendStyled(label, StyleSpan(Typeface.BOLD), RelativeSizeSpan(1.02f), ForegroundColorSpan(labelColor))
+    append('\n')
+    appendStyled(value.trim(), RelativeSizeSpan(0.94f), ForegroundColorSpan(valueColor))
+    return this
+}
+
+private fun SpannableStringBuilder.appendStyled(text: String, vararg spans: Any): SpannableStringBuilder {
+    val start = length
+    append(text)
+    spans.forEach { setSpan(it, start, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) }
+    return this
+}
