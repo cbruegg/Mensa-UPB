@@ -31,28 +31,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.cbruegg.mensaupb.util.MaxHeightNestedScrollView
-        android:id="@+id/dishTextScroll"
+    <TextView
+        android:id="@+id/dishText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_top_corners_bg_white"
-        android:clickable="true"
-        android:focusable="true"
+        android:gravity="start"
+        android:lineSpacingExtra="6dp"
+        android:minLines="3"
+        android:paddingStart="20dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="16dp"
+        android:textAlignment="viewStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/dishText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:lineSpacingExtra="6dp"
-            android:minLines="3"
-            android:paddingStart="20dp"
-            android:paddingTop="16dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="16dp"
-            android:textAlignment="viewStart" />
-    </com.cbruegg.mensaupb.util.MaxHeightNestedScrollView>
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
