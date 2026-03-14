@@ -1,6 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.io.FileInputStream
-import java.util.Properties
 
 apply(plugin = "kotlin-allopen")
 apply(plugin = "com.google.firebase.crashlytics")
@@ -22,9 +20,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
 
-        val apiIdProps = Properties()
-        apiIdProps.load(FileInputStream(rootProject.file("api_id.properties")))
-        val apiId = apiIdProps["id"] ?: error("API ID is missing!")
+        val apiId = System.getenv("MENSA_UPB_API_KEY")
+            ?: error("MENSA_UPB_API_KEY environment variable is missing!")
         buildConfigField("String", "API_ID", "\"$apiId\"")
         buildConfigField("String", "PRIVACY_POLICY_URL", "\"https://cbruegg.com/mensa-upb-privacy-policy\"")
     }

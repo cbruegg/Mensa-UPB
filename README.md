@@ -4,6 +4,10 @@ There already exist a few Android apps for the restaurants of the University of 
 
 Please find screenshots and more information about the app's features in the [Play Store](https://play.google.com/store/apps/details?id=com.cbruegg.mensaupb).
 
+# Development
+
+Set the `MENSA_UPB_API_KEY` environment variable before running Gradle or opening the project in Android Studio.
+
 # License
 
 ```
