@@ -68,6 +68,8 @@ class RestaurantFragment
     private lateinit var viewModelController: RestaurantViewModelController
 
     private var adapter: DishesPagerAdapter? = null
+    private var dayPagerMediator: TabLayoutMediator? = null
+    private var dayPagerCallback: ViewPager2.OnPageChangeCallback? = null
 
     private val dateFormatter by lazy { SimpleDateFormat(getString(R.string.dateTabFormat)) }
 
@@ -127,24 +129,28 @@ class RestaurantFragment
 
     private fun display(pagerInfo: PagerInfo, requestedDishName: String?, bottomPadding: Int) {
         val pagerIndex = pagerInfo.dates.indexOf(pagerInfo.position) // May be -1
+        val restrictedPagerIndex = pagerIndex.coerceAtLeast(0)
 
         val adapter = DishesPagerAdapter(
             requireContext(), viewModel.restaurant,
             pagerInfo.dates, requestedDishName, pagerIndex, repository,
             bottomPadding
         )
+        dayPagerMediator?.detach()
+        dayPagerMediator = null
+        dayPagerCallback?.let(binding.dayPager::unregisterOnPageChangeCallback)
+        dayPagerCallback = null
         this.adapter = adapter
         binding.dayPager.adapter = adapter
-        binding.dayPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        dayPagerCallback = (object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 viewModel.pagerInfo.value.position = pagerInfo.dates[position]
             }
-        })
-        TabLayoutMediator(binding.dayPagerTabs, binding.dayPager) { tab, position ->
-            binding.dayPager.currentItem = tab.position
+        }).also { binding.dayPager.registerOnPageChangeCallback(it) }
+        dayPagerMediator = TabLayoutMediator(binding.dayPagerTabs, binding.dayPager) { tab, position ->
             tab.text = dateFormatter.format(adapter.dates[position])
-        }.attach()
-        binding.dayPager.currentItem = pagerIndex
+        }.also { it.attach() }
+        binding.dayPager.setCurrentItem(restrictedPagerIndex, false)
 
         viewModel.lastLoadMeta = LastLoadMeta(pagerInfo.dates, whenLoaded = now)
     }
