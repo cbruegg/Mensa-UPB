@@ -32,6 +32,7 @@ These instructions apply to the whole repository.
 - For UI changes, capture either a screenshot, a UI hierarchy dump, or both.
 - For data-loading changes, inspect `logcat` for fetch, cache, and error output.
 - If device verification is blocked, say exactly what blocked it.
+- Prefer testing with Mensa Academica
 
 ## Project Notes
 
