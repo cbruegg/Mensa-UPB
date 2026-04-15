@@ -15,8 +15,8 @@ android {
         applicationId = "com.cbruegg.mensaupb"
         minSdk = 23
         targetSdk = 36
-        versionCode = 42
-        versionName = "1.7.0"
+        versionCode = 43
+        versionName = "1.7.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
 
